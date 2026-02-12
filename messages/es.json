@@ -1,0 +1,11 @@
+{
+  "brand": { "name": "Casa Herenia y Pedro" },
+  "common": { "loading": "Cargando...", "error": "Ha ocurrido un error" },
+  "Navigation": { "book": "Reservar", "home": "Inicio" },
+  "Hero": {
+    "title": "Bienvenidos a",
+    "brand": "Casa Herenia y Pedro",
+    "description": "Despierta entre mogotes y plantaciones. El Valle de Viñales a tus pies en una estancia exclusiva, donde el lujo es sentirse en casa desde el primer café.",
+    "cta": "RESERVAR AHORA"
+  }
+}
