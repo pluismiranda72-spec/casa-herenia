@@ -1,13 +1,141 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
+import { useDropzone } from "react-dropzone";
+import { CloudUpload, X } from "lucide-react";
+import { getGallery, saveImage } from "@/app/actions/galleryActions";
+import { optimizeCloudinaryUrl } from "@/utils/cloudinary";
+
+const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
+const UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
+const SLOT_COUNT = 8;
+
+async function uploadToCloudinary(file: File): Promise<string> {
+  if (!CLOUD_NAME || !UPLOAD_PRESET) {
+    throw new Error("Faltan variables de entorno de Cloudinary.");
+  }
+  const formData = new FormData();
+  formData.append("file", file);
+  formData.append("upload_preset", UPLOAD_PRESET);
+
+  const res = await fetch(
+    `https://api.cloudinary.com/v1_1/${CLOUD_NAME}/image/upload`,
+    { method: "POST", body: formData }
+  );
+  if (!res.ok) throw new Error(`Upload fallido: ${res.status}`);
+  const data = await res.json();
+  return data.secure_url;
+}
+
+type SlotCellProps = {
+  index: number;
+  url: string | null;
+  onUploaded: (index: number, url: string) => void;
+  onRemove: (index: number) => void;
+};
+
+function SlotCell({ index, url, onUploaded, onRemove }: SlotCellProps) {
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const onDrop = useCallback(
+    async (acceptedFiles: File[]) => {
+      const file = acceptedFiles[0];
+      if (!file) return;
+      setError(null);
+      setLoading(true);
+      try {
+        const secureUrl = await uploadToCloudinary(file);
+        onUploaded(index, secureUrl);
+      } catch (e) {
+        setError(e instanceof Error ? e.message : "Error al subir");
+      } finally {
+        setLoading(false);
+      }
+    },
+    [index, onUploaded]
+  );
+
+  const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    onDrop,
+    maxFiles: 1,
+    accept: { "image/*": [".jpg", ".jpeg", ".png", ".webp"] },
+    maxSize: 10 * 1024 * 1024,
+    disabled: loading,
+  });
+
+  const handleRemove = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    onRemove(index);
+  };
+
+  const slotContent = loading ? (
+    <>
+      <div className="w-8 h-8 border-2 border-[#C5A059] border-t-transparent rounded-full animate-spin" />
+      <span className="text-sm text-white/80">Subiendo...</span>
+    </>
+  ) : url ? (
+    <>
+      <div className="absolute inset-0 rounded-lg overflow-hidden">
+        <Image
+          src={optimizeCloudinaryUrl(url)}
+          alt={`Habitación - foto ${index + 1}`}
+          fill
+          className="object-cover"
+          sizes="(max-width: 768px) 50vw, 25vw"
+          unoptimized={url.startsWith("http")}
+        />
+      </div>
+      <button
+        type="button"
+        onClick={handleRemove}
+        className="absolute top-1.5 right-1.5 z-10 p-1 rounded bg-red-500/90 text-white hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-red-400"
+        aria-label="Borrar foto"
+      >
+        <X className="w-4 h-4" />
+      </button>
+      {isDragActive && (
+        <div className="absolute inset-0 bg-black/60 rounded-lg flex items-center justify-center border-2 border-[#C5A059] border-dashed">
+          <span className="text-sm text-white/90">Soltar para reemplazar</span>
+        </div>
+      )}
+    </>
+  ) : (
+    <>
+      <CloudUpload className="w-8 h-8 text-white/60" aria-hidden />
+      <span className="text-sm text-white/80 text-center px-2">
+        Arrastra y suelta tu foto
+      </span>
+    </>
+  );
+
+  return (
+    <div
+      {...getRootProps()}
+      className={`
+        relative aspect-square w-full rounded-lg border-2 flex flex-col items-center justify-center gap-2 cursor-pointer transition-colors group
+        ${url ? "border-transparent bg-white/10" : "border-dashed bg-black/30"}
+        ${!url && (isDragActive ? "border-[#C5A059] bg-black/50" : "border-gray-500 hover:border-gray-400")}
+        ${loading ? "pointer-events-none" : ""}
+      `}
+    >
+      <input {...getInputProps()} />
+      {slotContent}
+      {error && (
+        <span className="absolute bottom-2 left-2 right-2 text-xs text-red-400 text-center">{error}</span>
+      )}
+    </div>
+  );
+}
 
 type RoomDetailsModalProps = {
   isOpen: boolean;
   onClose: () => void;
   roomTitle: string;
+  roomSlug: string;
   images: string[];
 };
 
@@ -15,29 +143,23 @@ export default function RoomDetailsModal({
   isOpen,
   onClose,
   roomTitle,
-  images,
+  roomSlug,
+  images: _images,
 }: RoomDetailsModalProps) {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const total = images.length;
+  const [slotUrls, setSlotUrls] = useState<(string | null)[]>(() =>
+    Array(8).fill(null)
+  );
+  const [toast, setToast] = useState<string | null>(null);
 
   useEffect(() => {
-    if (isOpen) setCurrentIndex(0);
-  }, [isOpen]);
+    if (!isOpen || !roomSlug) return;
+    getGallery(roomSlug).then((urls) => setSlotUrls(urls));
+  }, [isOpen, roomSlug]);
 
-  const goPrev = useCallback(() => {
-    setCurrentIndex((i) => (i <= 0 ? total - 1 : i - 1));
-  }, [total]);
-  const goNext = useCallback(() => {
-    setCurrentIndex((i) => (i >= total - 1 ? 0 : i + 1));
-  }, [total]);
-
-  // Red de seguridad: Escape cierra el modal
   useEffect(() => {
     if (!isOpen) return;
     const handleKey = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
-      if (e.key === "ArrowLeft") goPrev();
-      if (e.key === "ArrowRight") goNext();
     };
     window.addEventListener("keydown", handleKey);
     document.body.style.overflow = "hidden";
@@ -45,11 +167,38 @@ export default function RoomDetailsModal({
       window.removeEventListener("keydown", handleKey);
       document.body.style.overflow = "";
     };
-  }, [isOpen, onClose, goPrev, goNext]);
+  }, [isOpen, onClose]);
 
-  const handleClose = useCallback(() => {
-    onClose();
-  }, [onClose]);
+  const showToast = useCallback((message: string) => {
+    setToast(message);
+    const t = setTimeout(() => setToast(null), 2000);
+    return () => clearTimeout(t);
+  }, []);
+
+  const handleUploaded = useCallback(
+    async (index: number, url: string) => {
+      setSlotUrls((prev) => {
+        const next = [...prev];
+        next[index] = url;
+        return next;
+      });
+      const res = await saveImage(roomSlug, index, url);
+      if (res.success) showToast("Foto guardada");
+    },
+    [roomSlug, showToast]
+  );
+
+  const handleRemove = useCallback(
+    async (index: number) => {
+      setSlotUrls((prev) => {
+        const next = [...prev];
+        next[index] = null;
+        return next;
+      });
+      await saveImage(roomSlug, index, null);
+    },
+    [roomSlug]
+  );
 
   return (
     <AnimatePresence>
@@ -62,108 +211,55 @@ export default function RoomDetailsModal({
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
         >
-          {/* Capa de fondo: clic cierra el modal (red de seguridad) */}
           <button
             type="button"
-            onClick={handleClose}
+            onClick={onClose}
             className="fixed inset-0 z-0 cursor-pointer"
-            aria-label="Cerrar modal (clic en el fondo)"
+            aria-label="Cerrar modal"
           />
 
-          {/* Botón de cierre: solo texto, alineado bajo el Navbar */}
           <button
             type="button"
-            onClick={(e) => {
-              e.stopPropagation();
-              handleClose();
-            }}
-            className="fixed top-24 right-30 md:right-20 lg:right-20 z-[10050] bg-transparent border-none font-sans text-sm tracking-widest text-white text-right cursor-pointer hover:text-[#C5A059] hover:underline underline-offset-4 transition-colors touch-target py-2"
+            onClick={(e) => { e.stopPropagation(); onClose(); }}
+            className="fixed top-24 right-30 md:right-20 z-[10050] bg-transparent border-none font-sans text-sm tracking-widest text-white cursor-pointer hover:text-[#C5A059] hover:underline underline-offset-4 py-2 touch-target"
             aria-label="Cerrar"
           >
             CERRAR
           </button>
 
-          {/* Contenido del modal (pointer-events-none en el wrapper; auto en zonas interactivas para no cerrar al tocar foto/flechas/miniaturas) */}
-          <div className="relative z-10 flex flex-1 flex-col min-h-0 pointer-events-none">
-            {/* Cabecera: título */}
-            <div className="flex items-center justify-between px-4 py-3 md:px-6 md:py-4 shrink-0 pr-32 md:pr-40">
+          <div className="relative z-10 flex flex-1 flex-col min-h-0 overflow-auto pointer-events-none">
+            <div className="pointer-events-auto px-4 py-3 md:px-6 md:py-4 shrink-0 pr-32 md:pr-40">
               <h2 className="font-serif text-lg md:text-xl text-white truncate">
                 {roomTitle}
               </h2>
             </div>
 
-            {/* Imagen principal + flechas (área con pointer-events-auto) */}
-            <div className="pointer-events-auto flex-1 flex items-center justify-center min-h-0 px-4 md:px-8">
-              <button
-                type="button"
-                onClick={goPrev}
-                className="absolute left-2 md:left-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full flex items-center justify-center text-white/90 hover:text-white bg-black/40 hover:bg-black/60 transition-colors touch-target"
-                aria-label="Foto anterior"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-                </svg>
-              </button>
-              <button
-                type="button"
-                onClick={goNext}
-                className="absolute right-2 md:right-4 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full flex items-center justify-center text-white/90 hover:text-white bg-black/40 hover:bg-black/60 transition-colors touch-target"
-                aria-label="Siguiente foto"
-              >
-                <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-              <div className="relative w-full max-w-5xl h-full max-h-[60vh] flex items-center justify-center">
-                <AnimatePresence mode="wait">
-                  <motion.div
-                    key={currentIndex}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    exit={{ opacity: 0, x: -20 }}
-                    transition={{ duration: 0.25 }}
-                    className="relative w-full h-full flex items-center justify-center"
-                  >
-                    <Image
-                      src={images[currentIndex]!}
-                      alt={`${roomTitle} - imagen ${currentIndex + 1}`}
-                      fill
-                      className="object-contain"
-                      sizes="(max-width: 1024px) 100vw, 1280px"
-                      unoptimized={images[currentIndex]!.startsWith("http")}
-                    />
-                  </motion.div>
-                </AnimatePresence>
-              </div>
-            </div>
-
-            {/* Tira de miniaturas (pointer-events-auto) */}
-            <div className="pointer-events-auto shrink-0 px-4 py-4 md:py-6 overflow-x-auto">
-              <div className="flex gap-2 justify-center min-w-0">
-                {images.map((src, i) => (
-                  <button
-                    key={`${src}-${i}`}
-                    type="button"
-                    onClick={() => setCurrentIndex(i)}
-                    className={`relative shrink-0 w-14 h-14 md:w-16 md:h-16 rounded-lg overflow-hidden border-2 transition-colors ${
-                      i === currentIndex
-                        ? "border-[#C5A059] ring-2 ring-[#C5A059]/50"
-                        : "border-transparent hover:border-white/40"
-                    }`}
-                    aria-label={`Ver imagen ${i + 1}`}
-                  >
-                    <Image
-                      src={src}
-                      alt=""
-                      fill
-                      className="object-cover"
-                      sizes="64px"
-                      unoptimized={src.startsWith("http")}
-                    />
-                  </button>
+            <div className="pointer-events-auto flex-1 px-4 pb-8 md:px-6">
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {Array.from({ length: SLOT_COUNT }, (_, i) => (
+                  <SlotCell
+                    key={i}
+                    index={i}
+                    url={slotUrls[i] ?? null}
+                    onUploaded={handleUploaded}
+                    onRemove={handleRemove}
+                  />
                 ))}
               </div>
             </div>
+
+            <AnimatePresence>
+              {toast && (
+                <motion.div
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0 }}
+                  className="pointer-events-none fixed bottom-6 left-1/2 -translate-x-1/2 z-[10060] px-4 py-2 rounded-lg bg-[#C5A059] text-[#0A0A0A] font-sans text-sm shadow-lg"
+                >
+                  {toast}
+                </motion.div>
+              )}
+            </AnimatePresence>
           </div>
         </motion.div>
       )}

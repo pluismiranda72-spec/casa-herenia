@@ -6,6 +6,7 @@ import { motion } from "framer-motion";
 import { PROPERTIES } from "@/data/properties";
 import type { Property } from "@/data/properties";
 import RoomDetailsModal from "@/components/RoomDetailsModal";
+import { optimizeCloudinaryUrl } from "@/utils/cloudinary";
 
 export default function RoomGallery() {
   const [selectedRoom, setSelectedRoom] = useState<Property | null>(null);
@@ -43,7 +44,7 @@ export default function RoomGallery() {
                 {/* Imagen a toda nitidez */}
                 <div className="relative h-56 sm:h-64 md:h-72 w-full overflow-hidden rounded-xl">
                   <Image
-                    src={property.image}
+                    src={optimizeCloudinaryUrl(property.image)}
                     alt={property.name}
                     fill
                     className="object-cover transition-transform duration-500 group-hover:scale-105"
@@ -79,6 +80,7 @@ export default function RoomGallery() {
         isOpen={selectedRoom !== null}
         onClose={() => setSelectedRoom(null)}
         roomTitle={selectedRoom?.name ?? ""}
+        roomSlug={selectedRoom?.id ?? ""}
         images={selectedRoom?.galleryImages ?? []}
       />
     </section>

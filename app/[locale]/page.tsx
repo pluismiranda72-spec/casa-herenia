@@ -4,6 +4,7 @@ import BenefitsSection from "@/components/BenefitsSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
 import ExternalReviewsSection from "@/components/ExternalReviewsSection";
 import LocationSection from "@/components/LocationSection";
+import ViñalesMiniWidget from "@/components/ViñalesMiniWidget";
 import Footer from "@/components/Footer";
 import ThanksBanner from "@/components/ThanksBanner";
 
@@ -31,6 +32,9 @@ export default async function Home({ searchParams }: HomeProps) {
       
       {/* 6. Ubicación y llegada */}
       <LocationSection />
+      
+      {/* Descubre Viñales - widget */}
+      <ViñalesMiniWidget />
       
       {/* 7. Pie de página */}
       <Footer />

@@ -10,6 +10,7 @@ import { PROPERTIES } from "@/data/properties";
 import { getNightlyPricing } from "@/utils/pricing";
 import { createBooking } from "@/app/actions/createBooking";
 import type { BlockedDatesByUnitYmd } from "@/lib/ical";
+import CancellationPolicyModal from "@/components/CancellationPolicyModal";
 import "react-day-picker/style.css";
 
 function formatYmd(d: Date): string {
@@ -309,8 +310,11 @@ export default function ReservasPage() {
                 disabled={!canSubmit}
                 className="w-full min-h-[48px] rounded-lg bg-[#C5A059] text-[#0A0A0A] font-sans font-semibold hover:bg-[#C5A059]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors touch-target"
               >
-                Enviar solicitud
+                Confirmar reserva
               </button>
+              <p className="mt-3 text-center">
+                <CancellationPolicyModal />
+              </p>
             </form>
           </div>
         </div>

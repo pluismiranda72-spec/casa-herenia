@@ -1,4 +1,5 @@
 import ical from "node-ical";
+import { createServiceRoleClient } from "@/lib/supabase/admin";
 
 export type PropertyUnit = "room_1" | "room_2" | "full_villa";
 
@@ -60,11 +61,94 @@ export function dateKeyToNoonUtc(key: string): Date {
 }
 
 /** Date → YYYY-MM-DD (componentes locales) para serialización. */
-function toYmd(date: Date): string {
+export function toYmd(date: Date): string {
   const y = date.getFullYear();
   const m = String(date.getMonth() + 1).padStart(2, "0");
   const day = String(date.getDate()).padStart(2, "0");
   return `${y}-${m}-${day}`;
+}
+
+/** Convierte YYYY-MM-DD a Date mediodía local. */
+function ymdToNoon(ymd: string): Date {
+  const [y, m, d] = ymd.split("-").map(Number);
+  return new Date(y, m - 1, d, 12, 0, 0, 0);
+}
+
+/** Expande rango start..end (end exclusivo, regla hotel) a Date[]. */
+function rangeToBlockedDates(startYmd: string, endYmd: string): Date[] {
+  const start = ymdToNoon(startYmd);
+  const end = ymdToNoon(endYmd);
+  return eventToBlockedDates(start, end);
+}
+
+/** Expande rango start..end (end inclusivo) a Date[]. Para manual_blocks. */
+function rangeToBlockedDatesInclusive(startYmd: string, endYmd: string): Date[] {
+  const start = ymdToNoon(startYmd);
+  const end = ymdToNoon(endYmd);
+  const endNext = new Date(end);
+  endNext.setDate(endNext.getDate() + 1);
+  return eventToBlockedDates(start, endNext);
+}
+
+const EMPTY_BLOCKED: BlockedDatesByUnit = {
+  room_1: [],
+  room_2: [],
+  full_villa: [],
+};
+
+/** Fechas bloqueadas por reservas confirmadas en Supabase. */
+async function getBookingsBlockedDates(): Promise<BlockedDatesByUnit> {
+  const supabase = createServiceRoleClient();
+  if (!supabase) return EMPTY_BLOCKED;
+
+  const { data: rows } = await supabase
+    .from("bookings")
+    .select("room_id, check_in, check_out")
+    .in("status", ["confirmed"]);
+
+  if (!rows?.length) return EMPTY_BLOCKED;
+
+  const byUnit: BlockedDatesByUnit = {
+    room_1: [],
+    room_2: [],
+    full_villa: [],
+  };
+
+  for (const r of rows) {
+    const roomId = r.room_id as PropertyUnit;
+    if (!roomId || !byUnit[roomId]) continue;
+    const dates = rangeToBlockedDates(String(r.check_in), String(r.check_out));
+    byUnit[roomId] = unionDates(byUnit[roomId], dates);
+  }
+  return byUnit;
+}
+
+/** Fechas bloqueadas por manual_blocks en Supabase. */
+async function getManualBlockedDates(): Promise<BlockedDatesByUnit> {
+  const supabase = createServiceRoleClient();
+  if (!supabase) return EMPTY_BLOCKED;
+
+  const { data: rows } = await supabase
+    .from("manual_blocks")
+    .select("room_id, start_date, end_date");
+
+  if (!rows?.length) return EMPTY_BLOCKED;
+
+  const byUnit: BlockedDatesByUnit = {
+    room_1: [],
+    room_2: [],
+    full_villa: [],
+  };
+
+  for (const r of rows) {
+    const roomId = r.room_id as PropertyUnit;
+    if (!roomId || !byUnit[roomId]) continue;
+    const start = String(r.start_date);
+    const end = String(r.end_date);
+    const dates = rangeToBlockedDatesInclusive(start, end);
+    byUnit[roomId] = unionDates(byUnit[roomId], dates);
+  }
+  return byUnit;
 }
 
 type ParsedCalendar = { eventCount: number; blockedDates: Date[] };
@@ -167,17 +251,13 @@ export async function getBlockedDates(unit: PropertyUnit): Promise<Date[]> {
   }
 }
 
-export async function getBlockedDatesByUnit(): Promise<BlockedDatesByUnit> {
-  console.log(
-    "[ical] getBlockedDatesByUnit: AIRBNB_ICAL_ROOM1, ROOM2, FULL"
-  );
-
+/** Solo iCal Airbnb (sin reservas ni bloqueos manuales). */
+async function getIcalBlockedDatesByUnit(): Promise<BlockedDatesByUnit> {
   const [room1, room2, full] = await Promise.all([
     fetchAndParseCalendar(ENV_ROOM1, "ROOM1"),
     fetchAndParseCalendar(ENV_ROOM2, "ROOM2"),
     fetchAndParseCalendar(ENV_FULL, "FULL"),
   ]);
-
   return {
     room_1: unionDates(room1.blockedDates, full.blockedDates),
     room_2: unionDates(room2.blockedDates, full.blockedDates),
@@ -185,6 +265,46 @@ export async function getBlockedDatesByUnit(): Promise<BlockedDatesByUnit> {
       room1.blockedDates,
       room2.blockedDates,
       full.blockedDates
+    ),
+  };
+}
+
+/** Fechas ocupadas por Airbnb + reservas confirmadas (para admin: mostrar en rojo). */
+export async function getBlockedDatesFromIcalAndBookings(): Promise<BlockedDatesByUnit> {
+  const [ical, bookings] = await Promise.all([
+    getIcalBlockedDatesByUnit(),
+    getBookingsBlockedDates(),
+  ]);
+  return {
+    room_1: unionDates(ical.room_1, bookings.room_1),
+    room_2: unionDates(ical.room_2, bookings.room_2),
+    full_villa: unionDates(ical.full_villa, bookings.full_villa),
+  };
+}
+
+/** Fechas bloqueadas manualmente (para admin: mostrar en gris). */
+export async function getManualBlockedDatesByUnit(): Promise<BlockedDatesByUnit> {
+  return getManualBlockedDates();
+}
+
+export async function getBlockedDatesByUnit(): Promise<BlockedDatesByUnit> {
+  console.log(
+    "[ical] getBlockedDatesByUnit: Airbnb + reservas + bloqueos manuales"
+  );
+
+  const [ical, bookings, manual] = await Promise.all([
+    getIcalBlockedDatesByUnit(),
+    getBookingsBlockedDates(),
+    getManualBlockedDates(),
+  ]);
+
+  return {
+    room_1: unionDates(ical.room_1, bookings.room_1, manual.room_1),
+    room_2: unionDates(ical.room_2, bookings.room_2, manual.room_2),
+    full_villa: unionDates(
+      ical.full_villa,
+      bookings.full_villa,
+      manual.full_villa
     ),
   };
 }

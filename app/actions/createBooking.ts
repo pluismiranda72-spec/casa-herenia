@@ -102,16 +102,41 @@ export async function createBooking(
       .filter(Boolean)
       .join("\n");
 
-    const { error: emailError } = await resend.emails.send({
+    await resend.emails.send({
       from: fromEmail,
       to: toEmail,
       subject,
       text,
     });
-    if (emailError) {
-      console.error("[createBooking] Resend:", emailError);
-      // No fallar la acción: la reserva ya está guardada
-    }
+
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
+    const cancelUrl = siteUrl
+      ? `${siteUrl.replace(/\/$/, "")}/es/reservas/cancelar/${row.id}?email=${encodeURIComponent(data.guest_email)}`
+      : "";
+    const clientText = [
+      `Hola ${data.guest_name},`,
+      ``,
+      `Su reserva en Casa Herenia y Pedro ha sido confirmada.`,
+      ``,
+      `Habitación: ${roomLabel}`,
+      `Entrada: ${data.check_in}`,
+      `Salida: ${data.check_out}`,
+      `Huéspedes: ${data.guests_count}`,
+      `Total: ${data.total_price} €`,
+      ``,
+      cancelUrl
+        ? `Para cancelar o modificar: ${cancelUrl}`
+        : "",
+    ]
+      .filter(Boolean)
+      .join("\n");
+
+    await resend.emails.send({
+      from: fromEmail,
+      to: data.guest_email,
+      subject: "Confirmación de su reserva - Casa Herenia y Pedro",
+      text: clientText,
+    });
   }
 
   // Ruta sin locale: el router de next-intl (useRouter) añade el locale al navegar

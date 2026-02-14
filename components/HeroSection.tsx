@@ -40,7 +40,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.4 }}
-          className="font-sans text-base sm:text-lg md:text-xl max-w-2xl mb-8 md:mb-10 text-gray-200 font-light px-2"
+          className="font-sans text-base sm:text-lg md:text-xl max-w-2xl mb-8 md:mb-10 text-gray-200 font-light px-2 text-center"
         >
           {t("description")}
         </motion.p>
@@ -49,10 +49,11 @@ export default function HeroSection() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.6 }}
+          className="mt-8 md:mt-10"
         >
           <Link
             href="/reservas"
-            className="bg-transparent border-2 border-white text-white px-6 py-3 sm:px-8 sm:py-4 rounded-none font-sans font-semibold tracking-widest hover:bg-[#6A8D55] hover:border-[#6A8D55] transition-all duration-300 ease-in-out text-sm sm:text-base"
+            className="bg-transparent border-2 border-white text-white px-6 py-3 sm:px-8 sm:py-4 rounded-none font-sans font-semibold tracking-widest hover:bg-[#6A8D55] hover:border-[#6A8D55] transition-all duration-300 ease-in-out text-sm sm:text-base inline-block text-center"
           >
             {t("cta")}
           </Link>

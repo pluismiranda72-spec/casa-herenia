@@ -22,6 +22,12 @@ export default function Footer() {
             <p className="mt-3 font-sans text-sm text-white/60 max-w-xs">
               Lujo tranquilo en el corazón de la naturaleza.
             </p>
+            <Link
+              href={`/${locale}/nosotros`}
+              className="mt-4 block font-sans text-sm text-white/60 no-underline hover:text-[#C5A059] transition-colors"
+            >
+              Nuestra Historia
+            </Link>
           </div>
 
           {/* Col 2: Enlaces rápidos */}
