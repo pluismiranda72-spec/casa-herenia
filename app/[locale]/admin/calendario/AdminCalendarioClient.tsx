@@ -1,7 +1,8 @@
 "use client";
 
-import { useState, useCallback, useMemo } from "react";
+import { useState, useCallback, useMemo, useEffect } from "react";
 import { DayPicker } from "react-day-picker";
+import { Link2 } from "lucide-react";
 import type { PropertyUnit } from "@/lib/ical";
 import {
   getManualBlocksForRoom,
@@ -10,6 +11,13 @@ import {
   type ManualBlockRow,
 } from "@/app/actions/manageCalendar";
 import "react-day-picker/style.css";
+
+/** Slugs técnicos para la URL del iCal (sin marcas ni nombres propios). */
+const ROOM_ID_TO_SLUG: Record<PropertyUnit, string> = {
+  room_1: "room-1",
+  room_2: "room-2",
+  full_villa: "full-villa",
+};
 
 /** Expande bloques a set de YYYY-MM-DD por habitación. */
 function blocksToYmdByUnit(
@@ -77,6 +85,7 @@ export default function AdminCalendarioClient({
   const [pending, setPending] = useState(false);
   const [message, setMessage] = useState<{ type: "ok" | "err"; text: string } | null>(null);
   const [unblockTarget, setUnblockTarget] = useState<{ ymd: string; block: ManualBlockRow } | null>(null);
+  const [linkCopied, setLinkCopied] = useState(false);
 
   const manualYmd = useMemo(
     () => blocksToYmdByUnit(manualBlocks),
@@ -91,6 +100,27 @@ export default function AdminCalendarioClient({
     ]);
     setManualBlocks({ room_1: r1, room_2: r2, full_villa: r3 });
   }, []);
+
+  const [syncLink, setSyncLink] = useState("");
+  const [icalDomain, setIcalDomain] = useState("");
+  useEffect(() => {
+    const domain = process.env.NEXT_PUBLIC_ICAL_DOMAIN || (typeof window !== "undefined" ? window.location.origin : "");
+    const cleanDomain = domain.replace(/\/$/, "");
+    const slug = ROOM_ID_TO_SLUG[roomId];
+    setIcalDomain(cleanDomain);
+    setSyncLink(cleanDomain ? `${cleanDomain}/api/ical/${slug}` : "");
+  }, [roomId]);
+
+  const handleCopyLink = useCallback(() => {
+    const domain = process.env.NEXT_PUBLIC_ICAL_DOMAIN || (typeof window !== "undefined" ? window.location.origin : "");
+    const cleanDomain = domain.replace(/\/$/, "");
+    const link = cleanDomain ? `${cleanDomain}/api/ical/${ROOM_ID_TO_SLUG[roomId]}` : "";
+    if (!link) return;
+    navigator.clipboard.writeText(link).then(() => {
+      setLinkCopied(true);
+      setTimeout(() => setLinkCopied(false), 2500);
+    });
+  }, [roomId]);
 
   const occupiedSet = new Set(occupiedYmd[roomId] ?? []);
   const manualSet = new Set(manualYmd[roomId] ?? []);
@@ -138,22 +168,46 @@ export default function AdminCalendarioClient({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap gap-2">
-        {ROOM_OPTIONS.map((opt) => (
-          <button
-            key={opt.value}
-            type="button"
-            onClick={() => setRoomId(opt.value)}
-            className={`px-4 py-2 rounded-lg font-sans text-sm font-medium transition-colors ${
-              roomId === opt.value
-                ? "bg-[#C5A059] text-[#0A0A0A]"
-                : "bg-white/10 text-white hover:bg-white/20"
-            }`}
-          >
-            {opt.label}
-          </button>
-        ))}
+      <div className="flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap gap-2">
+          {ROOM_OPTIONS.map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              onClick={() => setRoomId(opt.value)}
+              className={`px-4 py-2 rounded-lg font-sans text-sm font-medium transition-colors ${
+                roomId === opt.value
+                  ? "bg-[#C5A059] text-[#0A0A0A]"
+                  : "bg-white/10 text-white hover:bg-white/20"
+              }`}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </div>
+        <button
+          type="button"
+          onClick={handleCopyLink}
+          className="inline-flex items-center gap-2 px-3 py-2 rounded-lg border border-[#C5A059]/80 bg-transparent text-[#C5A059] font-sans text-sm hover:bg-[#C5A059]/10 transition-colors"
+        >
+          <Link2 className="w-4 h-4 shrink-0" aria-hidden />
+          {linkCopied ? "Enlace copiado al portapapeles" : "Copiar Enlace de Sincronización"}
+        </button>
       </div>
+      {(icalDomain || syncLink) && (
+        <div className="space-y-0.5">
+          {icalDomain && (
+            <p className="text-xs text-white/40">
+              Dominio en uso: <span className="font-mono">{icalDomain}</span>
+            </p>
+          )}
+          {syncLink && (
+            <p className="text-xs text-white/40 font-mono truncate max-w-full" title={syncLink}>
+              {syncLink}
+            </p>
+          )}
+        </div>
+      )}
 
       <div className="flex flex-wrap items-center gap-4">
         <span className="flex items-center gap-2 font-sans text-sm text-white/80">
