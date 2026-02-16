@@ -1,6 +1,6 @@
 "use server";
 
-import { differenceInDays, parseISO, startOfDay } from "date-fns";
+import { differenceInDays } from "date-fns";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
 import { Resend } from "resend";
 
@@ -17,7 +17,6 @@ export type BookingForCancel = {
   status: string;
 };
 
-/** Devuelve la reserva solo si el email coincide (para la página de cancelación). */
 export async function getBookingForCancel(
   bookingId: string,
   email: string
@@ -32,11 +31,12 @@ export async function getBookingForCancel(
     .single();
 
   if (error || !data) return null;
-  if (data.guest_email?.toLowerCase().trim() !== email?.toLowerCase().trim()) return null;
+  const guestEmail = (data.guest_email as string) ?? "";
+  const inputEmail = (email ?? "").toLowerCase().trim();
+  if (guestEmail.toLowerCase().trim() !== inputEmail) return null;
   return data as BookingForCancel;
 }
 
-/** Calcula si la cancelación tendría reembolso (más de 5 días hasta check-in). */
 export function isRefundable(daysUntilCheckIn: number): boolean {
   return daysUntilCheckIn > REFUND_THRESHOLD_DAYS;
 }
@@ -45,13 +45,19 @@ export type CancelBookingState =
   | { success: true; status: "cancelled_refund" | "cancelled_no_refund" }
   | { success: false; error: string };
 
+function getRoomLabel(roomId: string): string {
+  if (roomId === "room_1") return "Junior Suite I";
+  if (roomId === "room_2") return "Junior Suite II";
+  return "TWO-BEDROOM SUITE (Villa Completa)";
+}
+
 export async function cancelBooking(
   bookingId: string,
   email: string
 ): Promise<CancelBookingState> {
   const supabase = createServiceRoleClient();
   if (!supabase) {
-    return { success: false, error: "Servidor no configurado." };
+    return { success: false, error: "Server not configured." };
   }
 
   const { data: booking, error: fetchError } = await supabase
@@ -61,25 +67,26 @@ export async function cancelBooking(
     .single();
 
   if (fetchError || !booking) {
-    return { success: false, error: "Reserva no encontrada." };
+    return { success: false, error: "Booking not found." };
   }
 
-  if (booking.guest_email.toLowerCase().trim() !== email.toLowerCase().trim()) {
-    return { success: false, error: "El email no coincide con esta reserva." };
+  const guestEmail = String(booking.guest_email ?? "").toLowerCase().trim();
+  const inputEmail = (email ?? "").toLowerCase().trim();
+  if (guestEmail !== inputEmail) {
+    return { success: false, error: "Email does not match this booking." };
   }
 
-  if (booking.status === "cancelled_refund" || booking.status === "cancelled_no_refund") {
-    return { success: false, error: "Esta reserva ya está cancelada." };
+  const status = String(booking.status ?? "");
+  if (status === "cancelled_refund" || status === "cancelled_no_refund") {
+    return { success: false, error: "This booking is already cancelled." };
   }
 
-  const today = startOfDay(new Date());
-  const checkInDate = startOfDay(
-    typeof booking.check_in === "string" ? parseISO(booking.check_in) : new Date(booking.check_in)
-  );
-  const daysUntilCheckIn = differenceInDays(checkInDate, today);
+  const today = new Date();
+  const checkIn = new Date(booking.check_in);
+  const days = differenceInDays(checkIn, today);
 
   const newStatus: "cancelled_refund" | "cancelled_no_refund" =
-    daysUntilCheckIn > REFUND_THRESHOLD_DAYS ? "cancelled_refund" : "cancelled_no_refund";
+    days > REFUND_THRESHOLD_DAYS ? "cancelled_refund" : "cancelled_no_refund";
 
   const { error: updateError } = await supabase
     .from("bookings")
@@ -88,74 +95,64 @@ export async function cancelBooking(
 
   if (updateError) {
     console.error("[cancelBooking] Update:", updateError);
-    return { success: false, error: "No se pudo cancelar la reserva." };
+    return { success: false, error: "Could not cancel booking." };
   }
 
-  const roomLabel =
-    booking.room_id === "room_1"
-      ? "Junior Suite I"
-      : booking.room_id === "room_2"
-        ? "Junior Suite II"
-        : "TWO-BEDROOM SUITE (Villa Completa)";
-
+  const roomLabel = getRoomLabel(String(booking.room_id ?? ""));
   const fromEmail = process.env.RESEND_FROM_EMAIL;
   const toOwnerEmail = process.env.RESEND_TO_EMAIL ?? process.env.RESEND_FROM_EMAIL;
   const apiKey = process.env.RESEND_API_KEY;
 
   if (apiKey && fromEmail) {
     const resend = new Resend(apiKey);
-    const refundMessage =
+    const refundNote =
       newStatus === "cancelled_refund"
-        ? "DEBE reembolsar el 100% del importe al cliente."
-        : "NO debe reembolsar; la cancelación está dentro de los 5 días previos al check-in.";
+        ? "Full refund required (100%)."
+        : "No refund; cancellation within 5 days of check-in.";
 
-    const ownerText = [
-      "Cancelación de reserva",
+    const ownerLines = [
+      "Booking cancellation",
       "",
-      `La reserva ${bookingId} ha sido cancelada por el cliente.`,
+      `Booking ${bookingId} has been cancelled.`,
       "",
-      `Habitación: ${roomLabel}`,
-      `Entrada: ${booking.check_in}`,
-      `Salida: ${booking.check_out}`,
-      `Cliente: ${booking.guest_name} (${booking.guest_email})`,
-      `Importe total: ${booking.total_price} €`,
+      `Room: ${roomLabel}`,
+      `Check-in: ${booking.check_in}`,
+      `Check-out: ${booking.check_out}`,
+      `Guest: ${booking.guest_name} (${booking.guest_email})`,
+      `Total: ${booking.total_price} EUR`,
       "",
-      refundMessage,
-    ].join("\n");
-
+      refundNote,
+    ];
     await resend.emails.send({
       from: fromEmail,
       to: toOwnerEmail ?? fromEmail,
-      subject: "Cancelación de reserva - Casa Herenia y Pedro",
-      text: ownerText,
+      subject: "Booking cancelled",
+      text: ownerLines.join("\n"),
     });
 
-    const clientRefundText =
+    const clientRefundNote =
       newStatus === "cancelled_refund"
-        ? "Recibirá el reembolso del 100% del importe en el mismo método de pago utilizado."
-        : "Según la política de cancelación, al estar dentro de los 5 días previos a la llegada, esta cancelación no conlleva reembolso.";
+        ? "You will receive a full refund (100%) to your original payment method."
+        : "Per cancellation policy, cancellations within 5 days of arrival are non-refundable.";
 
-    const clientText = [
-      "Confirmación de cancelación",
+    const clientLines = [
+      "Cancellation confirmation",
       "",
-      `Hola ${booking.guest_name},`,
+      `Hello ${booking.guest_name},`,
       "",
-      "Su reserva ha sido cancelada correctamente.",
+      "Your booking has been cancelled.",
       "",
-      `Habitación: ${roomLabel}`,
-      `Fechas: ${booking.check_in} - ${booking.check_out}`,
-      `Importe: ${booking.total_price} €`,
+      `Room: ${roomLabel}`,
+      `Dates: ${booking.check_in} - ${booking.check_out}`,
+      `Amount: ${booking.total_price} EUR`,
       "",
-      clientRefundText,
-      "",
-      "Gracias por haber considerado Casa Herenia y Pedro.",
-    ].join("\n");
-
+      clientRefundNote,
+    ];
     await resend.emails.send({
       from: fromEmail,
-      to: booking.guest_email,
-      subject: "Su reserva ha sido cancelada - Casa Herenia y Pedro",
-      text: clientText,
+      to: String(booking.guest_email),
+      subject: "Your booking has been cancelled",
+      text: clientLines.join("\n"),
     });
   }
 
