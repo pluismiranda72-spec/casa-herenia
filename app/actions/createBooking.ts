@@ -1,145 +1,68 @@
-"use server";
+'use server';
 
-import { z } from "zod";
-import { createClient } from "@/lib/supabase/server";
-import { Resend } from "resend";
-
-const bookingSchema = z.object({
-  room_id: z.enum(["room_1", "room_2", "full_villa"]),
-  check_in: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  check_out: z.string().regex(/^\d{4}-\d{2}-\d{2}$/),
-  guests_count: z.number().int().min(1).max(6),
-  total_price: z.number().min(0),
-  guest_name: z.string().min(2).max(200),
-  guest_email: z.string().email(),
-  guest_phone: z.string().max(50).optional().or(z.literal("")),
-});
-
-export type CreateBookingState =
-  | { success: true; redirectUrl: string }
-  | { success: false; error: string };
+import { createClient } from '@/lib/supabase/server';
+import { stripe } from '@/lib/stripe';
+import { redirect } from 'next/navigation';
+import { headers } from 'next/headers';
 
 export async function createBooking(
-  _prevState: CreateBookingState | null,
+  _prevState: unknown,
   formData: FormData
-): Promise<CreateBookingState> {
-  const raw = {
-    room_id: formData.get("room_id"),
-    check_in: formData.get("check_in"),
-    check_out: formData.get("check_out"),
-    guests_count: Number(formData.get("guests_count")),
-    total_price: Number(formData.get("total_price")),
-    guest_name: formData.get("guest_name"),
-    guest_email: formData.get("guest_email"),
-    guest_phone: formData.get("guest_phone") ?? "",
-  };
-
-  const parsed = bookingSchema.safeParse({
-    ...raw,
-    guest_phone: raw.guest_phone === "" ? undefined : raw.guest_phone,
-  });
-
-  if (!parsed.success) {
-    const msg = parsed.error.flatten().fieldErrors;
-    const first = Object.values(msg).flat().find(Boolean);
-    return { success: false, error: first ?? "Datos inválidos." };
-  }
-
-  const data = parsed.data;
-
+) {
+    console.log("🚨🚨🚨 ¡¡ESTOY EJECUTANDO EL CÓDIGO NUEVO!! 🚨🚨🚨");
   const supabase = await createClient();
-  const { data: row, error: insertError } = await supabase
-    .from("bookings")
+  const headerList = await headers();
+  const origin = headerList.get('origin') || 'http://localhost:3000';
+
+  const payload = Object.fromEntries(formData.entries()) as Record<string, string>;
+  const guest_phone = payload.guest_phone?.trim() || null;
+
+  // 1. Guardar en Supabase
+  const { data: booking, error } = await supabase
+    .from('bookings')
     .insert({
-      room_id: data.room_id,
-      check_in: data.check_in,
-      check_out: data.check_out,
-      guests_count: data.guests_count,
-      total_price: data.total_price,
-      guest_name: data.guest_name,
-      guest_email: data.guest_email,
-      guest_phone: data.guest_phone || null,
-      status: "confirmed",
+      room_id: payload.room_id,
+      check_in: payload.check_in,
+      check_out: payload.check_out,
+      guests_count: Number(payload.guests_count),
+      total_price: Number(payload.total_price),
+      guest_name: payload.guest_name,
+      guest_email: payload.guest_email,
+      guest_phone,
+      status: 'pending_payment',
     })
-    .select("id")
+    .select()
     .single();
 
-  if (insertError) {
-    console.error("[createBooking] Supabase:", insertError);
-    return { success: false, error: "No se pudo guardar la reserva. Inténtalo de nuevo." };
-  }
+  if (error) throw new Error(error.message);
 
-  const fromEmail = process.env.RESEND_FROM_EMAIL;
-  // Destinatario: dueño de la casa (notificación). Por defecto tu correo; puede sobreescribirse con RESEND_TO_EMAIL.
-  const toEmail = process.env.RESEND_TO_EMAIL ?? "pluismiranda72@gmail.com";
-  const apiKey = process.env.RESEND_API_KEY;
+  const roomName =
+    payload.room_id === 'room_1'
+      ? 'Junior Suite I'
+      : payload.room_id === 'room_2'
+        ? 'Junior Suite II'
+        : payload.room_id === 'full_villa'
+          ? 'Villa Completa'
+          : payload.room_id;
 
-  if (apiKey && fromEmail) {
-    const resend = new Resend(apiKey);
-    const roomLabel =
-      data.room_id === "room_1"
-        ? "Junior Suite I"
-        : data.room_id === "room_2"
-          ? "Junior Suite II"
-          : "TWO-BEDROOM SUITE (Villa Completa)";
-    const subject = "Confirmación de Reserva";
-    const text = [
-      `Confirmación de reserva`,
-      ``,
-      `La siguiente reserva ha sido confirmada:`,
-      ``,
-      `Habitación: ${roomLabel}`,
-      `Entrada: ${data.check_in}`,
-      `Salida: ${data.check_out}`,
-      `Huéspedes: ${data.guests_count}`,
-      `Total: ${data.total_price} €`,
-      ``,
-      `Contacto:`,
-      `Nombre: ${data.guest_name}`,
-      `Email: ${data.guest_email}`,
-      data.guest_phone ? `Teléfono: ${data.guest_phone}` : "",
-    ]
-      .filter(Boolean)
-      .join("\n");
+  // 2. Stripe Session
+  const session = await stripe.checkout.sessions.create({
+    line_items: [
+      {
+        price_data: {
+          currency: 'eur',
+          product_data: { name: 'Reserva: ' + roomName },
+          unit_amount: Math.round(Number(payload.total_price) * 100),
+        },
+        quantity: 1,
+      },
+    ],
+    mode: 'payment',
+    customer_email: payload.guest_email,
+    metadata: { bookingId: booking.id },
+    success_url: `${origin}/es/gracias?session_id={CHECKOUT_SESSION_ID}&name=${encodeURIComponent(payload.guest_name)}&checkin=${payload.check_in}&checkout=${payload.check_out}`,
+    cancel_url: `${origin}/es/reservas`,
+  });
 
-    await resend.emails.send({
-      from: fromEmail,
-      to: toEmail,
-      subject,
-      text,
-    });
-
-    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || "";
-    const cancelUrl = siteUrl
-      ? `${siteUrl.replace(/\/$/, "")}/es/reservas/cancelar/${row.id}?email=${encodeURIComponent(data.guest_email)}`
-      : "";
-    const clientText = [
-      `Hola ${data.guest_name},`,
-      ``,
-      `Su reserva en Casa Herenia y Pedro ha sido confirmada.`,
-      ``,
-      `Habitación: ${roomLabel}`,
-      `Entrada: ${data.check_in}`,
-      `Salida: ${data.check_out}`,
-      `Huéspedes: ${data.guests_count}`,
-      `Total: ${data.total_price} €`,
-      ``,
-      cancelUrl
-        ? `Para cancelar o modificar: ${cancelUrl}`
-        : "",
-    ]
-      .filter(Boolean)
-      .join("\n");
-
-    await resend.emails.send({
-      from: fromEmail,
-      to: data.guest_email,
-      subject: "Confirmación de su reserva - Casa Herenia y Pedro",
-      text: clientText,
-    });
-  }
-
-  // Ruta sin locale: el router de next-intl (useRouter) añade el locale al navegar
-  const redirectUrl = `/gracias?name=${encodeURIComponent(data.guest_name)}&checkin=${data.check_in}&checkout=${data.check_out}`;
-  return { success: true, redirectUrl };
+  if (session.url) redirect(session.url);
 }

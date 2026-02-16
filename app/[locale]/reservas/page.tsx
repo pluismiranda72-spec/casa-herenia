@@ -1,8 +1,6 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useFormState } from "react-dom";
-import { useRouter } from "@/i18n/navigation";
 import { useLocale } from "next-intl";
 import { DayPicker } from "react-day-picker";
 import { useBookingStore } from "@/stores/booking-store";
@@ -11,6 +9,7 @@ import { getNightlyPricing } from "@/utils/pricing";
 import { createBooking } from "@/app/actions/createBooking";
 import type { BlockedDatesByUnitYmd } from "@/lib/ical";
 import CancellationPolicyModal from "@/components/CancellationPolicyModal";
+import { isRedirectError } from "next/dist/client/components/redirect";
 import "react-day-picker/style.css";
 
 function formatYmd(d: Date): string {
@@ -76,17 +75,25 @@ export default function ReservasPage() {
   const hasExtraGuestSupplement =
     pricing && pricing.extraGuests > 0 && (property?.extraPersonFee ?? 0) > 0;
 
-  const [state, formAction] = useFormState(createBooking, null);
-  const router = useRouter();
   const locale = useLocale();
+  const [isPending, setIsPending] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
-  useEffect(() => {
-    if (state?.success && "redirectUrl" in state && state.redirectUrl) {
-      router.push(state.redirectUrl);
-    } else if (state?.success) {
-      router.push("/gracias");
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    setSubmitError(null);
+    setIsPending(true);
+    const form = e.currentTarget;
+    const formData = new FormData(form);
+    try {
+      await createBooking(null, formData);
+    } catch (err) {
+      if (isRedirectError(err)) throw err;
+      setSubmitError(err instanceof Error ? err.message : "Error al procesar la reserva.");
+    } finally {
+      setIsPending(false);
     }
-  }, [state, router]);
+  };
 
   const canSubmit =
     selectedUnit &&
@@ -184,7 +191,8 @@ export default function ReservasPage() {
           {/* Columna derecha: sticky resumen + formulario de contacto */}
           <div className="lg:col-span-1">
             <form
-              action={formAction}
+              onSubmit={handleSubmit}
+              method="post"
               className="lg:sticky lg:top-24 rounded-xl bg-white/5 border border-[#C5A059]/30 p-6 space-y-6"
             >
               <input type="hidden" name="locale" value={locale} />
@@ -300,17 +308,17 @@ export default function ReservasPage() {
                   Elige una estancia y las fechas.
                 </p>
               )}
-              {state && !state.success && (
+              {submitError && (
                 <p className="font-sans text-sm text-red-400" role="alert">
-                  {state.error}
+                  {submitError}
                 </p>
               )}
               <button
                 type="submit"
-                disabled={!canSubmit}
+                disabled={!canSubmit || isPending}
                 className="w-full min-h-[48px] rounded-lg bg-[#C5A059] text-[#0A0A0A] font-sans font-semibold hover:bg-[#C5A059]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors touch-target"
               >
-                Confirmar reserva
+                {isPending ? "Redirigiendo a Stripe…" : "Confirmar reserva"}
               </button>
               <p className="mt-3 text-center">
                 <CancellationPolicyModal />

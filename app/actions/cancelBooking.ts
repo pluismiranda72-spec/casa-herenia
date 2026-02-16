@@ -2,7 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server';
 import { Resend } from 'resend';
-import { differenceInDays, parseISO } from 'date-fns';
+import { differenceInDays } from 'date-fns';
 import { revalidatePath } from 'next/cache';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -23,7 +23,6 @@ export async function cancelBooking(bookingId: string) {
     }
 
     // 2. Calcular días para el check-in
-    // Aseguramos que las fechas sean objetos Date válidos
     const checkInDate = new Date(booking.check_in);
     const today = new Date();
     
@@ -49,7 +48,7 @@ export async function cancelBooking(bookingId: string) {
 
     // 5. Enviar Emails (Notificación)
     
-    // A) Al Dueño
+    // A) Al Dueño (Tú)
     await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
       to: 'pluismiranda72@gmail.com', // Tu correo fijo para asegurar que llega
@@ -62,11 +61,10 @@ export async function cancelBooking(bookingId: string) {
       `
     });
 
-    // B) Al Cliente
+    // B) Al Cliente (Usamos tu correo para probar)
     await resend.emails.send({
       from: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
-      to: 'pluismiranda72@gmail.com', // EN MODO PRUEBA, TIENE QUE SER TU CORREO. 
-      // Cuando tengas dominio propio, cambia esto por: booking.guest_email
+      to: 'pluismiranda72@gmail.com', 
       subject: 'Confirmación de Cancelación - Casa Herenia y Pedro',
       html: `
         <h1>Su reserva ha sido cancelada</h1>
