@@ -1,160 +1,85 @@
-"use server";
+'use server';
 
-import { differenceInDays } from "date-fns";
-import { createServiceRoleClient } from "@/lib/supabase/admin";
-import { Resend } from "resend";
+import { createClient } from '@/lib/supabase/server';
+import { Resend } from 'resend';
+import { differenceInDays, parseISO } from 'date-fns';
+import { revalidatePath } from 'next/cache';
 
-const REFUND_THRESHOLD_DAYS = 5;
+const resend = new Resend(process.env.RESEND_API_KEY);
 
-export type BookingForCancel = {
-  id: string;
-  check_in: string;
-  check_out: string;
-  guest_name: string;
-  guest_email: string;
-  total_price: number;
-  room_id: string;
-  status: string;
-};
+export async function cancelBooking(bookingId: string) {
+  const supabase = createClient();
 
-export async function getBookingForCancel(
-  bookingId: string,
-  email: string
-): Promise<BookingForCancel | null> {
-  const supabase = createServiceRoleClient();
-  if (!supabase) return null;
+  try {
+    // 1. Obtener la reserva
+    const { data: booking, error: fetchError } = await supabase
+      .from('bookings')
+      .select('*')
+      .eq('id', bookingId)
+      .single();
 
-  const { data, error } = await supabase
-    .from("bookings")
-    .select("id, check_in, check_out, guest_name, guest_email, total_price, room_id, status")
-    .eq("id", bookingId)
-    .single();
+    if (fetchError || !booking) {
+      throw new Error('Reserva no encontrada');
+    }
 
-  if (error || !data) return null;
-  const guestEmail = (data.guest_email as string) ?? "";
-  const inputEmail = (email ?? "").toLowerCase().trim();
-  if (guestEmail.toLowerCase().trim() !== inputEmail) return null;
-  return data as BookingForCancel;
-}
+    // 2. Calcular días para el check-in
+    // Aseguramos que las fechas sean objetos Date válidos
+    const checkInDate = new Date(booking.check_in);
+    const today = new Date();
+    
+    // Calculamos la diferencia
+    const daysUntilCheckIn = differenceInDays(checkInDate, today);
+    const UMBRAL_REEMBOLSO = 5;
 
-export function isRefundable(daysUntilCheckIn: number): boolean {
-  return daysUntilCheckIn > REFUND_THRESHOLD_DAYS;
-}
+    // 3. Determinar el nuevo estado
+    let newStatus = 'cancelled_no_refund'; // Por defecto no reembolsable
+    if (daysUntilCheckIn > UMBRAL_REEMBOLSO) {
+      newStatus = 'cancelled_refund'; // Reembolsable si faltan más de 5 días
+    }
 
-export type CancelBookingState =
-  | { success: true; status: "cancelled_refund" | "cancelled_no_refund" }
-  | { success: false; error: string };
+    // 4. Actualizar en Supabase
+    const { error: updateError } = await supabase
+      .from('bookings')
+      .update({ status: newStatus })
+      .eq('id', bookingId);
 
-function getRoomLabel(roomId: string): string {
-  if (roomId === "room_1") return "Junior Suite I";
-  if (roomId === "room_2") return "Junior Suite II";
-  return "TWO-BEDROOM SUITE (Villa Completa)";
-}
+    if (updateError) {
+      throw new Error('Error al actualizar la reserva');
+    }
 
-export async function cancelBooking(
-  bookingId: string,
-  email: string
-): Promise<CancelBookingState> {
-  const supabase = createServiceRoleClient();
-  if (!supabase) {
-    return { success: false, error: "Server not configured." };
-  }
-
-  const { data: booking, error: fetchError } = await supabase
-    .from("bookings")
-    .select("id, check_in, check_out, guest_name, guest_email, total_price, room_id, status")
-    .eq("id", bookingId)
-    .single();
-
-  if (fetchError || !booking) {
-    return { success: false, error: "Booking not found." };
-  }
-
-  const guestEmail = String(booking.guest_email ?? "").toLowerCase().trim();
-  const inputEmail = (email ?? "").toLowerCase().trim();
-  if (guestEmail !== inputEmail) {
-    return { success: false, error: "Email does not match this booking." };
-  }
-
-  const status = String(booking.status ?? "");
-  if (status === "cancelled_refund" || status === "cancelled_no_refund") {
-    return { success: false, error: "This booking is already cancelled." };
-  }
-
-  const today = new Date();
-  const checkIn = new Date(booking.check_in);
-  const days = differenceInDays(checkIn, today);
-
-  const newStatus: "cancelled_refund" | "cancelled_no_refund" =
-    days > REFUND_THRESHOLD_DAYS ? "cancelled_refund" : "cancelled_no_refund";
-
-  const { error: updateError } = await supabase
-    .from("bookings")
-    .update({ status: newStatus })
-    .eq("id", bookingId);
-
-  if (updateError) {
-    console.error("[cancelBooking] Update:", updateError);
-    return { success: false, error: "Could not cancel booking." };
-  }
-
-  const roomLabel = getRoomLabel(String(booking.room_id ?? ""));
-  const fromEmail = process.env.RESEND_FROM_EMAIL;
-  const toOwnerEmail = process.env.RESEND_TO_EMAIL ?? process.env.RESEND_FROM_EMAIL;
-  const apiKey = process.env.RESEND_API_KEY;
-
-  if (apiKey && fromEmail) {
-    const resend = new Resend(apiKey);
-    const refundNote =
-      newStatus === "cancelled_refund"
-        ? "Full refund required (100%)."
-        : "No refund; cancellation within 5 days of check-in.";
-
-    const ownerLines = [
-      "Booking cancellation",
-      "",
-      `Booking ${bookingId} has been cancelled.`,
-      "",
-      `Room: ${roomLabel}`,
-      `Check-in: ${booking.check_in}`,
-      `Check-out: ${booking.check_out}`,
-      `Guest: ${booking.guest_name} (${booking.guest_email})`,
-      `Total: ${booking.total_price} EUR`,
-      "",
-      refundNote,
-    ];
+    // 5. Enviar Emails (Notificación)
+    
+    // A) Al Dueño
     await resend.emails.send({
-      from: fromEmail,
-      to: toOwnerEmail ?? fromEmail,
-      subject: "Booking cancelled",
-      text: ownerLines.join("\n"),
+      from: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
+      to: 'pluismiranda72@gmail.com', // Tu correo fijo para asegurar que llega
+      subject: `RESERVA CANCELADA - ${booking.guest_name}`,
+      html: `
+        <h1>Cancelación de Reserva</h1>
+        <p>El huésped <strong>${booking.guest_name}</strong> ha cancelado.</p>
+        <p><strong>Estado de reembolso:</strong> ${newStatus === 'cancelled_refund' ? '✅ REEMBOLSABLE (Devolver dinero)' : '❌ NO REEMBOLSABLE'}</p>
+        <p>Fechas liberadas: ${booking.check_in} al ${booking.check_out}</p>
+      `
     });
 
-    const clientRefundNote =
-      newStatus === "cancelled_refund"
-        ? "You will receive a full refund (100%) to your original payment method."
-        : "Per cancellation policy, cancellations within 5 days of arrival are non-refundable.";
-
-    const clientLines = [
-      "Cancellation confirmation",
-      "",
-      `Hello ${booking.guest_name},`,
-      "",
-      "Your booking has been cancelled.",
-      "",
-      `Room: ${roomLabel}`,
-      `Dates: ${booking.check_in} - ${booking.check_out}`,
-      `Amount: ${booking.total_price} EUR`,
-      "",
-      clientRefundNote,
-    ];
+    // B) Al Cliente
     await resend.emails.send({
-      from: fromEmail,
-      to: String(booking.guest_email),
-      subject: "Your booking has been cancelled",
-      text: clientLines.join("\n"),
+      from: process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev',
+      to: 'pluismiranda72@gmail.com', // EN MODO PRUEBA, TIENE QUE SER TU CORREO. 
+      // Cuando tengas dominio propio, cambia esto por: booking.guest_email
+      subject: 'Confirmación de Cancelación - Casa Herenia y Pedro',
+      html: `
+        <h1>Su reserva ha sido cancelada</h1>
+        <p>Hola ${booking.guest_name}, hemos procesado su cancelación.</p>
+        <p>Estado: ${newStatus === 'cancelled_refund' ? 'Se procederá al reembolso según política.' : 'Cancelación fuera de plazo (Sin reembolso).'}</p>
+      `
     });
-  }
 
-  return { success: true, status: newStatus };
+    revalidatePath('/reservas');
+    return { success: true, status: newStatus };
+
+  } catch (error) {
+    console.error('Error al cancelar:', error);
+    return { success: false, error: 'No se pudo cancelar la reserva' };
+  }
 }
