@@ -104,21 +104,28 @@ export default function TaxiBookingModal({ isOpen, onClose }: TaxiBookingModalPr
             <div className="py-8 text-center space-y-4">
               <p className="font-sans text-lg text-[#C5A059]">
                 {isPagoSuccess
-                  ? "Redirigiendo a pasarela... (Simulación: Email de prueba enviado)"
+                  ? "Redirigiendo a la pasarela de pago..."
                   : "Solicitud enviada. Te contactaremos."}
               </p>
               {!isPagoSuccess && (
-                <p className="font-sans text-sm text-white/70">
-                  Nos pondremos en contacto contigo por WhatsApp para confirmar.
+                <>
+                  <p className="font-sans text-sm text-white/70">
+                    Nos pondremos en contacto contigo por WhatsApp para confirmar.
+                  </p>
+                  <button
+                    type="button"
+                    onClick={onClose}
+                    className="px-6 py-2 rounded-lg bg-[#C5A059] text-[#0A0A0A] font-sans font-semibold hover:bg-[#C5A059]/90 transition-colors cursor-pointer"
+                  >
+                    Cerrar
+                  </button>
+                </>
+              )}
+              {isPagoSuccess && (
+                <p className="font-sans text-sm text-white/60">
+                  Si no eres redirigido en unos segundos, cierra esta ventana e inténtalo de nuevo.
                 </p>
               )}
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-6 py-2 rounded-lg bg-[#C5A059] text-[#0A0A0A] font-sans font-semibold hover:bg-[#C5A059]/90 transition-colors cursor-pointer"
-              >
-                Cerrar
-              </button>
             </div>
           ) : (
             <form ref={formRef} action={formAction} className="space-y-5">

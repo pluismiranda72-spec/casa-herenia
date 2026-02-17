@@ -1,8 +1,11 @@
 "use server";
 
 import { z } from "zod";
+import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Resend } from "resend";
+import { stripe } from "@/lib/stripe";
 
 const PRICE_COLECTIVO = 25;
 const PRICE_PRIVADO = 120;
@@ -20,7 +23,10 @@ export type BookTaxiState =
   | { success: true; type: "solicitud" | "pago" }
   | { success: false; error: string };
 
-function calculateTotal(serviceType: "colectivo" | "privado", passengers: number): number {
+function calculateTotal(
+  serviceType: "colectivo" | "privado",
+  passengers: number
+): number {
   if (serviceType === "privado") return PRICE_PRIVADO;
   return passengers * PRICE_COLECTIVO;
 }
@@ -29,6 +35,14 @@ export async function bookTaxi(
   _prevState: BookTaxiState | null,
   formData: FormData
 ): Promise<BookTaxiState> {
+  const headerList = await headers();
+  const originRaw =
+    process.env.NEXT_PUBLIC_SITE_URL ||
+    headerList.get("origin") ||
+    "http://localhost:3000";
+  const origin = originRaw.replace(/\/$/, "");
+  console.log("Entorno:", process.env.NODE_ENV, "Origen:", origin);
+
   const raw = {
     client_name: formData.get("client_name"),
     client_whatsapp: formData.get("client_whatsapp"),
@@ -46,47 +60,39 @@ export async function bookTaxi(
   }
 
   const data = parsed.data;
-  const totalPrice = calculateTotal(data.service_type, data.passengers_count);
-  const bookingType = (formData.get("booking_type") as string) === "pago" ? "pago" : "solicitud";
+  const bookingType =
+    formData.get("booking_type") === "pago" ? "pago" : "solicitud";
 
-  // Validación extra: colectivo puede tener más de 4 en lógica de negocio; el schema limita a 4 para privado. Aquí ambos están 1-4.
   if (data.service_type === "privado" && data.passengers_count > 4)
     return { success: false, error: "Taxi privado admite máximo 4 personas." };
   if (data.service_type === "colectivo" && data.passengers_count > 8)
     return { success: false, error: "Máximo 8 personas en colectivo." };
 
-  const supabase = await createClient();
-  const { error: insertError } = await supabase.from("taxi_requests").insert({
-    client_name: data.client_name,
-    client_whatsapp: data.client_whatsapp,
-    pickup_address: data.pickup_address,
-    pickup_date: data.pickup_date,
-    service_type: data.service_type,
-    passengers_count: data.passengers_count,
-    total_price: totalPrice,
-  });
+  const totalPrice = calculateTotal(data.service_type, data.passengers_count);
 
-  if (insertError) {
-    console.error("[bookTaxi] Supabase:", insertError);
-    // Continuar: enviar email aunque falle la tabla (por si no existe aún)
-  }
+  // ——— CASO A: Solicitud (pago en efectivo) ———
+  if (bookingType === "solicitud") {
+    const supabase = await createClient();
+    await supabase.from("taxi_requests").insert({
+      client_name: data.client_name,
+      client_whatsapp: data.client_whatsapp,
+      pickup_address: data.pickup_address,
+      pickup_date: data.pickup_date,
+      service_type: data.service_type,
+      passengers_count: data.passengers_count,
+      total_price: totalPrice,
+    });
 
-  const fromEmail = process.env.RESEND_FROM_EMAIL;
-  const apiKey = process.env.RESEND_API_KEY;
+    const fromEmail = process.env.RESEND_FROM_EMAIL;
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey || !fromEmail)
+      return { success: false, error: "Servicio de email no configurado." };
 
-  if (apiKey && fromEmail) {
     const resend = new Resend(apiKey);
-    const serviceLabel = data.service_type === "privado" ? "Taxi Privado" : "Taxi Colectivo";
-    const subject =
-      bookingType === "pago"
-        ? `⚠️ INTENTO DE PAGO ONLINE - Taxi - ${data.client_name}`
-        : `Nueva Solicitud de Taxi (Pago en efectivo) - ${data.client_name}`;
-    const actionLine =
-      bookingType === "pago"
-        ? ">>> El cliente pulsó 'Confirmar pago de viaje' (intento de pago online)."
-        : ">>> El cliente pulsó 'Confirmar solicitud de viaje' (pago en efectivo).";
+    const serviceLabel =
+      data.service_type === "privado" ? "Taxi Privado" : "Taxi Colectivo";
     const text = [
-      actionLine,
+      ">>> El cliente pulsó 'Confirmar solicitud de viaje' (pago en efectivo).",
       `Precio total calculado: ${totalPrice} EUR/USD`,
       "",
       "Cliente:",
@@ -99,22 +105,57 @@ export async function bookTaxi(
       `Tipo de taxi: ${serviceLabel}`,
       `Nº personas: ${data.passengers_count}`,
       `Precio total: ${totalPrice} EUR/USD`,
-      "",
     ].join("\n");
 
     const { error: emailError } = await resend.emails.send({
       from: fromEmail,
-      to: "pluismiranda72@gmail.com",
-      subject,
+      to: process.env.RESEND_TO_EMAIL ?? fromEmail,
+      subject: `Nueva Solicitud de Taxi (Pago en efectivo) - ${data.client_name}`,
       text,
     });
     if (emailError) {
       console.error("[bookTaxi] Resend:", emailError);
-      return { success: false, error: "No se pudo enviar la solicitud. Inténtalo de nuevo." };
+      return {
+        success: false,
+        error: "No se pudo enviar la solicitud. Inténtalo de nuevo.",
+      };
     }
-  } else {
-    return { success: false, error: "Servicio de email no configurado." };
+    return { success: true, type: "solicitud" };
   }
 
-  return { success: true, type: bookingType };
+  // ——— CASO B: Pago con Stripe ———
+  if (!process.env.STRIPE_SECRET_KEY)
+    return { success: false, error: "Pago no configurado." };
+
+  const serviceLabel =
+    data.service_type === "privado" ? "Privado" : "Colectivo";
+  const productName = `Transporte: ${serviceLabel} (${data.passengers_count} pax)`;
+  const amountCents = Math.round(totalPrice * 100);
+
+  const session = await stripe.checkout.sessions.create({
+    mode: "payment",
+    line_items: [
+      {
+        quantity: 1,
+        price_data: {
+          currency: "eur",
+          unit_amount: amountCents,
+          product_data: { name: productName },
+        },
+      },
+    ],
+    metadata: {
+      client_name: data.client_name,
+      client_whatsapp: data.client_whatsapp,
+      pickup_address: data.pickup_address,
+      pickup_date: data.pickup_date,
+      service_type: data.service_type,
+      passengers_count: String(data.passengers_count),
+    },
+    success_url: `${origin}/es/gracias?type=taxi`,
+    cancel_url: origin,
+  });
+
+  if (session.url) redirect(session.url);
+  return { success: false, error: "No se pudo crear la sesión de pago." };
 }
