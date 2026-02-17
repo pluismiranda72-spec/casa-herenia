@@ -9,6 +9,7 @@ import { stripe } from "@/lib/stripe";
 
 const PRICE_COLECTIVO = 25;
 const PRICE_PRIVADO = 120;
+const TAXI_EMAIL_TO = "pluismiranda72@gmail.com";
 
 const taxiSchema = z.object({
   client_name: z.string().min(2).max(200),
@@ -60,7 +61,7 @@ export async function bookTaxi(
   }
 
   const data = parsed.data;
-  const bookingType =
+  const type =
     formData.get("booking_type") === "pago" ? "pago" : "solicitud";
 
   if (data.service_type === "privado" && data.passengers_count > 4)
@@ -70,8 +71,46 @@ export async function bookTaxi(
 
   const totalPrice = calculateTotal(data.service_type, data.passengers_count);
 
-  // ——— CASO A: Solicitud (pago en efectivo) ———
-  if (bookingType === "solicitud") {
+  // ——— CASO 1: Solicitud (pago en efectivo) ———
+  if (type === "solicitud") {
+    const apiKey = process.env.RESEND_API_KEY;
+    if (!apiKey)
+      return { success: false, error: "Servicio de email no configurado." };
+
+    const resend = new Resend(apiKey);
+    const fromEmail =
+      process.env.RESEND_FROM_EMAIL ?? "onboarding@resend.dev";
+    const serviceLabel =
+      data.service_type === "privado" ? "Taxi Privado" : "Taxi Colectivo";
+
+    const text = [
+      "Nueva solicitud de taxi (pago en efectivo).",
+      "",
+      "Nombre: " + data.client_name,
+      "WhatsApp: " + data.client_whatsapp,
+      "Origen (recogida): " + data.pickup_address,
+      "Destino: Viñales (Casa Herenia y Pedro)",
+      "Fecha de recogida: " + data.pickup_date,
+      "Tipo: " + serviceLabel,
+      "Nº personas: " + data.passengers_count,
+      "Precio estimado: " + totalPrice + " EUR/USD",
+    ].join("\n");
+
+    const { error: emailError } = await resend.emails.send({
+      from: fromEmail,
+      to: TAXI_EMAIL_TO,
+      subject: "🚖 Nueva Solicitud de TAXI (Pago en efectivo)",
+      text,
+    });
+
+    if (emailError) {
+      console.error("[bookTaxi] Resend:", emailError);
+      return {
+        success: false,
+        error: "No se pudo enviar la solicitud. Inténtalo de nuevo.",
+      };
+    }
+
     const supabase = await createClient();
     await supabase.from("taxi_requests").insert({
       client_name: data.client_name,
@@ -83,79 +122,46 @@ export async function bookTaxi(
       total_price: totalPrice,
     });
 
-    const fromEmail = process.env.RESEND_FROM_EMAIL;
-    const apiKey = process.env.RESEND_API_KEY;
-    if (!apiKey || !fromEmail)
-      return { success: false, error: "Servicio de email no configurado." };
-
-    const resend = new Resend(apiKey);
-    const serviceLabel =
-      data.service_type === "privado" ? "Taxi Privado" : "Taxi Colectivo";
-    const text = [
-      ">>> El cliente pulsó 'Confirmar solicitud de viaje' (pago en efectivo).",
-      `Precio total calculado: ${totalPrice} EUR/USD`,
-      "",
-      "Cliente:",
-      `Nombre: ${data.client_name}`,
-      `WhatsApp: ${data.client_whatsapp}`,
-      "",
-      "Viaje:",
-      `Dirección de recogida: ${data.pickup_address}`,
-      `Fecha de recogida: ${data.pickup_date}`,
-      `Tipo de taxi: ${serviceLabel}`,
-      `Nº personas: ${data.passengers_count}`,
-      `Precio total: ${totalPrice} EUR/USD`,
-    ].join("\n");
-
-    const { error: emailError } = await resend.emails.send({
-      from: fromEmail,
-      to: process.env.RESEND_TO_EMAIL ?? fromEmail,
-      subject: `Nueva Solicitud de Taxi (Pago en efectivo) - ${data.client_name}`,
-      text,
-    });
-    if (emailError) {
-      console.error("[bookTaxi] Resend:", emailError);
-      return {
-        success: false,
-        error: "No se pudo enviar la solicitud. Inténtalo de nuevo.",
-      };
-    }
     return { success: true, type: "solicitud" };
   }
 
-  // ——— CASO B: Pago con Stripe ———
-  if (!process.env.STRIPE_SECRET_KEY)
-    return { success: false, error: "Pago no configurado." };
+  // ——— CASO 2: Pago con Stripe ———
+  if (type === "pago") {
+    if (!process.env.STRIPE_SECRET_KEY)
+      return { success: false, error: "Pago no configurado." };
 
-  const serviceLabel =
-    data.service_type === "privado" ? "Privado" : "Colectivo";
-  const productName = `Transporte: ${serviceLabel} (${data.passengers_count} pax)`;
-  const amountCents = Math.round(totalPrice * 100);
+    const serviceLabel =
+      data.service_type === "privado" ? "Privado" : "Colectivo";
+    const productName = `Transporte: ${serviceLabel} (${data.passengers_count} pax)`;
+    const amountCents = Math.round(totalPrice * 100);
 
-  const session = await stripe.checkout.sessions.create({
-    mode: "payment",
-    line_items: [
-      {
-        quantity: 1,
-        price_data: {
-          currency: "eur",
-          unit_amount: amountCents,
-          product_data: { name: productName },
+    const session = await stripe.checkout.sessions.create({
+      mode: "payment",
+      line_items: [
+        {
+          quantity: 1,
+          price_data: {
+            currency: "eur",
+            unit_amount: amountCents,
+            product_data: { name: productName },
+          },
         },
+      ],
+      metadata: {
+        client_name: data.client_name,
+        client_whatsapp: data.client_whatsapp,
+        pickup_address: data.pickup_address,
+        pickup_date: data.pickup_date,
+        service_type: data.service_type,
+        passengers_count: String(data.passengers_count),
       },
-    ],
-    metadata: {
-      client_name: data.client_name,
-      client_whatsapp: data.client_whatsapp,
-      pickup_address: data.pickup_address,
-      pickup_date: data.pickup_date,
-      service_type: data.service_type,
-      passengers_count: String(data.passengers_count),
-    },
-    success_url: `${origin}/es/gracias?type=taxi`,
-    cancel_url: origin,
-  });
+      success_url: `${origin}/es/gracias?type=taxi`,
+      cancel_url: origin,
+    });
 
-  if (session.url) redirect(session.url);
-  return { success: false, error: "No se pudo crear la sesión de pago." };
+    if (session.url) redirect(session.url);
+    return { success: false, error: "No se pudo crear la sesión de pago." };
+  }
+
+  return { success: false, error: "Tipo de reserva no válido." };
 }
