@@ -2,7 +2,6 @@ import HeroSection from "@/components/HeroSection";
 import RoomGallery from "@/components/RoomGallery";
 import BenefitsSection from "@/components/BenefitsSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
-import ExternalReviewsSection from "@/components/ExternalReviewsSection";
 import LocationSection from "@/components/LocationSection";
 import ViñalesMiniWidget from "@/components/ViñalesMiniWidget";
 import Footer from "@/components/Footer";
@@ -24,13 +23,10 @@ export default async function Home({ searchParams }: HomeProps) {
       {/* 3. Servicios / Comodidades */}
       <BenefitsSection />
       
-      {/* 4. Reseñas Internas (Negras) */}
+      {/* 4. Reseñas (internas + enlace TripAdvisor) */}
       <TestimonialsSection />
       
-      {/* 5. Reseñas TripAdvisor (Doradas/Blancas) */}
-      <ExternalReviewsSection />
-      
-      {/* 6. Ubicación y llegada */}
+      {/* 5. Ubicación y llegada */}
       <LocationSection />
       
       {/* Descubre Viñales - widget */}

@@ -84,13 +84,21 @@ export default function TestimonialsSection() {
             </motion.article>
           ))}
         </div>
-        <div className="mt-8 text-center">
+        <div className="flex flex-col md:flex-row justify-center items-center gap-6 mt-16">
           <Link
             href="/opiniones"
-            className="inline-block font-sans text-sm text-[#C5A059] underline underline-offset-2 hover:text-[#C5A059]/90 transition-colors"
+            className="px-8 py-3 rounded-full border border-[#C5A059] text-[#C5A059] bg-transparent hover:bg-[#C5A059] hover:text-black transition-all duration-300 text-xs font-bold tracking-[0.15em] uppercase"
           >
-            Ver todas las opiniones
+            VER OPINIONES DE LA CASA
           </Link>
+          <a
+            href="https://www.tripadvisor.es/Hotel_Review-g616288-d15045948-Reviews-Casa_Herenia_y_Pedro-Vinales_Pinar_del_Rio_Province_Cuba.html"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="px-8 py-3 rounded-full border border-[#C5A059] text-[#C5A059] bg-transparent hover:bg-[#C5A059] hover:text-black transition-all duration-300 text-xs font-bold tracking-[0.15em] uppercase"
+          >
+            LEER EN TRIPADVISOR
+          </a>
         </div>
       </div>
     </section>
