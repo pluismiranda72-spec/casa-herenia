@@ -18,6 +18,8 @@ const createPostSchema = z.object({
   excerpt: z.string().max(500).optional().or(z.literal("")),
   content: z.string().optional().or(z.literal("")),
   media_type: z.enum(["image", "video"]),
+  post_type: z.enum(["standard", "instagram"]),
+  instagram_url: z.string().url().optional().or(z.literal("")),
 });
 
 export type CreatePostState = { success: true; slug?: string } | { success: false; error: string };
@@ -36,12 +38,16 @@ export async function createPost(
   const content = (formData.get("content") as string) ?? "";
   const mediaType = formData.get("media_type") as string | null;
   const file = formData.get("media") as File | null;
+  const postType = (formData.get("post_type") as string) || "standard";
+  const instagramUrl = (formData.get("instagram_url") as string)?.trim() || null;
 
   const parsed = createPostSchema.safeParse({
     title: title ?? "",
     excerpt: excerpt || undefined,
     content: content || undefined,
     media_type: mediaType === "video" ? "video" : "image",
+    post_type: postType === "instagram" ? "instagram" : "standard",
+    instagram_url: instagramUrl || undefined,
   });
   if (!parsed.success) {
     const first = Object.values(parsed.error.flatten().fieldErrors).flat().find(Boolean);
@@ -49,8 +55,16 @@ export async function createPost(
   }
 
   const data = parsed.data;
-  let mediaUrl: string | null = null;
+  const isInstagram = data.post_type === "instagram";
+  if (isInstagram && !data.instagram_url) {
+    return { success: false, error: "URL de Instagram obligatoria para tipo Embeber Instagram." };
+  }
 
+  if (isInstagram && (!file || file.size === 0)) {
+    return { success: false, error: "La foto de portada es obligatoria para posts de Instagram." };
+  }
+
+  let mediaUrl: string | null = null;
   if (file && file.size > 0) {
     const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
     const safeName = `${Date.now()}-${slugify(file.name.slice(0, 20))}.${ext}`;
@@ -82,7 +96,9 @@ export async function createPost(
     excerpt: data.excerpt || null,
     content: data.content || null,
     media_url: mediaUrl,
-    media_type: data.media_type,
+    media_type: isInstagram ? "image" : data.media_type,
+    type: data.post_type,
+    instagram_url: isInstagram ? data.instagram_url || null : null,
   });
 
   if (insertError) {

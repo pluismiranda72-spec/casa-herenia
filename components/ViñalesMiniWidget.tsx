@@ -4,7 +4,7 @@ import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 
 type Post = {
   id: string;
@@ -12,6 +12,8 @@ type Post = {
   slug: string;
   media_url: string | null;
   media_type: string | null;
+  type: string | null;
+  instagram_url: string | null;
 };
 
 const SCROLL_STEP = 300;
@@ -29,7 +31,7 @@ export default function ViñalesMiniWidget() {
     const supabase = createClient();
     supabase
       .from("posts")
-      .select("id, title, slug, media_url, media_type")
+      .select("id, title, slug, media_url, media_type, type, instagram_url")
       .order("created_at", { ascending: false })
       .limit(10)
       .then(({ data }) => setPosts(data ?? []));
@@ -91,36 +93,68 @@ export default function ViñalesMiniWidget() {
             className="flex gap-6 overflow-x-auto scroll-smooth py-2 px-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
           >
             {hasPosts ? (
-              posts.map((post) => (
-                <Link
-                  key={post.id}
-                  href={`/descubre/${post.slug}`}
-                  className="flex flex-col min-w-[240px] max-w-[240px] shrink-0 group"
-                >
-                  <div className="relative w-full aspect-[4/3] rounded-md overflow-hidden bg-[#1a1a1a]">
-                    {post.media_url && post.media_type === "image" ? (
-                      <Image
-                        src={post.media_url}
-                        alt=""
-                        fill
-                        className="object-cover transition-transform group-hover:scale-105"
-                        sizes="240px"
-                        unoptimized={post.media_url.startsWith("http")}
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-[#C5A059]/60 font-serif text-sm">
-                        Viñales
-                      </div>
-                    )}
-                  </div>
-                  <p
-                    className="mt-3 font-serif text-sm text-gray-200 text-center line-clamp-2"
-                    style={{ fontFamily: "var(--font-playfair), 'Playfair Display', serif" }}
+              posts.map((post) => {
+                const isInstagram = post.type === "instagram" && post.instagram_url;
+                const mediaUrl = post.media_url;
+                const cardContent = (
+                  <>
+                    <div className="relative w-full aspect-[4/3] rounded-md overflow-hidden bg-[#1a1a1a]">
+                      {mediaUrl ? (
+                        <Image
+                          src={mediaUrl}
+                          alt=""
+                          fill
+                          className="object-cover transition-transform group-hover:scale-105"
+                          sizes="240px"
+                          unoptimized={mediaUrl.startsWith("http")}
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-[#C5A059]/60 font-serif text-sm">
+                          Viñales
+                        </div>
+                      )}
+                      {isInstagram && (
+                        <>
+                          <div className="absolute inset-0 bg-black/20" aria-hidden />
+                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                            <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center">
+                              <Play className="w-5 h-5 text-[#0A0A0A] fill-current" />
+                            </div>
+                          </div>
+                        </>
+                      )}
+                    </div>
+                    <p
+                      className="mt-3 font-serif text-sm text-gray-200 text-center line-clamp-2"
+                      style={{ fontFamily: "var(--font-playfair), 'Playfair Display', serif" }}
+                    >
+                      {displayTitle(post.title)}
+                    </p>
+                  </>
+                );
+                if (isInstagram) {
+                  return (
+                    <a
+                      key={post.id}
+                      href={post.instagram_url!}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex flex-col min-w-[240px] max-w-[240px] shrink-0 group"
+                    >
+                      {cardContent}
+                    </a>
+                  );
+                }
+                return (
+                  <Link
+                    key={post.id}
+                    href={`/descubre/${post.slug}`}
+                    className="flex flex-col min-w-[240px] max-w-[240px] shrink-0 group"
                   >
-                    {displayTitle(post.title)}
-                  </p>
-                </Link>
-              ))
+                    {cardContent}
+                  </Link>
+                );
+              })
             ) : (
               <div className="min-w-[240px] max-w-[240px] flex flex-col shrink-0">
                 <div className="w-full aspect-[4/3] rounded-md bg-[#1a1a1a] flex items-center justify-center text-[#C5A059]/60 font-serif text-sm px-4 text-center">
