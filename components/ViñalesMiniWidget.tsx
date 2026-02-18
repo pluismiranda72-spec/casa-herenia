@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 type Post = {
   id: string;
@@ -14,9 +14,16 @@ type Post = {
   media_type: string | null;
 };
 
+const SCROLL_STEP = 300;
+
+function displayTitle(title: string): string {
+  if (title === "El Santuario de Piedra y Alma") return "Viñales: un lugar mágico";
+  return title;
+}
+
 export default function ViñalesMiniWidget() {
   const [posts, setPosts] = useState<Post[]>([]);
-  const [index, setIndex] = useState(0);
+  const scrollRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     const supabase = createClient();
@@ -24,101 +31,108 @@ export default function ViñalesMiniWidget() {
       .from("posts")
       .select("id, title, slug, media_url, media_type")
       .order("created_at", { ascending: false })
-      .limit(3)
+      .limit(10)
       .then(({ data }) => setPosts(data ?? []));
   }, []);
 
-  useEffect(() => {
-    if (posts.length <= 1) return;
-    const t = setInterval(() => setIndex((i) => (i + 1) % posts.length), 4000);
-    return () => clearInterval(t);
-  }, [posts.length]);
+  function scroll(direction: "left" | "right") {
+    const el = scrollRef.current;
+    if (!el) return;
+    const step = direction === "left" ? -SCROLL_STEP : SCROLL_STEP;
+    el.scrollTo({ left: el.scrollLeft + step, behavior: "smooth" });
+  }
 
-  // Siempre visible: si no hay posts mostramos mensaje "Próximamente"
   const hasPosts = posts.length > 0;
 
   return (
     <section
-      className="w-full bg-[#0A0A0A]/95 border-t border-[#C5A059]/20 py-6 px-4"
+      className="w-full bg-[#0A0A0A]/95 border-t border-[#C5A059]/20 py-8 px-4"
       aria-label="Descubre Viñales"
     >
-      <div className="container mx-auto flex flex-col md:flex-row items-center justify-between gap-6">
-        <div className="flex items-center gap-4 overflow-hidden">
-          <div className="relative w-[200px] h-[120px] rounded-lg overflow-hidden shrink-0 bg-[#1a1a1a]">
-            <AnimatePresence mode="wait">
-              {hasPosts && posts[index] ? (
-                <motion.div
-                  key={posts[index].id}
-                  initial={{ opacity: 0, x: 40 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -40 }}
-                  transition={{ duration: 0.4, ease: "easeInOut" }}
-                  className="absolute inset-0"
+      <div className="container mx-auto">
+        <div className="flex items-center justify-between gap-4 mb-6">
+          <h2 className="font-serif text-xl md:text-2xl text-white">
+            Historias del Valle
+          </h2>
+          <Link
+            href="/descubre"
+            className="shrink-0 border border-[#C5A059] text-[#C5A059] font-sans text-xs uppercase tracking-widest px-4 py-2.5 hover:bg-[#C5A059] hover:text-[#0A0A0A] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50"
+          >
+            DESCUBRE VIÑALES
+          </Link>
+        </div>
+
+        <div className="relative">
+          {/* Flechas */}
+          {hasPosts && posts.length > 1 && (
+            <>
+              <button
+                type="button"
+                onClick={() => scroll("left")}
+                aria-label="Anterior"
+                className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-black/50 hover:bg-[#C5A059] text-white flex items-center justify-center transition-colors -left-4 md:-left-2"
+              >
+                <ChevronLeft className="w-5 h-5" />
+              </button>
+              <button
+                type="button"
+                onClick={() => scroll("right")}
+                aria-label="Siguiente"
+                className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-black/50 hover:bg-[#C5A059] text-white flex items-center justify-center transition-colors -right-4 md:-right-2"
+              >
+                <ChevronRight className="w-5 h-5" />
+              </button>
+            </>
+          )}
+
+          {/* Contenedor del carrusel */}
+          <div
+            ref={scrollRef}
+            className="flex gap-6 overflow-x-auto scroll-smooth py-2 px-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
+          >
+            {hasPosts ? (
+              posts.map((post) => (
+                <Link
+                  key={post.id}
+                  href={`/descubre/${post.slug}`}
+                  className="flex flex-col min-w-[240px] max-w-[240px] shrink-0 group"
                 >
-                  {posts[index].media_url && posts[index].media_type === "image" ? (
-                    <Image
-                      src={posts[index].media_url}
-                      alt=""
-                      fill
-                      className="object-cover"
-                      sizes="200px"
-                      unoptimized={posts[index].media_url.startsWith("http")}
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center text-[#C5A059]/60 font-serif text-sm">
-                      Viñales
-                    </div>
-                  )}
-                </motion.div>
-              ) : (
-                <div className="absolute inset-0 flex items-center justify-center text-[#C5A059]/70 font-serif text-sm text-center px-3">
+                  <div className="relative w-full aspect-[4/3] rounded-md overflow-hidden bg-[#1a1a1a]">
+                    {post.media_url && post.media_type === "image" ? (
+                      <Image
+                        src={post.media_url}
+                        alt=""
+                        fill
+                        className="object-cover transition-transform group-hover:scale-105"
+                        sizes="240px"
+                        unoptimized={post.media_url.startsWith("http")}
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-[#C5A059]/60 font-serif text-sm">
+                        Viñales
+                      </div>
+                    )}
+                  </div>
+                  <p
+                    className="mt-3 font-serif text-sm text-gray-200 text-center line-clamp-2"
+                    style={{ fontFamily: "var(--font-playfair), 'Playfair Display', serif" }}
+                  >
+                    {displayTitle(post.title)}
+                  </p>
+                </Link>
+              ))
+            ) : (
+              <div className="min-w-[240px] max-w-[240px] flex flex-col shrink-0">
+                <div className="w-full aspect-[4/3] rounded-md bg-[#1a1a1a] flex items-center justify-center text-[#C5A059]/60 font-serif text-sm px-4 text-center">
                   Próximamente nuevas historias
                 </div>
-              )}
-            </AnimatePresence>
-          </div>
-          <div className="min-w-0 max-w-[220px]">
-            <AnimatePresence mode="wait">
-              {hasPosts && posts[index] ? (
-                <motion.p
-                  key={posts[index].id}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  className="font-serif text-[#faf9f6] text-sm md:text-base line-clamp-2"
-                  style={{ fontFamily: "var(--font-playfair), serif" }}
-                >
-                  {posts[index].title}
-                </motion.p>
-              ) : (
-                <p className="font-serif text-[#faf9f6]/80 text-sm md:text-base" style={{ fontFamily: "var(--font-playfair), serif" }}>
-                  Próximamente nuevas historias
+                <p className="mt-3 font-serif text-sm text-gray-400 text-center">
+                  Próximamente
                 </p>
-              )}
-            </AnimatePresence>
-            {hasPosts && posts.length > 1 && (
-              <div className="flex gap-1 mt-2">
-                {posts.map((_, i) => (
-                  <button
-                    key={i}
-                    type="button"
-                    aria-label={`Ver tarjeta ${i + 1}`}
-                    onClick={() => setIndex(i)}
-                    className={`h-1 rounded-full transition-all ${
-                      i === index ? "w-4 bg-[#C5A059]" : "w-1 bg-[#C5A059]/40"
-                    }`}
-                  />
-                ))}
               </div>
             )}
           </div>
         </div>
-        <Link
-          href="/descubre"
-          className="shrink-0 border border-[#C5A059] text-[#C5A059] font-sans text-xs uppercase tracking-widest px-4 py-2.5 hover:bg-[#C5A059] hover:text-[#0A0A0A] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50"
-        >
-          Descubre Viñales
-        </Link>
       </div>
     </section>
   );
