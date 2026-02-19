@@ -129,6 +129,7 @@
     "guestsCount": "Huéspedes",
     "total": "Total",
     "extraSupplement": "Suplemento huéspedes extra",
+    "extraSupplementLine": "+ Suplemento huésped adicional ({fee}€/pers)",
     "perNight": "× {nights} noches",
     "name": "Nombre *",
     "email": "Email *",

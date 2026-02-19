@@ -11,7 +11,7 @@ export interface Property {
   unit: "room_1" | "room_2" | "full_villa";
   /** Máximo de huéspedes. Junior Suites: 3; Villa completa: 6. */
   maxGuests: number;
-  /** Huéspedes incluidos en el precio base. Por encima de este número se aplica extraPersonFee. Junior: 2, Villa: 4. */
+  /** Huéspedes incluidos en el precio base. Por encima de este número se aplica extraPersonFee. Junior: 1, Villa: 4. */
   baseGuestsIncluded: number;
   /** Suplemento por noche por cada huésped por encima de baseGuestsIncluded (€/persona). */
   extraPersonFee?: number;
@@ -41,8 +41,8 @@ export const PROPERTIES: Property[] = [
     ],
     unit: "room_1",
     maxGuests: 3,
-    baseGuestsIncluded: 2,
-    extraPersonFee: 15,
+    baseGuestsIncluded: 1,
+    extraPersonFee: 10,
   },
   {
     id: "room-2",
@@ -67,8 +67,8 @@ export const PROPERTIES: Property[] = [
     ],
     unit: "room_2",
     maxGuests: 3,
-    baseGuestsIncluded: 2,
-    extraPersonFee: 15,
+    baseGuestsIncluded: 1,
+    extraPersonFee: 10,
   },
   {
     id: "full-villa",

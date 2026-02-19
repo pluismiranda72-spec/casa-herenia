@@ -253,10 +253,13 @@ export default function ReservasPage() {
                       {property.currency} {t("perNight", { nights })}
                     </p>
                     {hasExtraGuestSupplement && pricing && property.extraPersonFee != null && (
-                      <p className="font-sans text-xs text-gray-400 mt-1">
-                        {t("extraSupplement")} ({pricing.extraGuests} × {property.extraPersonFee}
-                        {property.currency}): +{pricing.nightlyExtraFee}
-                        {property.currency}/noche
+                      <p className="font-sans text-sm text-gray-300 mt-1">
+                        {t("extraSupplementLine", { fee: property.extraPersonFee })}
+                        <span className="block text-xs text-gray-400 mt-0.5">
+                          ({pricing.extraGuests} × {property.extraPersonFee}
+                          {property.currency}): +{pricing.nightlyExtraFee}
+                          {property.currency}/noche
+                        </span>
                       </p>
                     )}
                     <p className="font-serif text-2xl text-[#C5A059] mt-1">

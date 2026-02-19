@@ -59,9 +59,27 @@ export default function TaxiBookingModal({ isOpen, onClose }: TaxiBookingModalPr
     };
   }, [isOpen, onClose]);
 
+  // Solo cap cuando el valor actual supera el máximo del tipo actual (ej: 8 en colectivo → usuario cambia a privado → 6).
+  // No tocar el valor si ya está dentro del rango (ej: 2 o 3 al cambiar a privado se mantienen).
   useEffect(() => {
-    if (serviceType === "privado" && passengers > MAX_PRIVADO_PAX) setPassengers(MAX_PRIVADO_PAX);
-  }, [serviceType, passengers]);
+    if (passengers <= maxPassengers) return;
+    setPassengers(maxPassengers);
+  }, [serviceType, maxPassengers, passengers]);
+
+  function handlePassengersChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const raw = e.target.value;
+    if (raw === "") {
+      setPassengers(1);
+      return;
+    }
+    const parsed = Number(raw);
+    if (Number.isNaN(parsed) || parsed < 1) {
+      setPassengers(1);
+      return;
+    }
+    const newValue = Math.min(maxPassengers, Math.max(1, Math.floor(parsed)));
+    setPassengers(newValue);
+  }
 
   function handlePayment() {
     const form = formRef.current;
@@ -232,12 +250,14 @@ export default function TaxiBookingModal({ isOpen, onClose }: TaxiBookingModalPr
                 <span className="font-sans text-sm text-[#C5A059] mb-1 block">{t("passengersLabel")}</span>
                 <input
                   type="number"
+                  inputMode="numeric"
                   name="passengers_count"
                   min={1}
                   max={maxPassengers}
                   value={passengers}
-                  onChange={(e) => setPassengers(Number(e.target.value) || 1)}
-                  className="w-full min-h-[44px] px-4 rounded-lg bg-white/10 border border-white/20 text-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50"
+                  onFocus={(e) => e.target.select()}
+                  onChange={handlePassengersChange}
+                  className="w-full min-h-[44px] px-4 rounded-lg bg-white/10 border border-white/20 text-white font-sans text-base focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50"
                 />
                 <span className="font-sans text-xs text-white/50 mt-1 block">
                   {serviceType === "privado" ? t("passengersHintPrivado") : t("passengersHintColectivo")}
