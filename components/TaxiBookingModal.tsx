@@ -37,14 +37,15 @@ export default function TaxiBookingModal({ isOpen, onClose }: TaxiBookingModalPr
   const [serviceType, setServiceType] = useState<"colectivo" | "privado">("colectivo");
   const [passengers, setPassengers] = useState(1);
 
+  const maxPassengers = serviceType === "privado" ? MAX_PRIVADO_PAX : 8;
+  const effectivePassengers = passengers < 1 ? 1 : Math.min(maxPassengers, passengers);
   const totalPrice =
     serviceType === "privado"
-      ? passengers <= 4
+      ? effectivePassengers <= 4
         ? PRICE_PRIVADO_PER_VEHICLE
         : PRICE_PRIVADO_PER_VEHICLE * 2
-      : passengers * PRICE_COLECTIVO;
-  const maxPassengers = serviceType === "privado" ? MAX_PRIVADO_PAX : 8;
-  const showMultiTaxiInfo = serviceType === "privado" && passengers > 4;
+      : effectivePassengers * PRICE_COLECTIVO;
+  const showMultiTaxiInfo = serviceType === "privado" && effectivePassengers > 4;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -59,26 +60,28 @@ export default function TaxiBookingModal({ isOpen, onClose }: TaxiBookingModalPr
     };
   }, [isOpen, onClose]);
 
-  // Solo cap cuando el valor actual supera el máximo del tipo actual (ej: 8 en colectivo → usuario cambia a privado → 6).
-  // No tocar el valor si ya está dentro del rango (ej: 2 o 3 al cambiar a privado se mantienen).
+  // Solo cap cuando cambia el tipo y el valor actual supera el nuevo máximo (ej: 8 en colectivo → usuario cambia a privado → 6).
   useEffect(() => {
     if (passengers <= maxPassengers) return;
     setPassengers(maxPassengers);
   }, [serviceType, maxPassengers, passengers]);
 
+  // onChange: solo actualizar estado; no restringir máximo aquí para permitir escritura fluida (ej: "2", "3").
   function handlePassengersChange(e: React.ChangeEvent<HTMLInputElement>) {
     const raw = e.target.value;
     if (raw === "") {
-      setPassengers(1);
+      setPassengers(0);
       return;
     }
-    const parsed = Number(raw);
-    if (Number.isNaN(parsed) || parsed < 1) {
-      setPassengers(1);
-      return;
-    }
-    const newValue = Math.min(maxPassengers, Math.max(1, Math.floor(parsed)));
-    setPassengers(newValue);
+    const parsed = parseInt(raw, 10);
+    if (Number.isNaN(parsed)) return;
+    setPassengers(parsed);
+  }
+
+  // Validación solo al salir del campo: aplicar mínimo y máximo.
+  function handlePassengersBlur() {
+    if (passengers < 1) setPassengers(1);
+    else if (passengers > maxPassengers) setPassengers(maxPassengers);
   }
 
   function handlePayment() {
@@ -248,15 +251,18 @@ export default function TaxiBookingModal({ isOpen, onClose }: TaxiBookingModalPr
 
               <label className="block">
                 <span className="font-sans text-sm text-[#C5A059] mb-1 block">{t("passengersLabel")}</span>
+                <input type="hidden" name="passengers_count" value={effectivePassengers} />
                 <input
                   type="number"
                   inputMode="numeric"
-                  name="passengers_count"
+                  pattern="[0-9]*"
+                  aria-label={t("passengersLabel")}
                   min={1}
                   max={maxPassengers}
-                  value={passengers}
+                  value={passengers === 0 ? "" : passengers}
                   onFocus={(e) => e.target.select()}
                   onChange={handlePassengersChange}
+                  onBlur={handlePassengersBlur}
                   className="w-full min-h-[44px] px-4 rounded-lg bg-white/10 border border-white/20 text-white font-sans text-base focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50"
                 />
                 <span className="font-sans text-xs text-white/50 mt-1 block">
