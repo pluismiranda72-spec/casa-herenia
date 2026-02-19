@@ -5,6 +5,7 @@ import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { ChevronLeft, ChevronRight, Play } from "lucide-react";
+import { optimizeCloudinaryUrl } from "@/utils/cloudinary";
 
 type Post = {
   id: string;
@@ -14,6 +15,7 @@ type Post = {
   media_type: string | null;
   type: string | null;
   instagram_url: string | null;
+  gallery_urls: string[] | null;
 };
 
 const SCROLL_STEP = 300;
@@ -21,6 +23,98 @@ const SCROLL_STEP = 300;
 function displayTitle(title: string): string {
   if (title === "El Santuario de Piedra y Alma") return "Viñales: un lugar mágico";
   return title;
+}
+
+function CardImage({
+  post,
+  isInstagram,
+}: {
+  post: Post;
+  isInstagram: boolean;
+}) {
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const urls = (post.gallery_urls && post.gallery_urls.length > 1)
+    ? post.gallery_urls.map(optimizeCloudinaryUrl)
+    : post.media_url
+      ? [optimizeCloudinaryUrl(post.media_url)]
+      : [];
+
+  const hasGallery = urls.length > 1;
+  const go = (delta: number) => {
+    setCurrentSlide((prev) => {
+      const next = prev + delta;
+      if (next < 0) return urls.length - 1;
+      if (next >= urls.length) return 0;
+      return next;
+    });
+  };
+
+  return (
+    <div className="relative w-full aspect-[4/3] rounded-md overflow-hidden bg-[#1a1a1a] group/card">
+      {urls.length > 0 ? (
+        <>
+          {urls.map((url, i) => (
+            <div
+              key={i}
+              className="absolute inset-0 transition-opacity duration-300 ease-out"
+              style={{ opacity: i === currentSlide ? 1 : 0 }}
+            >
+              <Image
+                src={url}
+                alt=""
+                fill
+                className="object-cover transition-transform duration-300 group-hover/card:scale-105"
+                sizes="240px"
+                unoptimized={url.startsWith("http")}
+              />
+            </div>
+          ))}
+          {hasGallery && (
+            <>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  go(-1);
+                }}
+                aria-label="Foto anterior"
+                className="absolute left-1 top-1/2 -translate-y-1/2 z-10 w-6 h-6 rounded-full bg-black/20 text-white flex items-center justify-center hover:bg-black/50 transition-colors"
+              >
+                <ChevronLeft className="w-3.5 h-3.5" />
+              </button>
+              <button
+                type="button"
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  go(1);
+                }}
+                aria-label="Foto siguiente"
+                className="absolute right-1 top-1/2 -translate-y-1/2 z-10 w-6 h-6 rounded-full bg-black/20 text-white flex items-center justify-center hover:bg-black/50 transition-colors"
+              >
+                <ChevronRight className="w-3.5 h-3.5" />
+              </button>
+            </>
+          )}
+        </>
+      ) : (
+        <div className="w-full h-full flex items-center justify-center text-[#C5A059]/60 font-serif text-sm">
+          Viñales
+        </div>
+      )}
+      {isInstagram && (
+        <>
+          <div className="absolute inset-0 bg-black/20" aria-hidden />
+          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+            <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center">
+              <Play className="w-5 h-5 text-[#0A0A0A] fill-current" />
+            </div>
+          </div>
+        </>
+      )}
+    </div>
+  );
 }
 
 export default function ViñalesMiniWidget() {
@@ -31,7 +125,7 @@ export default function ViñalesMiniWidget() {
     const supabase = createClient();
     supabase
       .from("posts")
-      .select("id, title, slug, media_url, media_type, type, instagram_url")
+      .select("id, title, slug, media_url, media_type, type, instagram_url, gallery_urls")
       .order("created_at", { ascending: false })
       .limit(10)
       .then(({ data }) => setPosts(data ?? []));
@@ -65,7 +159,6 @@ export default function ViñalesMiniWidget() {
         </div>
 
         <div className="relative">
-          {/* Flechas */}
           {hasPosts && posts.length > 1 && (
             <>
               <button
@@ -87,7 +180,6 @@ export default function ViñalesMiniWidget() {
             </>
           )}
 
-          {/* Contenedor del carrusel */}
           <div
             ref={scrollRef}
             className="flex gap-6 overflow-x-auto scroll-smooth py-2 px-1 [scrollbar-width:none] [-ms-overflow-style:none] [&::-webkit-scrollbar]:hidden"
@@ -95,35 +187,9 @@ export default function ViñalesMiniWidget() {
             {hasPosts ? (
               posts.map((post) => {
                 const isInstagram = post.type === "instagram" && post.instagram_url;
-                const mediaUrl = post.media_url;
                 const cardContent = (
                   <>
-                    <div className="relative w-full aspect-[4/3] rounded-md overflow-hidden bg-[#1a1a1a]">
-                      {mediaUrl ? (
-                        <Image
-                          src={mediaUrl}
-                          alt=""
-                          fill
-                          className="object-cover transition-transform group-hover:scale-105"
-                          sizes="240px"
-                          unoptimized={mediaUrl.startsWith("http")}
-                        />
-                      ) : (
-                        <div className="w-full h-full flex items-center justify-center text-[#C5A059]/60 font-serif text-sm">
-                          Viñales
-                        </div>
-                      )}
-                      {isInstagram && (
-                        <>
-                          <div className="absolute inset-0 bg-black/20" aria-hidden />
-                          <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                            <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center">
-                              <Play className="w-5 h-5 text-[#0A0A0A] fill-current" />
-                            </div>
-                          </div>
-                        </>
-                      )}
-                    </div>
+                    <CardImage post={post} isInstagram={!!isInstagram} />
                     <p
                       className="mt-3 font-serif text-sm text-gray-200 text-center line-clamp-2"
                       style={{ fontFamily: "var(--font-playfair), 'Playfair Display', serif" }}

@@ -1,16 +1,19 @@
 "use client";
 
 import { Zap, Snowflake, Wifi, Coffee, Tv } from "lucide-react";
+import { useTranslations } from "next-intl";
 
 const BENEFITS = [
-  { id: "power", icon: Zap, title: "Energía de Respaldo 24H" },
-  { id: "ac", icon: Snowflake, title: "Aire Acondicionado" },
-  { id: "wifi", icon: Wifi, title: "Wifi Estable" },
-  { id: "breakfast", icon: Coffee, title: "Desayuno Exquisito" },
-  { id: "streaming", icon: Tv, title: "TV con Streaming" },
+  { id: "power", icon: Zap, key: "power" as const },
+  { id: "ac", icon: Snowflake, key: "ac" as const },
+  { id: "wifi", icon: Wifi, key: "wifi" as const },
+  { id: "breakfast", icon: Coffee, key: "breakfast" as const },
+  { id: "streaming", icon: Tv, key: "streaming" as const },
 ];
 
 export default function BenefitsSection() {
+  const t = useTranslations("Benefits");
+
   return (
     <section
       className="w-full py-12 md:py-24 px-4 md:px-6 bg-white"
@@ -21,7 +24,7 @@ export default function BenefitsSection() {
           id="benefits-heading"
           className="font-serif text-2xl sm:text-3xl md:text-4xl text-brand-black text-center mb-8 md:mb-16"
         >
-          Comodidades Exclusivas
+          {t("title")}
         </h2>
 
         <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-wrap md:justify-center gap-6 md:gap-10 max-w-5xl mx-auto">
@@ -40,7 +43,7 @@ export default function BenefitsSection() {
                   />
                 </div>
                 <h3 className="font-sans text-sm sm:text-base md:text-lg font-medium text-gray-800">
-                  {item.title}
+                  {t(item.key)}
                 </h3>
               </div>
             );

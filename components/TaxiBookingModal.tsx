@@ -2,21 +2,24 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useFormState, useFormStatus } from "react-dom";
-import { X, CreditCard } from "lucide-react";
+import { X, CreditCard, Info } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { bookTaxi } from "@/app/actions/bookTaxi";
 
 const PRICE_COLECTIVO = 25;
-const PRICE_PRIVADO = 120;
+const PRICE_PRIVADO_PER_VEHICLE = 120;
+const MAX_PRIVADO_PAX = 6;
 
 function SubmitButton() {
   const { pending } = useFormStatus();
+  const t = useTranslations("Taxi");
   return (
     <button
       type="submit"
       disabled={pending}
       className="w-full min-h-[48px] rounded-lg bg-[#C5A059] text-[#0A0A0A] font-sans font-semibold hover:bg-[#C5A059]/90 transition-colors cursor-pointer disabled:opacity-70 disabled:cursor-wait"
     >
-      {pending ? "Enviando…" : "Confirmar solicitud de viaje"}
+      {pending ? t("sending") : t("submit")}
     </button>
   );
 }
@@ -27,6 +30,7 @@ type TaxiBookingModalProps = {
 };
 
 export default function TaxiBookingModal({ isOpen, onClose }: TaxiBookingModalProps) {
+  const t = useTranslations("Taxi");
   const formRef = useRef<HTMLFormElement>(null);
   const bookingTypeRef = useRef<HTMLInputElement>(null);
   const [state, formAction] = useFormState(bookTaxi, null);
@@ -34,8 +38,13 @@ export default function TaxiBookingModal({ isOpen, onClose }: TaxiBookingModalPr
   const [passengers, setPassengers] = useState(1);
 
   const totalPrice =
-    serviceType === "privado" ? PRICE_PRIVADO : passengers * PRICE_COLECTIVO;
-  const maxPassengers = serviceType === "privado" ? 4 : 8;
+    serviceType === "privado"
+      ? passengers <= 4
+        ? PRICE_PRIVADO_PER_VEHICLE
+        : PRICE_PRIVADO_PER_VEHICLE * 2
+      : passengers * PRICE_COLECTIVO;
+  const maxPassengers = serviceType === "privado" ? MAX_PRIVADO_PAX : 8;
+  const showMultiTaxiInfo = serviceType === "privado" && passengers > 4;
 
   useEffect(() => {
     if (!isOpen) return;
@@ -51,7 +60,7 @@ export default function TaxiBookingModal({ isOpen, onClose }: TaxiBookingModalPr
   }, [isOpen, onClose]);
 
   useEffect(() => {
-    if (serviceType === "privado" && passengers > 4) setPassengers(4);
+    if (serviceType === "privado" && passengers > MAX_PRIVADO_PAX) setPassengers(MAX_PRIVADO_PAX);
   }, [serviceType, passengers]);
 
   function handlePayment() {
@@ -62,7 +71,7 @@ export default function TaxiBookingModal({ isOpen, onClose }: TaxiBookingModalPr
     const address = (form.elements.namedItem("pickup_address") as HTMLInputElement)?.value?.trim();
     const date = (form.elements.namedItem("pickup_date") as HTMLInputElement)?.value?.trim();
     if (!name || !whatsapp || !address || !date) {
-      alert("Por favor, complete todos los campos obligatorios antes de continuar al pago.");
+      alert(t("fillAllFields"));
       return;
     }
     if (bookingTypeRef.current) bookingTypeRef.current.value = "pago";
@@ -87,13 +96,13 @@ export default function TaxiBookingModal({ isOpen, onClose }: TaxiBookingModalPr
       >
         <div className="sticky top-0 flex items-center justify-between px-4 py-3 border-b border-white/10 bg-[#0A0A0A]/95 z-10">
           <h2 className="font-serif text-xl text-white">
-            Reservar viaje
+            {t("title")}
           </h2>
           <button
             type="button"
             onClick={onClose}
             className="p-2 rounded-full text-white/80 hover:text-white hover:bg-white/10 transition-colors cursor-pointer"
-            aria-label="Cerrar"
+            aria-label={t("close")}
           >
             <X className="w-5 h-5" />
           </button>
@@ -103,27 +112,25 @@ export default function TaxiBookingModal({ isOpen, onClose }: TaxiBookingModalPr
           {success ? (
             <div className="py-8 text-center space-y-4">
               <p className="font-sans text-lg text-[#C5A059]">
-                {isPagoSuccess
-                  ? "Redirigiendo a la pasarela de pago..."
-                  : "Solicitud enviada. Te contactaremos."}
+                {isPagoSuccess ? t("redirecting") : t("successSent")}
               </p>
               {!isPagoSuccess && (
                 <>
                   <p className="font-sans text-sm text-white/70">
-                    Nos pondremos en contacto contigo por WhatsApp para confirmar.
+                    {t("successContact")}
                   </p>
                   <button
                     type="button"
                     onClick={onClose}
                     className="px-6 py-2 rounded-lg bg-[#C5A059] text-[#0A0A0A] font-sans font-semibold hover:bg-[#C5A059]/90 transition-colors cursor-pointer"
                   >
-                    Cerrar
+                    {t("closeBtn")}
                   </button>
                 </>
               )}
               {isPagoSuccess && (
                 <p className="font-sans text-sm text-white/60">
-                  Si no eres redirigido en unos segundos, cierra esta ventana e inténtalo de nuevo.
+                  {t("redirectHint")}
                 </p>
               )}
             </div>
@@ -136,37 +143,37 @@ export default function TaxiBookingModal({ isOpen, onClose }: TaxiBookingModalPr
                 defaultValue="solicitud"
               />
               <label className="block">
-                <span className="font-sans text-sm text-[#C5A059] mb-1 block">Nombre y apellidos *</span>
+                <span className="font-sans text-sm text-[#C5A059] mb-1 block">{t("nameLabel")}</span>
                 <input
                   type="text"
                   name="client_name"
                   required
-                  placeholder="María García López"
+                  placeholder={t("namePlaceholder")}
                   className="w-full min-h-[44px] px-4 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/40 font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50"
                 />
               </label>
               <label className="block">
-                <span className="font-sans text-sm text-[#C5A059] mb-1 block">WhatsApp (con código de país) *</span>
+                <span className="font-sans text-sm text-[#C5A059] mb-1 block">{t("whatsappLabel")}</span>
                 <input
                   type="tel"
                   name="client_whatsapp"
                   required
-                  placeholder="+34 612 345 678"
+                  placeholder={t("whatsappPlaceholder")}
                   className="w-full min-h-[44px] px-4 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/40 font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50"
                 />
               </label>
               <label className="block">
-                <span className="font-sans text-sm text-[#C5A059] mb-1 block">Dirección de recogida en La Habana *</span>
+                <span className="font-sans text-sm text-[#C5A059] mb-1 block">{t("addressLabel")}</span>
                 <input
                   type="text"
                   name="pickup_address"
                   required
-                  placeholder="Calle, número, barrio"
+                  placeholder={t("addressPlaceholder")}
                   className="w-full min-h-[44px] px-4 rounded-lg bg-white/10 border border-white/20 text-white placeholder:text-white/40 font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50"
                 />
               </label>
               <label className="block">
-                <span className="font-sans text-sm text-[#C5A059] mb-1 block">Fecha de recogida *</span>
+                <span className="font-sans text-sm text-[#C5A059] mb-1 block">{t("dateLabel")}</span>
                 <input
                   type="date"
                   name="pickup_date"
@@ -176,7 +183,7 @@ export default function TaxiBookingModal({ isOpen, onClose }: TaxiBookingModalPr
               </label>
 
               <fieldset>
-                <span className="font-sans text-sm text-[#C5A059] mb-2 block">Tipo de servicio *</span>
+                <span className="font-sans text-sm text-[#C5A059] mb-2 block">{t("serviceTypeLabel")}</span>
                 <div className="flex gap-3">
                   <label className="flex-1 cursor-pointer">
                     <input
@@ -194,9 +201,9 @@ export default function TaxiBookingModal({ isOpen, onClose }: TaxiBookingModalPr
                           : "border-white/20 text-white/80 hover:border-white/40"
                       }`}
                     >
-                      Colectivo
+                      {t("colectivo")}
                     </span>
-                    <span className="block mt-1 font-sans text-xs text-white/50 text-center">25 €/persona</span>
+                    <span className="block mt-1 font-sans text-xs text-white/50 text-center">{t("colectivoPrice")}</span>
                   </label>
                   <label className="flex-1 cursor-pointer">
                     <input
@@ -214,15 +221,15 @@ export default function TaxiBookingModal({ isOpen, onClose }: TaxiBookingModalPr
                           : "border-white/20 text-white/80 hover:border-white/40"
                       }`}
                     >
-                      Privado
+                      {t("privado")}
                     </span>
-                    <span className="block mt-1 font-sans text-xs text-white/50 text-center">120 € total (máx. 4)</span>
+                    <span className="block mt-1 font-sans text-xs text-white/50 text-center">{t("privadoPrice")}</span>
                   </label>
                 </div>
               </fieldset>
 
               <label className="block">
-                <span className="font-sans text-sm text-[#C5A059] mb-1 block">Cantidad de personas *</span>
+                <span className="font-sans text-sm text-[#C5A059] mb-1 block">{t("passengersLabel")}</span>
                 <input
                   type="number"
                   name="passengers_count"
@@ -233,14 +240,23 @@ export default function TaxiBookingModal({ isOpen, onClose }: TaxiBookingModalPr
                   className="w-full min-h-[44px] px-4 rounded-lg bg-white/10 border border-white/20 text-white font-sans text-sm focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50"
                 />
                 <span className="font-sans text-xs text-white/50 mt-1 block">
-                  {serviceType === "privado" ? "Máximo 4 personas." : "Hasta 8 personas."}
+                  {serviceType === "privado" ? t("passengersHintPrivado") : t("passengersHintColectivo")}
                 </span>
               </label>
 
               <div className="rounded-lg bg-white/5 border border-[#C5A059]/30 px-4 py-3">
-                <p className="font-sans text-sm text-white/70">Precio total estimado</p>
+                <p className="font-sans text-sm text-white/70">{t("totalLabel")}</p>
                 <p className="font-serif text-2xl text-[#C5A059]">{totalPrice} EUR o USD</p>
               </div>
+
+              {showMultiTaxiInfo && (
+                <div className="flex gap-2 rounded-lg bg-amber-500/15 border border-amber-500/30 px-4 py-3">
+                  <Info className="w-5 h-5 text-amber-400 shrink-0 mt-0.5" aria-hidden />
+                  <p className="font-sans text-sm text-amber-200/95">
+                    {t("multiTaxiInfo")}
+                  </p>
+                </div>
+              )}
 
               {state && !state.success && (
                 <p className="font-sans text-sm text-red-400" role="alert">
@@ -255,7 +271,7 @@ export default function TaxiBookingModal({ isOpen, onClose }: TaxiBookingModalPr
                   className="w-full min-h-[48px] rounded-lg bg-green-700 hover:bg-green-800 text-white font-sans font-semibold transition-colors cursor-pointer inline-flex items-center justify-center gap-2"
                 >
                   <CreditCard className="w-5 h-5 shrink-0" aria-hidden />
-                  Confirmar pago de viaje
+                  {t("confirmPayment")}
                 </button>
                 <SubmitButton />
               </div>

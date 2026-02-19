@@ -1,6 +1,6 @@
 {
   "brand": { "name": "Casa Herenia y Pedro" },
-  "common": { "loading": "Cargando...", "error": "Ha ocurrido un error" },
+  "common": { "loading": "Cargando...", "error": "Ha ocurrido un error", "bookingError": "Error al procesar la reserva." },
   "Navigation": { "book": "Reservar", "home": "Inicio" },
   "Hero": {
     "title": "Bienvenidos a",
@@ -8,5 +8,146 @@
     "description": "Despierta entre mogotes y plantaciones. El Valle de Viñales a tus pies en una estancia exclusiva, donde el lujo es sentirse en casa desde el primer café.",
     "cta": "RESERVAR AHORA",
     "storyCta": "Nuestra Historia"
+  },
+  "Rooms": {
+    "title": "Nuestras Estancias",
+    "perNight": "/ noche",
+    "viewDetails": "Ver Detalles",
+    "room_1": {
+      "name": "JUNIOR SUITE I",
+      "desc": "Ambiente exclusivo y acogedor. Atención bilingüe, Baño en suite, A/C, 2 camas dobles y minibar con agua de cortesía."
+    },
+    "room_2": {
+      "name": "JUNIOR SUITE II",
+      "desc": "Ambiente exclusivo y acogedor. Atención bilingüe, Baño en suite, A/C, 2 camas dobles y minibar con agua de cortesía."
+    },
+    "full_villa": {
+      "name": "TWO-BEDROOM SUITE",
+      "desc": "Privacidad total. Ambiente íntimo, tranquilo y exclusivo, con check-in flexible y guía local."
+    }
+  },
+  "Benefits": {
+    "title": "Comodidades Exclusivas",
+    "power": "Energía de Respaldo 24H",
+    "ac": "Aire Acondicionado",
+    "wifi": "Wifi Estable",
+    "breakfast": "Desayuno Exquisito",
+    "streaming": "TV con Streaming"
+  },
+  "Testimonials": {
+    "title": "Lo que dicen nuestros huéspedes",
+    "verifiedStay": "Verified Stay",
+    "t1": {
+      "quote": "Encontré una paz que no sabía que necesitaba. El servicio fue impecable y cada detalle estaba pensado para que nos sintiéramos como en casa. Volveremos sin duda.",
+      "author": "Sophie Laurent"
+    },
+    "t2": {
+      "quote": "La combinación de naturaleza y confort es única. Dormir con el sonido del bosque y desayunar con esas vistas… Una experiencia que nos ha reconectado como familia.",
+      "author": "Marco Benedetti"
+    },
+    "t3": {
+      "quote": "Trato exquisito y un lugar que transmite calma desde el primer momento. El equipo se preocupó por cada pequeño detalle. Recomiendo Casa Herenia y Pedro con el corazón.",
+      "author": "Elena Kowalski"
+    },
+    "ctaOpinions": "VER OPINIONES DE LA CASA",
+    "ctaTripAdvisor": "LEER EN TRIPADVISOR"
+  },
+  "Location": {
+    "title": "Llegada sin Preocupaciones",
+    "subtitle": "Te recogemos en la puerta de tu alojamiento hasta nuestra casa.",
+    "transportTitle": "Opciones de transporte",
+    "taxiPrivate": "Taxi Privado: 120 EUR/USD por vehículo (máx. 4 pax). Para grupos de 5-6 personas, se gestionarán 2 vehículos.",
+    "taxiColectivo": "Taxi Colectivo: 25 EUR o USD por persona",
+    "reserveTrip": "Reservar viaje"
+  },
+  "Footer": {
+    "brandName": "Casa Herenia y Pedro",
+    "tagline": "Lujo tranquilo en el corazón de la naturaleza.",
+    "ourStory": "Nuestra Historia",
+    "quickLinks": "Enlaces rápidos",
+    "home": "Inicio",
+    "rooms": "Habitaciones",
+    "book": "Reservar",
+    "contact": "Contacto",
+    "questions": "¿Preguntas? Escríbenos cuando quieras.",
+    "legal": "Aviso legal",
+    "privacy": "Privacidad",
+    "rights": "Todos los derechos reservados."
+  },
+  "Taxi": {
+    "title": "Reservar viaje",
+    "close": "Cerrar",
+    "nameLabel": "Nombre y apellidos *",
+    "namePlaceholder": "María García López",
+    "whatsappLabel": "WhatsApp (con código de país) *",
+    "whatsappPlaceholder": "+34 612 345 678",
+    "addressLabel": "Dirección de recogida en La Habana *",
+    "addressPlaceholder": "Calle, número, barrio",
+    "dateLabel": "Fecha de recogida *",
+    "serviceTypeLabel": "Tipo de servicio *",
+    "colectivo": "Colectivo",
+    "privado": "Privado",
+    "colectivoPrice": "25 €/persona",
+    "privadoPrice": "120 €/vehículo (máx. 6 pax)",
+    "passengersLabel": "Cantidad de personas *",
+    "passengersHintPrivado": "Máximo 6 personas.",
+    "multiTaxiInfo": "Al superar las 4 personas, la reserva incluye automáticamente 2 Taxis Privados para su comodidad.",
+    "passengersHintColectivo": "Hasta 8 personas.",
+    "totalLabel": "Precio total estimado",
+    "submit": "Confirmar solicitud de viaje",
+    "confirmPayment": "Confirmar pago de viaje",
+    "sending": "Enviando…",
+    "successSent": "Solicitud enviada. Te contactaremos.",
+    "successContact": "Nos pondremos en contacto contigo por WhatsApp para confirmar.",
+    "closeBtn": "Cerrar",
+    "redirecting": "Redirigiendo a la pasarela de pago...",
+    "redirectHint": "Si no eres redirigido en unos segundos, cierra esta ventana e inténtalo de nuevo.",
+    "fillAllFields": "Por favor, complete todos los campos obligatorios antes de continuar al pago."
+  },
+  "Chat": {
+    "title": "Aura · Concierge",
+    "ariaChat": "Chat con Aura",
+    "close": "Cerrar chat",
+    "placeholder": "Escribe tu mensaje...",
+    "send": "Enviar",
+    "greeting": "Hola. Soy Aura. Pregúntame sobre check-in, wifi, desayuno o la casa.",
+    "error": "Algo ha fallado. Intenta de nuevo en un momento.",
+    "writing": "Aura está escribiendo...",
+    "openChat": "Abrir chat con Aura",
+    "messageAria": "Mensaje para Aura"
+  },
+  "Calendar": {
+    "selectRoom": "Elige tu estancia",
+    "guests": "Huéspedes",
+    "dates": "Fechas",
+    "adult": "adulto",
+    "adults": "adultos",
+    "stay": "Estancia",
+    "checkIn": "Entrada",
+    "checkOut": "Salida",
+    "nights": "Noches",
+    "guestsCount": "Huéspedes",
+    "total": "Total",
+    "extraSupplement": "Suplemento huéspedes extra",
+    "perNight": "× {nights} noches",
+    "name": "Nombre *",
+    "email": "Email *",
+    "phone": "Teléfono",
+    "optional": "Opcional",
+    "yourName": "Tu nombre",
+    "yourEmail": "tu@email.com",
+    "chooseStayAndDates": "Elige una estancia y las fechas.",
+    "confirmBooking": "Confirmar reserva",
+    "redirectingStripe": "Redirigiendo a Stripe…",
+    "reservationSummary": "Resumen de reserva",
+    "reservasPageTitle": "Reservar"
+  },
+  "RoomModal": {
+    "close": "CERRAR",
+    "uploading": "Subiendo...",
+    "dropToReplace": "Soltar para reemplazar",
+    "dragPhoto": "Arrastra y suelta tu foto",
+    "deletePhoto": "Borrar foto",
+    "photoSaved": "Foto guardada"
   }
 }

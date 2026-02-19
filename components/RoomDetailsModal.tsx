@@ -5,6 +5,7 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { useDropzone } from "react-dropzone";
 import { CloudUpload, X } from "lucide-react";
+import { useTranslations } from "next-intl";
 import { getGallery, saveImage } from "@/app/actions/galleryActions";
 import { optimizeCloudinaryUrl } from "@/utils/cloudinary";
 
@@ -37,6 +38,7 @@ type SlotCellProps = {
 };
 
 function SlotCell({ index, url, onUploaded, onRemove }: SlotCellProps) {
+  const t = useTranslations("RoomModal");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -50,12 +52,12 @@ function SlotCell({ index, url, onUploaded, onRemove }: SlotCellProps) {
         const secureUrl = await uploadToCloudinary(file);
         onUploaded(index, secureUrl);
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Error al subir");
+        setError(e instanceof Error ? e.message : t("uploading"));
       } finally {
         setLoading(false);
       }
     },
-    [index, onUploaded]
+    [index, onUploaded, t]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({
@@ -75,14 +77,14 @@ function SlotCell({ index, url, onUploaded, onRemove }: SlotCellProps) {
   const slotContent = loading ? (
     <>
       <div className="w-8 h-8 border-2 border-[#C5A059] border-t-transparent rounded-full animate-spin" />
-      <span className="text-sm text-white/80">Subiendo...</span>
+      <span className="text-sm text-white/80">{t("uploading")}</span>
     </>
   ) : url ? (
     <>
       <div className="absolute inset-0 rounded-lg overflow-hidden">
         <Image
           src={optimizeCloudinaryUrl(url)}
-          alt={`Habitación - foto ${index + 1}`}
+          alt={`${index + 1}`}
           fill
           className="object-cover"
           sizes="(max-width: 768px) 50vw, 25vw"
@@ -93,13 +95,13 @@ function SlotCell({ index, url, onUploaded, onRemove }: SlotCellProps) {
         type="button"
         onClick={handleRemove}
         className="absolute top-1.5 right-1.5 z-10 p-1 rounded bg-red-500/90 text-white hover:bg-red-600 transition-colors opacity-0 group-hover:opacity-100 focus:opacity-100 focus:outline-none focus:ring-2 focus:ring-red-400"
-        aria-label="Borrar foto"
+        aria-label={t("deletePhoto")}
       >
         <X className="w-4 h-4" />
       </button>
       {isDragActive && (
         <div className="absolute inset-0 bg-black/60 rounded-lg flex items-center justify-center border-2 border-[#C5A059] border-dashed">
-          <span className="text-sm text-white/90">Soltar para reemplazar</span>
+          <span className="text-sm text-white/90">{t("dropToReplace")}</span>
         </div>
       )}
     </>
@@ -107,7 +109,7 @@ function SlotCell({ index, url, onUploaded, onRemove }: SlotCellProps) {
     <>
       <CloudUpload className="w-8 h-8 text-white/60" aria-hidden />
       <span className="text-sm text-white/80 text-center px-2">
-        Arrastra y suelta tu foto
+        {t("dragPhoto")}
       </span>
     </>
   );
@@ -146,6 +148,7 @@ export default function RoomDetailsModal({
   roomSlug,
   images: _images,
 }: RoomDetailsModalProps) {
+  const t = useTranslations("RoomModal");
   const [slotUrls, setSlotUrls] = useState<(string | null)[]>(() =>
     Array(8).fill(null)
   );
@@ -183,9 +186,9 @@ export default function RoomDetailsModal({
         return next;
       });
       const res = await saveImage(roomSlug, index, url);
-      if (res.success) showToast("Foto guardada");
+      if (res.success) showToast(t("photoSaved"));
     },
-    [roomSlug, showToast]
+    [roomSlug, showToast, t]
   );
 
   const handleRemove = useCallback(
@@ -222,9 +225,9 @@ export default function RoomDetailsModal({
             type="button"
             onClick={(e) => { e.stopPropagation(); onClose(); }}
             className="fixed top-24 right-30 md:right-20 z-[10050] bg-transparent border-none font-sans text-sm tracking-widest text-white cursor-pointer hover:text-[#C5A059] hover:underline underline-offset-4 py-2 touch-target"
-            aria-label="Cerrar"
+            aria-label={t("close")}
           >
-            CERRAR
+            {t("close")}
           </button>
 
           <div className="relative z-10 flex flex-1 flex-col min-h-0 overflow-auto pointer-events-none">

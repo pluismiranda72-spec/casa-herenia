@@ -40,6 +40,12 @@ export async function createPost(
   const file = formData.get("media") as File | null;
   const postType = (formData.get("post_type") as string) || "standard";
   const instagramUrl = (formData.get("instagram_url") as string)?.trim() || null;
+  const mediaUrlFromForm = (formData.get("media_url") as string)?.trim() || null;
+  const galleryUrlsRaw = formData.get("gallery_urls") as string | null;
+  const galleryUrls: string[] | null =
+    galleryUrlsRaw && galleryUrlsRaw.startsWith("[")
+      ? (JSON.parse(galleryUrlsRaw) as string[])
+      : null;
 
   const parsed = createPostSchema.safeParse({
     title: title ?? "",
@@ -65,7 +71,12 @@ export async function createPost(
   }
 
   let mediaUrl: string | null = null;
-  if (file && file.size > 0) {
+  let galleryUrlsInsert: string[] | null = null;
+
+  if (galleryUrls?.length && mediaUrlFromForm) {
+    mediaUrl = mediaUrlFromForm;
+    galleryUrlsInsert = galleryUrls;
+  } else if (file && file.size > 0) {
     const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
     const safeName = `${Date.now()}-${slugify(file.name.slice(0, 20))}.${ext}`;
     const { data: uploadData, error: uploadError } = await supabase.storage
@@ -99,6 +110,7 @@ export async function createPost(
     media_type: isInstagram ? "image" : data.media_type,
     type: data.post_type,
     instagram_url: isInstagram ? data.instagram_url || null : null,
+    gallery_urls: galleryUrlsInsert,
   });
 
   if (insertError) {

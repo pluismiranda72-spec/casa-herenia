@@ -3,30 +3,9 @@
 import { Link } from "@/i18n/navigation";
 import { Star, Check } from "lucide-react";
 import { motion } from "framer-motion";
+import { useTranslations } from "next-intl";
 
-const TESTIMONIALS = [
-  {
-    id: "1",
-    quote:
-      "Encontré una paz que no sabía que necesitaba. El servicio fue impecable y cada detalle estaba pensado para que nos sintiéramos como en casa. Volveremos sin duda.",
-    author: "Sophie Laurent",
-    rating: 5,
-  },
-  {
-    id: "2",
-    quote:
-      "La combinación de naturaleza y confort es única. Dormir con el sonido del bosque y desayunar con esas vistas… Una experiencia que nos ha reconectado como familia.",
-    author: "Marco Benedetti",
-    rating: 5,
-  },
-  {
-    id: "3",
-    quote:
-      "Trato exquisito y un lugar que transmite calma desde el primer momento. El equipo se preocupó por cada pequeño detalle. Recomiendo Casa Herenia y Pedro con el corazón.",
-    author: "Elena Kowalski",
-    rating: 5,
-  },
-];
+const TESTIMONIAL_KEYS = ["t1", "t2", "t3"] as const;
 
 function Stars({ count = 5 }: { count?: number }) {
   return (
@@ -43,6 +22,8 @@ function Stars({ count = 5 }: { count?: number }) {
 }
 
 export default function TestimonialsSection() {
+  const t = useTranslations("Testimonials");
+
   return (
     <section
       className="w-full py-12 md:py-24 px-4 md:px-6 bg-[#0A0A0A]"
@@ -53,33 +34,32 @@ export default function TestimonialsSection() {
           id="testimonials-heading"
           className="font-serif text-2xl sm:text-3xl md:text-4xl text-white text-center mb-8 md:mb-12"
         >
-          Lo que dicen nuestros huéspedes
+          {t("title")}
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
-          {TESTIMONIALS.map((review, index) => (
+          {TESTIMONIAL_KEYS.map((key, index) => (
             <motion.article
-              key={review.id}
+              key={key}
               className="relative rounded-xl bg-white/5 backdrop-blur-md border border-[#C5A059]/30 p-5 md:p-8"
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true, margin: "-40px" }}
               transition={{ duration: 0.5, delay: index * 0.1 }}
             >
-              {/* Badge VERIFIED STAY */}
               <div className="absolute top-4 right-4 flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-[#C5A059]/20 border border-[#C5A059]/40">
                 <Check className="w-3.5 h-3.5 text-[#C5A059]" aria-hidden />
                 <span className="font-sans text-[10px] md:text-xs font-bold uppercase tracking-widest text-[#C5A059]">
-                  Verified Stay
+                  {t("verifiedStay")}
                 </span>
               </div>
 
-              <Stars count={review.rating} />
+              <Stars count={5} />
               <blockquote className="mt-4 font-serif text-lg md:text-xl text-white/95 italic leading-relaxed">
-                &ldquo;{review.quote}&rdquo;
+                &ldquo;{t(`${key}.quote`)}&rdquo;
               </blockquote>
               <cite className="mt-6 not-italic block font-sans text-sm font-bold uppercase tracking-widest text-[#C5A059]">
-                — {review.author}
+                — {t(`${key}.author`)}
               </cite>
             </motion.article>
           ))}
@@ -89,7 +69,7 @@ export default function TestimonialsSection() {
             href="/opiniones"
             className="px-8 py-3 rounded-full border border-[#C5A059] text-[#C5A059] bg-transparent hover:bg-[#C5A059] hover:text-black transition-all duration-300 text-xs font-bold tracking-[0.15em] uppercase"
           >
-            VER OPINIONES DE LA CASA
+            {t("ctaOpinions")}
           </Link>
           <a
             href="https://www.tripadvisor.es/Hotel_Review-g616288-d15045948-Reviews-Casa_Herenia_y_Pedro-Vinales_Pinar_del_Rio_Province_Cuba.html"
@@ -97,7 +77,7 @@ export default function TestimonialsSection() {
             rel="noopener noreferrer"
             className="px-8 py-3 rounded-full border border-[#C5A059] text-[#C5A059] bg-transparent hover:bg-[#C5A059] hover:text-black transition-all duration-300 text-xs font-bold tracking-[0.15em] uppercase"
           >
-            LEER EN TRIPADVISOR
+            {t("ctaTripAdvisor")}
           </a>
         </div>
       </div>

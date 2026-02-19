@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import { Car } from "lucide-react";
+import { useTranslations } from "next-intl";
 import TaxiBookingModal from "@/components/TaxiBookingModal";
 
 export default function LocationSection() {
+  const t = useTranslations("Location");
   const [isTaxiModalOpen, setIsTaxiModalOpen] = useState(false);
 
   return (
@@ -18,10 +20,10 @@ export default function LocationSection() {
           id="location-heading"
           className="font-serif text-2xl sm:text-3xl md:text-4xl text-[#0A0A0A] mb-4"
         >
-          Llegada sin Preocupaciones
+          {t("title")}
         </h2>
         <p className="font-serif text-lg text-gray-700 leading-relaxed mb-8">
-          Te recogemos en la puerta de tu alojamiento hasta nuestra casa.
+          {t("subtitle")}
         </p>
 
         <div className="rounded-xl border border-[#C5A059]/30 bg-white p-6 md:p-8 shadow-sm text-left mb-8">
@@ -29,15 +31,11 @@ export default function LocationSection() {
             <div className="shrink-0 w-10 h-10 rounded-full bg-[#C5A059]/15 flex items-center justify-center">
               <Car className="w-5 h-5 text-[#C5A059]" aria-hidden />
             </div>
-            <span className="font-sans font-semibold text-[#0A0A0A]">Opciones de transporte</span>
+            <span className="font-sans font-semibold text-[#0A0A0A]">{t("transportTitle")}</span>
           </div>
           <ul className="space-y-2 font-sans text-sm text-gray-700">
-            <li>
-              <strong className="text-[#0A0A0A]">Taxi Privado:</strong> 120 EUR o USD (total por vehículo, máx. 4 pax)
-            </li>
-            <li>
-              <strong className="text-[#0A0A0A]">Taxi Colectivo:</strong> 25 EUR o USD por persona
-            </li>
+            <li><strong className="text-[#0A0A0A]">{t("taxiPrivate")}</strong></li>
+            <li><strong className="text-[#0A0A0A]">{t("taxiColectivo")}</strong></li>
           </ul>
         </div>
 
@@ -46,7 +44,7 @@ export default function LocationSection() {
           onClick={() => setIsTaxiModalOpen(true)}
           className="inline-flex items-center justify-center min-h-[44px] px-6 py-2.5 rounded-lg bg-[#C5A059] text-[#0A0A0A] font-sans text-sm font-semibold hover:bg-[#C5A059]/90 transition-colors cursor-pointer"
         >
-          Reservar viaje
+          {t("reserveTrip")}
         </button>
       </div>
 

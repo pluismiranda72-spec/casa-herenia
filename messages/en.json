@@ -1,12 +1,65 @@
 {
-  "brand": { "name": "Casa Herenia y Pedro" },
-  "common": { "loading": "Loading...", "error": "An error occurred" },
-  "Navigation": { "book": "Book Now", "home": "Home" },
+  "Navigation": {
+    "home": "Home",
+    "rooms": "Stays",
+    "blog": "Journal",
+    "book": "RESERVE"
+  },
   "Hero": {
     "title": "Welcome to",
     "brand": "Casa Herenia y Pedro",
+    "subtitle": "Quiet luxury in the heart of nature.",
     "description": "Wake up among mogotes and plantations. The Viñales Valley at your feet in an exclusive stay, where luxury means feeling at home from the very first coffee.",
-    "cta": "BOOK NOW",
-    "storyCta": "Our Story"
+    "historyLink": "Our History",
+    "cta": "BOOK NOW"
+  },
+  "Rooms": {
+    "title": "Our Stays",
+    "detailsBtn": "View Details",
+    "closeBtn": "CLOSE",
+    "suite1": {
+      "title": "JUNIOR SUITE I",
+      "price": "55€ / night",
+      "desc": "Exclusive and cozy atmosphere. Bilingual service, En-suite bathroom, A/C, 2 double beds, and complimentary minibar."
+    },
+    "suite2": {
+      "title": "JUNIOR SUITE II",
+      "price": "55€ / night",
+      "desc": "Exclusive and cozy atmosphere. Bilingual service, En-suite bathroom, A/C, 2 double beds, and complimentary minibar."
+    },
+    "villa": {
+      "title": "TWO-BEDROOM SUITE",
+      "price": "120€ / night",
+      "desc": "Total privacy. An intimate, quiet, and exclusive environment with flexible check-in and local guide."
+    }
+  },
+  "Benefits": {
+    "title": "Exclusive Amenities",
+    "power": "24H Backup Power",
+    "ac": "Air Conditioning",
+    "wifi": "Stable Wi-Fi",
+    "breakfast": "Exquisite Breakfast",
+    "tv": "TV with Streaming"
+  },
+  "Reviews": {
+    "title": "Guest Reviews",
+    "tripadvisorBtn": "READ ON TRIPADVISOR",
+    "internalBtn": "VIEW ALL REVIEWS"
+  },
+  "Blog": {
+    "title": "Valley Stories",
+    "cta": "DISCOVER VIÑALES"
+  },
+  "Location": {
+    "title": "Worry-Free Arrival",
+    "subtitle": "We pick you up at the door of your accommodation and take you to our home.",
+    "private": "Private Taxi",
+    "collective": "Collective Taxi",
+    "perPerson": "per person",
+    "bookBtn": "Book Transfer"
+  },
+  "Footer": {
+    "contact": "Questions? Write to us anytime.",
+    "rights": "All rights reserved."
   }
 }

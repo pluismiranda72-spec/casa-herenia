@@ -8,7 +8,8 @@ import { Resend } from "resend";
 import { stripe } from "@/lib/stripe";
 
 const PRICE_COLECTIVO = 25;
-const PRICE_PRIVADO = 120;
+const PRICE_PRIVADO_PER_VEHICLE = 120;
+const MAX_PRIVADO_PAX = 6;
 const TAXI_EMAIL_TO = "pluismiranda72@gmail.com";
 
 const taxiSchema = z.object({
@@ -28,7 +29,9 @@ function calculateTotal(
   serviceType: "colectivo" | "privado",
   passengers: number
 ): number {
-  if (serviceType === "privado") return PRICE_PRIVADO;
+  if (serviceType === "privado") {
+    return passengers <= 4 ? PRICE_PRIVADO_PER_VEHICLE : PRICE_PRIVADO_PER_VEHICLE * 2;
+  }
   return passengers * PRICE_COLECTIVO;
 }
 
@@ -64,8 +67,8 @@ export async function bookTaxi(
   const type =
     formData.get("booking_type") === "pago" ? "pago" : "solicitud";
 
-  if (data.service_type === "privado" && data.passengers_count > 4)
-    return { success: false, error: "Taxi privado admite máximo 4 personas." };
+  if (data.service_type === "privado" && data.passengers_count > MAX_PRIVADO_PAX)
+    return { success: false, error: "Taxi privado admite máximo 6 personas." };
   if (data.service_type === "colectivo" && data.passengers_count > 8)
     return { success: false, error: "Máximo 8 personas en colectivo." };
 
@@ -82,6 +85,8 @@ export async function bookTaxi(
       process.env.RESEND_FROM_EMAIL ?? "onboarding@resend.dev";
     const serviceLabel =
       data.service_type === "privado" ? "Taxi Privado" : "Taxi Colectivo";
+    const vehiclesNeeded =
+      data.service_type === "privado" && data.passengers_count > 4 ? 2 : 1;
 
     const text = [
       "Nueva solicitud de taxi (pago en efectivo).",
@@ -93,6 +98,7 @@ export async function bookTaxi(
       "Fecha de recogida: " + data.pickup_date,
       "Tipo: " + serviceLabel,
       "Nº personas: " + data.passengers_count,
+      "Vehículos necesarios: " + vehiclesNeeded,
       "Precio estimado: " + totalPrice + " EUR/USD",
     ].join("\n");
 
@@ -132,7 +138,11 @@ export async function bookTaxi(
 
     const serviceLabel =
       data.service_type === "privado" ? "Privado" : "Colectivo";
-    const productName = `Transporte: ${serviceLabel} (${data.passengers_count} pax)`;
+    const vehiclesSuffix =
+      data.service_type === "privado" && data.passengers_count > 4
+        ? `, 2 vehículos`
+        : "";
+    const productName = `Transporte: ${serviceLabel} (${data.passengers_count} pax${vehiclesSuffix})`;
     const amountCents = Math.round(totalPrice * 100);
 
     const session = await stripe.checkout.sessions.create({

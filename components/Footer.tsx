@@ -1,69 +1,67 @@
 "use client";
 
 import Link from "next/link";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Mail, MessageCircle } from "lucide-react";
 
 export default function Footer() {
   const locale = useLocale();
+  const t = useTranslations("Footer");
 
   return (
     <footer className="w-full bg-[#0A0A0A] text-white" role="contentinfo">
       <div className="container mx-auto px-4 py-12 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10 md:gap-12">
-          {/* Col 1: Logo */}
           <div>
             <Link
               href={`/${locale}`}
               className="font-serif text-xl md:text-2xl text-[#C5A059] hover:opacity-90 transition-opacity"
             >
-              Casa Herenia y Pedro
+              {t("brandName")}
             </Link>
             <p className="mt-3 font-sans text-sm text-white/60 max-w-xs">
-              Lujo tranquilo en el corazón de la naturaleza.
+              {t("tagline")}
             </p>
             <Link
               href={`/${locale}/nosotros`}
               className="mt-4 block font-sans text-sm text-white/60 no-underline hover:text-[#C5A059] transition-colors"
             >
-              Nuestra Historia
+              {t("ourStory")}
             </Link>
           </div>
 
-          {/* Col 2: Enlaces rápidos */}
           <div>
             <h3 className="font-sans font-semibold text-white text-sm uppercase tracking-widest mb-4">
-              Enlaces rápidos
+              {t("quickLinks")}
             </h3>
             <nav className="flex flex-col gap-3" aria-label="Enlaces del sitio">
               <Link
                 href={`/${locale}`}
                 className="font-sans text-sm text-white/80 hover:text-[#C5A059] transition-colors"
               >
-                Inicio
+                {t("home")}
               </Link>
               <Link
                 href={`/${locale}#estancias`}
                 className="font-sans text-sm text-white/80 hover:text-[#C5A059] transition-colors"
               >
-                Habitaciones
+                {t("rooms")}
               </Link>
               <Link
-                href={`/${locale}/reservar`}
+                href={`/${locale}/reservas`}
                 className="font-sans text-sm text-white/80 hover:text-[#C5A059] transition-colors"
               >
-                Reservar
+                {t("book")}
               </Link>
             </nav>
           </div>
 
-          {/* Col 3: Contacto directo */}
           <div>
             <h3 className="font-sans font-semibold text-white text-sm uppercase tracking-widest mb-4">
-              Contacto
+              {t("contact")}
             </h3>
             <p className="font-sans text-sm text-white/70 mb-4">
-              ¿Preguntas? Escríbenos cuando quieras.
+              {t("questions")}
             </p>
             <div className="flex flex-col gap-3">
               <a
@@ -86,25 +84,23 @@ export default function Footer() {
           </div>
         </div>
 
-        {/* Línea y pie */}
         <div className="mt-12 pt-8 border-t border-white/10">
           <div className="flex flex-col sm:flex-row justify-between items-center gap-4">
             <p className="font-sans text-xs text-white/50">
-              © {new Date().getFullYear()} Casa Herenia y Pedro. Todos los
-              derechos reservados.
+              © {new Date().getFullYear()} {t("brandName")}. {t("rights")}
             </p>
             <div className="flex gap-6">
               <Link
                 href={`/${locale}/aviso-legal`}
                 className="font-sans text-xs text-white/50 hover:text-white/70 transition-colors"
               >
-                Aviso legal
+                {t("legal")}
               </Link>
               <Link
                 href={`/${locale}/privacidad`}
                 className="font-sans text-xs text-white/50 hover:text-white/70 transition-colors"
               >
-                Privacidad
+                {t("privacy")}
               </Link>
             </div>
           </div>
