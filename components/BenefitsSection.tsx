@@ -42,7 +42,7 @@ export default function BenefitsSection() {
                     aria-hidden
                   />
                 </div>
-                <h3 className="font-sans text-sm sm:text-base md:text-lg font-medium text-gray-800">
+                <h3 className="font-sans text-xs sm:text-sm md:text-base font-medium text-gray-800">
                   {t(item.key)}
                 </h3>
               </div>

@@ -2,6 +2,16 @@
 
 import { z } from "zod";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
+import { translateText } from "@/lib/translationService";
+
+function firstNWords(text: string, n: number): string {
+  return text
+    .replace(/\s+/g, " ")
+    .trim()
+    .split(" ")
+    .slice(0, n)
+    .join(" ");
+}
 
 function slugify(title: string): string {
   return title
@@ -101,16 +111,38 @@ export async function createPost(
     slug = `${baseSlug}-${attempt}`;
   }
 
+  // Traducción automática al inglés (solo para posts estándar con contenido en español)
+  let titleEn: string | null = null;
+  let contentEn: string | null = null;
+  let excerptEn: string | null = null;
+
+  let excerptEs = data.excerpt || null;
+  if (!isInstagram && data.title) {
+    const excerptRaw = data.excerpt || (data.content ? firstNWords(data.content.replace(/<[^>]*>/g, " "), 20) : "");
+    if (!data.excerpt?.trim() && excerptRaw) excerptEs = excerptRaw;
+    const [tEn, cEn, eEn] = await Promise.all([
+      translateText(data.title, "en"),
+      data.content ? translateText(data.content.replace(/<[^>]*>/g, " "), "en") : Promise.resolve(null),
+      excerptRaw ? translateText(excerptRaw, "en") : Promise.resolve(null),
+    ]);
+    titleEn = tEn;
+    contentEn = cEn;
+    excerptEn = eEn;
+  }
+
   const { error: insertError } = await supabase.from("posts").insert({
     title: data.title,
     slug,
-    excerpt: data.excerpt || null,
+    excerpt: excerptEs,
     content: data.content || null,
     media_url: mediaUrl,
     media_type: isInstagram ? "image" : data.media_type,
     type: data.post_type,
     instagram_url: isInstagram ? data.instagram_url || null : null,
     gallery_urls: galleryUrlsInsert,
+    title_en: titleEn,
+    content_en: contentEn,
+    excerpt_en: excerptEn,
   });
 
   if (insertError) {

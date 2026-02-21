@@ -1,6 +1,6 @@
 import { createClient } from "@/lib/supabase/server";
 import Image from "next/image";
-import Link from "next/link";
+import { Link } from "@/i18n/navigation";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
@@ -11,11 +11,23 @@ export const metadata: Metadata = {
 const BLUR_DATA =
   "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAgEDBAMBAAAAAAAAAAAAAQIDAAQRBRIhMQYTQVFh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAZEQACAwEAAAAAAAAAAAAAAAABAgADESH/2gAMAwEAAhEDEEA/ALmi6tqF1pVrcXN5PNNIm53eRiSfZooqJZQp/9k=";
 
-export default async function DescubrePage() {
+type Props = { params: Promise<{ locale: string }> };
+
+function postTitle(post: { title: string; title_en: string | null }, locale: string): string {
+  return locale === "en" && post.title_en?.trim() ? post.title_en : post.title;
+}
+
+function postExcerpt(post: { excerpt: string | null; excerpt_en: string | null }, locale: string): string | null {
+  const ex = locale === "en" && post.excerpt_en?.trim() ? post.excerpt_en : post.excerpt;
+  return ex?.trim() || null;
+}
+
+export default async function DescubrePage({ params }: Props) {
+  const { locale } = await params;
   const supabase = await createClient();
   const { data: posts } = await supabase
     .from("posts")
-    .select("id, title, slug, excerpt, media_url, media_type, created_at")
+    .select("id, title, title_en, slug, excerpt, excerpt_en, media_url, media_type, created_at")
     .order("created_at", { ascending: false });
 
   const list = posts ?? [];
@@ -56,7 +68,7 @@ export default async function DescubrePage() {
                     {post.media_url && post.media_type === "image" ? (
                       <Image
                         src={post.media_url}
-                        alt={post.title}
+                        alt={postTitle(post, locale)}
                         fill
                         className="object-cover"
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -83,11 +95,11 @@ export default async function DescubrePage() {
                       className="font-serif text-xl md:text-2xl text-[#0A0A0A] line-clamp-2"
                       style={{ fontFamily: "var(--font-playfair), serif" }}
                     >
-                      {post.title}
+                      {postTitle(post, locale)}
                     </h2>
-                    {post.excerpt && (
+                    {postExcerpt(post, locale) && (
                       <p className="mt-2 font-sans text-sm text-[#0A0A0A]/70 line-clamp-2">
-                        {post.excerpt}
+                        {postExcerpt(post, locale)}
                       </p>
                     )}
                   </div>

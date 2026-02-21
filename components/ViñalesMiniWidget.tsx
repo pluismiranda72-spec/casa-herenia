@@ -3,6 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
+import { useLocale } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { optimizeCloudinaryUrl } from "@/utils/cloudinary";
@@ -10,6 +11,7 @@ import { optimizeCloudinaryUrl } from "@/utils/cloudinary";
 type Post = {
   id: string;
   title: string;
+  title_en: string | null;
   slug: string;
   media_url: string | null;
   media_type: string | null;
@@ -20,9 +22,11 @@ type Post = {
 
 const SCROLL_STEP = 300;
 
-function displayTitle(title: string): string {
-  if (title === "El Santuario de Piedra y Alma") return "Viñales: un lugar mágico";
-  return title;
+function displayTitle(title: string, titleEn: string | null, locale: string): string {
+  const t = locale === "en" && titleEn?.trim() ? titleEn : title;
+  if (t === "El Santuario de Piedra y Alma" || t === "The Sanctuary of Stone and Soul")
+    return locale === "en" ? "Viñales: a magical place" : "Viñales: un lugar mágico";
+  return t;
 }
 
 function CardImage({
@@ -118,6 +122,7 @@ function CardImage({
 }
 
 export default function ViñalesMiniWidget() {
+  const locale = useLocale();
   const [posts, setPosts] = useState<Post[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -125,7 +130,7 @@ export default function ViñalesMiniWidget() {
     const supabase = createClient();
     supabase
       .from("posts")
-      .select("id, title, slug, media_url, media_type, type, instagram_url, gallery_urls")
+      .select("id, title, title_en, slug, media_url, media_type, type, instagram_url, gallery_urls")
       .order("created_at", { ascending: false })
       .limit(10)
       .then(({ data }) => setPosts(data ?? []));
@@ -194,7 +199,7 @@ export default function ViñalesMiniWidget() {
                       className="mt-3 font-serif text-sm text-gray-200 text-center line-clamp-2"
                       style={{ fontFamily: "var(--font-playfair), 'Playfair Display', serif" }}
                     >
-                      {displayTitle(post.title)}
+                      {displayTitle(post.title, post.title_en, locale)}
                     </p>
                   </>
                 );
