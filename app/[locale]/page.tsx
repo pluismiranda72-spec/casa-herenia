@@ -1,4 +1,5 @@
 import HeroSection from "@/components/HeroSection";
+import AwardsSection from "@/components/AwardsSection";
 import RoomGallery from "@/components/RoomGallery";
 import BenefitsSection from "@/components/BenefitsSection";
 import TestimonialsSection from "@/components/TestimonialsSection";
@@ -14,6 +15,7 @@ export default async function Home({ searchParams }: HomeProps) {
     <main className="flex min-h-screen flex-col">
       <ThanksBanner thanks={params.thanks ?? null} />
       <HeroSection />
+      <AwardsSection />
       <RoomGallery />
       <BenefitsSection />
       <TestimonialsSection />
