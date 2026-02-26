@@ -4,13 +4,14 @@ import { useState } from "react";
 import { useScroll, useMotionValueEvent } from "framer-motion";
 import { Link } from "@/i18n/navigation";
 import { LanguageSwitcher } from "@/components/LanguageSwitcher";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 const SCROLL_THRESHOLD = 24;
 
 export function Navbar() {
   const { scrollY } = useScroll();
   const locale = useLocale();
+  const t = useTranslations("Hero");
   const [scrolled, setScrolled] = useState(false);
 
   useMotionValueEvent(scrollY, "change", (v) =>
@@ -38,13 +39,19 @@ export function Navbar() {
           <span className="truncate">Casa Herenia y Pedro</span>
         </Link>
 
-        {/* Grupo de acción: Descubre Viñales + Selector de Idioma + CTA Reservar */}
+        {/* Grupo de acción: Descubre Viñales + Tu Reserva Segura + Selector de Idioma + CTA Reservar */}
         <div className="flex items-center gap-1.5 sm:gap-4 shrink-0">
           <Link
             href="/descubre"
             className="hidden sm:inline font-sans text-sm text-[#faf9f6]/90 hover:text-[#C5A059] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 rounded"
           >
             Descubre Viñales
+          </Link>
+          <Link
+            href="/reserva-segura"
+            className="hidden sm:inline font-sans text-sm text-[#faf9f6]/90 hover:text-[#C5A059] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 rounded"
+          >
+            {t("safeBookingCta")}
           </Link>
           <LanguageSwitcher embedded />
           <Link
