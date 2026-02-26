@@ -43,13 +43,13 @@ export function Navbar() {
         <div className="flex items-center gap-1.5 sm:gap-4 shrink-0">
           <Link
             href="/descubre"
-            className="hidden sm:inline font-sans text-sm text-[#faf9f6]/90 hover:text-[#C5A059] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 rounded"
+            className="hidden sm:inline font-sans text-sm font-semibold uppercase tracking-widest text-[#faf9f6]/90 hover:text-[#C5A059] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 rounded"
           >
-            Descubre Viñales
+            {t("discoverCta")}
           </Link>
           <Link
             href="/reserva-segura"
-            className="hidden sm:inline font-sans text-sm text-[#faf9f6]/90 hover:text-[#C5A059] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 rounded"
+            className="hidden sm:inline font-sans text-sm font-semibold uppercase tracking-widest text-[#faf9f6]/90 hover:text-[#C5A059] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 rounded"
           >
             {t("safeBookingCta")}
           </Link>
