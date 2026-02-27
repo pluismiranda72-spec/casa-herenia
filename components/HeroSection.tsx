@@ -49,7 +49,7 @@ export default function HeroSection() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.6 }}
-          className="mt-8 md:mt-10 flex flex-col items-center gap-4 sm:flex-row sm:gap-6 sm:justify-center"
+          className="mt-8 md:mt-10 flex flex-col md:flex-row justify-center items-center w-full gap-4 sm:gap-6"
         >
           <Link
             href="/reservas"
@@ -59,13 +59,13 @@ export default function HeroSection() {
           </Link>
           <Link
             href="/descubre"
-            className="w-full sm:w-auto shrink-0 border border-[#C5A059] text-[#C5A059] font-sans text-xs uppercase tracking-widest px-4 py-2.5 sm:px-6 sm:py-3 hover:bg-[#C5A059] hover:text-[#0A0A0A] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 focus:ring-offset-2 focus:ring-offset-transparent inline-block text-center"
+            className="md:hidden w-full sm:w-auto shrink-0 border border-[#C5A059] text-[#C5A059] font-sans text-xs uppercase tracking-widest px-4 py-2.5 sm:px-6 sm:py-3 hover:bg-[#C5A059] hover:text-[#0A0A0A] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 focus:ring-offset-2 focus:ring-offset-transparent inline-block text-center"
           >
             {t("discoverCta")}
           </Link>
           <Link
             href="/reserva-segura"
-            className="w-full sm:w-auto shrink-0 border border-[#C5A059] text-[#C5A059] font-sans text-xs uppercase tracking-widest px-4 py-2.5 sm:px-6 sm:py-3 hover:bg-[#C5A059] hover:text-[#0A0A0A] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 focus:ring-offset-2 focus:ring-offset-transparent inline-block text-center"
+            className="md:hidden w-full sm:w-auto shrink-0 border border-[#C5A059] text-[#C5A059] font-sans text-xs uppercase tracking-widest px-4 py-2.5 sm:px-6 sm:py-3 hover:bg-[#C5A059] hover:text-[#0A0A0A] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 focus:ring-offset-2 focus:ring-offset-transparent inline-block text-center"
           >
             {t("safeBookingCta")}
           </Link>

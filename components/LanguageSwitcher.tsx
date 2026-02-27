@@ -28,7 +28,7 @@ export function LanguageSwitcher({ embedded }: LanguageSwitcherProps) {
 
   return (
     <div
-      className={`flex items-center gap-1 font-sans text-sm tracking-wide ${
+      className={`flex flex-row items-center gap-1 font-sans text-sm tracking-wide ${
         embedded ? "relative" : "fixed top-6 right-6 z-[1000]"
       }`}
       role="group"
