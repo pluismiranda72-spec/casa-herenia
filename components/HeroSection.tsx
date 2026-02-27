@@ -24,32 +24,34 @@ export default function HeroSection() {
         <div className="absolute inset-0 bg-black/40 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
       </div>
 
-      {/* 2. Contenido Central */}
-      <div className="relative z-10 flex h-full flex-col items-center justify-center px-5 sm:px-6 md:px-8 text-center text-white">
-        <motion.h1
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.2 }}
-          className="font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold mb-4 md:mb-6 tracking-tight"
-        >
-          {t("title")} <br />
-          <span className="text-[#C5A059]">{t("brand")}</span>
-        </motion.h1>
+      {/* 2. Contenido Central — py-8 en móvil para evitar solapamiento en landscape; sm:py-16 en tablet/desktop */}
+      <div className="relative z-10 flex h-full min-h-0 flex-col items-center justify-center overflow-y-auto px-5 py-8 sm:py-16 sm:px-6 md:px-8 text-center text-white">
+        <div className="space-y-4 w-full max-w-2xl">
+          <motion.h1
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight"
+          >
+            {t("title")} <br />
+            <span className="text-[#C5A059]">{t("brand")}</span>
+          </motion.h1>
 
-        <motion.p
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8, delay: 0.4 }}
-          className="font-sans text-base sm:text-lg md:text-xl max-w-2xl mb-8 md:mb-10 text-gray-200 font-light px-2 text-center"
-        >
-          {t("description")}
-        </motion.p>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+            className="font-sans text-base sm:text-lg md:text-xl text-gray-200 font-light px-2 text-center"
+          >
+            {t("description")}
+          </motion.p>
+        </div>
 
         <motion.div
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.6 }}
-          className="mt-8 md:mt-10 flex flex-col md:flex-row justify-center items-center w-full gap-4 sm:gap-6"
+          className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center w-full mt-6 sm:mt-10"
         >
           <Link
             href="/reservas"
