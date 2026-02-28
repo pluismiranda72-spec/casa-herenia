@@ -48,7 +48,7 @@ function CardImage({
     setCurrentSlide((prev) => {
       const next = prev + delta;
       if (next < 0) return urls.length - 1;
-      if (next >= urls.length) return 0;
+      if (urls.length <= next) return 0;
       return next;
     });
   };
@@ -146,6 +146,7 @@ export default function ViñalesMiniWidget() {
   const hasPosts = posts.length > 0;
 
   return (
+    (
     <section
       className="w-full bg-[#0A0A0A]/95 border-t border-[#C5A059]/20 py-8 px-4"
       aria-label="Descubre Viñales"
@@ -155,12 +156,20 @@ export default function ViñalesMiniWidget() {
           <h2 className="font-serif text-xl md:text-2xl text-white">
             Historias del Valle
           </h2>
-          <Link
-            href="/descubre"
-            className="shrink-0 border border-[#C5A059] text-[#C5A059] font-sans text-xs uppercase tracking-widest px-4 py-2.5 hover:bg-[#C5A059] hover:text-[#0A0A0A] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50"
-          >
-            DESCUBRE VIÑALES
-          </Link>
+          <div className="flex flex-row items-baseline gap-6 sm:gap-10">
+            <Link
+              href="/descubre"
+              className="shrink-0 border border-[#C5A059] text-[#C5A059] font-sans text-xs uppercase tracking-widest px-4 py-2.5 hover:bg-[#C5A059] hover:text-[#0A0A0A] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50"
+            >
+              DESCUBRE VIÑALES
+            </Link>
+            <a
+              href="#faq-section"
+              className="shrink-0 font-sans text-xs uppercase tracking-widest text-[#C5A059] hover:text-amber-600 transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50"
+            >
+              Preguntas frecuentes
+            </a>
+          </div>
         </div>
 
         <div className="relative">
@@ -240,5 +249,6 @@ export default function ViñalesMiniWidget() {
         </div>
       </div>
     </section>
+    )
   );
 }

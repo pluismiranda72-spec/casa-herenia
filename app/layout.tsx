@@ -60,6 +60,12 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="es" className={`${playfair.variable} ${montserrat.variable}`}>
+      <head>
+        {/* Preconnect to Stripe for instant checkout when user clicks RESERVAR */}
+        <link rel="preconnect" href="https://js.stripe.com" />
+        <link rel="dns-prefetch" href="https://js.stripe.com" />
+        <link rel="preconnect" href="https://m.stripe.network" />
+      </head>
       <body className="min-h-screen">
         {children}
         <Analytics />

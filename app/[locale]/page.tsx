@@ -6,6 +6,7 @@ import TestimonialsSection from "@/components/TestimonialsSection";
 import LocationSection from "@/components/LocationSection";
 import ViñalesMiniWidget from "@/components/ViñalesMiniWidget";
 import ThanksBanner from "@/components/ThanksBanner";
+import FAQSection from "@/components/FAQSection";
 
 type HomeProps = { searchParams: Promise<{ thanks?: string }> };
 
@@ -21,6 +22,7 @@ export default async function Home({ searchParams }: HomeProps) {
       <TestimonialsSection />
       <LocationSection />
       <ViñalesMiniWidget />
+      <FAQSection />
     </main>
   );
 }

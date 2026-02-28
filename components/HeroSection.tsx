@@ -10,14 +10,14 @@ export default function HeroSection() {
 
   return (
     <section className="relative h-screen w-full overflow-hidden">
-      {/* 1. Imagen de Fondo (Placeholder de Lujo) */}
-      <div className="absolute inset-0">
+      {/* 1. Imagen de Fondo (Placeholder de Lujo) — bg-stone-900 evita pantalla blanca mientras carga */}
+      <div className="absolute inset-0 bg-stone-900">
         <Image
           src="/fondo.jpg"
           alt="Vista panorámica de Casa Herenia y Pedro"
           fill
           className="object-cover"
-          sizes="100vw"
+          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
           priority
         />
         {/* Overlay Oscuro para que se lea el texto */}
@@ -55,6 +55,7 @@ export default function HeroSection() {
         >
           <Link
             href="/reservas"
+            prefetch={true}
             className="w-full sm:w-auto bg-transparent border-2 border-white text-white px-6 py-3 sm:px-8 sm:py-4 rounded-none font-sans font-semibold tracking-widest hover:bg-[#6A8D55] hover:border-[#6A8D55] transition-all duration-300 ease-in-out text-sm sm:text-base inline-block text-center"
           >
             {t("cta")}

@@ -77,12 +77,20 @@ export default function TestimonialsSection() {
               ))}
               <span className="font-sans text-sm font-bold text-white ml-0.5">5.0</span>
             </div>
-            <p
-              className="font-serif text-lg md:text-xl text-white"
-              style={{ fontFamily: "var(--font-playfair), serif" }}
-            >
-              N.º 1 de 62 hostales en Viñales
-            </p>
+            <div className="flex flex-col items-center gap-0.5">
+              <p
+                className="font-serif text-base md:text-lg text-white leading-tight"
+                style={{ fontFamily: "var(--font-playfair), serif" }}
+              >
+                N.º 1 de 62 hostales en Viñales
+              </p>
+              <p
+                className="font-serif text-base md:text-lg text-white leading-tight"
+                style={{ fontFamily: "var(--font-playfair), serif" }}
+              >
+                N.º 2 de 418 hostales en Cuba
+              </p>
+            </div>
             <p className="font-sans text-xs text-white/50">
               (285 opiniones)
             </p>
