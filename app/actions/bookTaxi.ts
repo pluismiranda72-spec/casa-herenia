@@ -6,6 +6,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { Resend } from "resend";
 import { stripe } from "@/lib/stripe";
+import { GLOBAL_CURRENCY } from "@/lib/constants/currency";
 
 const PRICE_COLECTIVO = 25;
 const PRICE_PRIVADO_PER_VEHICLE = 120;
@@ -54,6 +55,7 @@ export async function bookTaxi(
     pickup_date: formData.get("pickup_date"),
     service_type: formData.get("service_type"),
     passengers_count: Number(formData.get("passengers_count")),
+    locale: formData.get("locale"),
   };
 
   const parsed = taxiSchema.safeParse(raw);
@@ -99,7 +101,7 @@ export async function bookTaxi(
       "Tipo: " + serviceLabel,
       "Nº personas: " + data.passengers_count,
       "Vehículos necesarios: " + vehiclesNeeded,
-      "Precio estimado: " + totalPrice + " EUR/USD",
+      "Precio estimado: " + totalPrice + " EUR",
     ].join("\n");
 
     const { error: emailError } = await resend.emails.send({
@@ -145,13 +147,14 @@ export async function bookTaxi(
     const productName = `Transporte: ${serviceLabel} (${data.passengers_count} pax${vehiclesSuffix})`;
     const amountCents = Math.round(totalPrice * 100);
 
+    // All payments in EUR only (GLOBAL_CURRENCY). No dynamic currency.
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
       line_items: [
         {
           quantity: 1,
           price_data: {
-            currency: "eur",
+            currency: GLOBAL_CURRENCY,
             unit_amount: amountCents,
             product_data: { name: productName },
           },
@@ -164,9 +167,10 @@ export async function bookTaxi(
         pickup_date: data.pickup_date,
         service_type: data.service_type,
         passengers_count: String(data.passengers_count),
+        locale: String(raw.locale === "en" ? "en" : "es"),
       },
-      success_url: `${origin}/es/gracias?type=taxi`,
-      cancel_url: origin,
+      success_url: `${origin}/${raw.locale === "en" ? "en" : "es"}/gracias?type=taxi`,
+      cancel_url: `${origin}/${raw.locale === "en" ? "en" : "es"}`,
     });
 
     if (session.url) redirect(session.url);

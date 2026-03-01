@@ -11,6 +11,7 @@ import { createBooking } from "@/app/actions/createBooking";
 import type { BlockedDatesByUnitYmd } from "@/lib/ical";
 import CancellationPolicyModal from "@/components/CancellationPolicyModal";
 import { isRedirectError } from "next/dist/client/components/redirect";
+import { CURRENCY_SYMBOL } from "@/lib/constants/currency";
 import "react-day-picker/style.css";
 
 function formatYmd(d: Date): string {
@@ -250,21 +251,21 @@ export default function ReservasPage() {
                   <div className="border-t border-white/20 pt-4">
                     <p className="font-sans text-sm text-gray-400">
                       {nightlyRate}
-                      {property.currency} {t("perNight", { nights })}
+                      {CURRENCY_SYMBOL} {t("perNight", { nights })}
                     </p>
                     {hasExtraGuestSupplement && pricing && property.extraPersonFee != null && (
                       <p className="font-sans text-sm text-gray-300 mt-1">
                         {t("extraSupplementLine", { fee: property.extraPersonFee })}
                         <span className="block text-xs text-gray-400 mt-0.5">
                           ({pricing.extraGuests} × {property.extraPersonFee}
-                          {property.currency}): +{pricing.nightlyExtraFee}
-                          {property.currency}/noche
+                          {CURRENCY_SYMBOL}): +{pricing.nightlyExtraFee}
+                          {CURRENCY_SYMBOL}/noche
                         </span>
                       </p>
                     )}
                     <p className="font-serif text-2xl text-[#C5A059] mt-1">
                       {t("total")}: {totalPrice}
-                      {property.currency}
+                      {CURRENCY_SYMBOL}
                     </p>
                   </div>
                   <div className="space-y-3 border-t border-white/20 pt-4">

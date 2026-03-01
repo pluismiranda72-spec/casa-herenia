@@ -3,8 +3,9 @@
 import { useState, useEffect, useRef } from "react";
 import { useFormState, useFormStatus } from "react-dom";
 import { X, CreditCard, Info } from "lucide-react";
-import { useTranslations } from "next-intl";
+import { useTranslations, useLocale } from "next-intl";
 import { bookTaxi } from "@/app/actions/bookTaxi";
+import { CURRENCY_CODE } from "@/lib/constants/currency";
 
 const PRICE_COLECTIVO = 25;
 const PRICE_PRIVADO_PER_VEHICLE = 120;
@@ -31,6 +32,7 @@ type TaxiBookingModalProps = {
 
 export default function TaxiBookingModal({ isOpen, onClose }: TaxiBookingModalProps) {
   const t = useTranslations("Taxi");
+  const locale = useLocale();
   const formRef = useRef<HTMLFormElement>(null);
   const bookingTypeRef = useRef<HTMLInputElement>(null);
   const [state, formAction] = useFormState(bookTaxi, null);
@@ -163,6 +165,7 @@ export default function TaxiBookingModal({ isOpen, onClose }: TaxiBookingModalPr
                 ref={bookingTypeRef}
                 defaultValue="solicitud"
               />
+              <input type="hidden" name="locale" value={locale} />
               <label className="block">
                 <span className="font-sans text-sm text-[#C5A059] mb-1 block">{t("nameLabel")}</span>
                 <input
@@ -272,7 +275,7 @@ export default function TaxiBookingModal({ isOpen, onClose }: TaxiBookingModalPr
 
               <div className="rounded-lg bg-white/5 border border-[#C5A059]/30 px-4 py-3">
                 <p className="font-sans text-sm text-white/70">{t("totalLabel")}</p>
-                <p className="font-serif text-2xl text-[#C5A059]">{totalPrice} EUR o USD</p>
+                <p className="font-serif text-2xl text-[#C5A059]">{totalPrice} {CURRENCY_CODE}</p>
               </div>
 
               {showMultiTaxiInfo && (

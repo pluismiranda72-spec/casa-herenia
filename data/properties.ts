@@ -4,6 +4,7 @@ export interface Property {
   name: string;
   description: string;
   pricePerNight: number;
+  /** Display symbol; platform is EUR-only. See lib/constants/currency. */
   currency: string;
   image: string;
   /** URLs para la galería de detalles del modal (10 imágenes). */
@@ -17,6 +18,8 @@ export interface Property {
   extraPersonFee?: number;
 }
 
+import { CURRENCY_SYMBOL } from "@/lib/constants/currency";
+
 export const PROPERTIES: Property[] = [
   {
     id: "room-1",
@@ -25,7 +28,7 @@ export const PROPERTIES: Property[] = [
     description:
       "Ambiente exclusivo y acogedor. Atención bilingüe, Baño en suite, A/C, 2 camas dobles y minibar con agua de cortesía.",
     pricePerNight: 55,
-    currency: "€",
+    currency: CURRENCY_SYMBOL,
     image: "/room-1.jpg",
     galleryImages: [
       "/room-1.jpg",
@@ -51,7 +54,7 @@ export const PROPERTIES: Property[] = [
     description:
       "Ambiente exclusivo y acogedor. Atención bilingüe, Baño en suite, A/C, 2 camas dobles y minibar con agua de cortesía.",
     pricePerNight: 55,
-    currency: "€",
+    currency: CURRENCY_SYMBOL,
     image: "/room-2.jpg",
     galleryImages: [
       "/room-2.jpg",
@@ -77,7 +80,7 @@ export const PROPERTIES: Property[] = [
     description:
       "Privacidad total. Ambiente íntimo, tranquilo y exclusivo, con check-in flexible y guía local.",
     pricePerNight: 120,
-    currency: "€",
+    currency: CURRENCY_SYMBOL,
     image: "/doble-estancia.png",
     galleryImages: [
       "/doble-estancia.png",

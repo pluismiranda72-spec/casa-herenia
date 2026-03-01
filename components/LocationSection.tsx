@@ -33,7 +33,7 @@ export default function LocationSection() {
             </div>
             <span className="font-sans font-semibold text-[#0A0A0A]">{t("transportTitle")}</span>
           </div>
-          <ul className="space-y-2 font-sans text-sm text-gray-700">
+          <ul className="space-y-2 font-sans text-sm text-gray-700 break-words min-w-0">
             <li><strong className="text-[#0A0A0A]">{t("taxiPrivate")}</strong></li>
             <li><strong className="text-[#0A0A0A]">{t("taxiColectivo")}</strong></li>
           </ul>

@@ -19,7 +19,7 @@ export default function Footer() {
             >
               {t("brandName")}
             </Link>
-            <p className="mt-3 font-sans text-sm text-white/60 max-w-xs">
+            <p className="mt-3 font-sans text-sm text-white/60 max-w-xs break-words">
               {t("tagline")}
             </p>
             <Link
@@ -34,7 +34,7 @@ export default function Footer() {
             <h3 className="font-sans font-semibold text-white text-sm uppercase tracking-widest mb-4">
               {t("quickLinks")}
             </h3>
-            <nav className="flex flex-col gap-3" aria-label="Enlaces del sitio">
+            <nav className="flex flex-col gap-3" aria-label={t("navAria")}>
               <Link
                 href={`/${locale}`}
                 className="font-sans text-sm text-white/80 hover:text-[#C5A059] transition-colors"
@@ -63,7 +63,7 @@ export default function Footer() {
             <p className="font-sans text-sm text-white/70 mb-4">
               {t("questions")}
             </p>
-            <div className="flex flex-col gap-3">
+            <div className="flex flex-col gap-3 mb-6">
               <a
                 href="mailto:pluismiranda72@gmail.com"
                 className="inline-flex items-center gap-2 font-sans text-sm text-white/80 hover:text-[#C5A059] transition-colors"
@@ -80,6 +80,12 @@ export default function Footer() {
                 <MessageCircle className="w-4 h-4 shrink-0" aria-hidden />
                 +34 624 070 468
               </a>
+              <Link
+                href={`/${locale}/contacto`}
+                className="font-sans text-sm text-[#C5A059] hover:underline"
+              >
+                {t("contactFormLink")} →
+              </Link>
             </div>
           </div>
         </div>

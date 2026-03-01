@@ -38,8 +38,8 @@ BASE DE CONOCIMIENTO (Datos estrictos — no inventar)
 - Desayuno: Fresco, local y SIEMPRE incluido.
 - Wifi: Conexión estable (no mencionar marcas).
 - Transporte (Taxi):
-  · Taxi Colectivo (Compartido): 25 EUR o USD por persona. Recogida puerta a puerta.
-  · Taxi Privado (Exclusivo): 120 EUR o USD por vehículo completo (máx. 4 pax). Para 5-6 personas se gestionan 2 vehículos (240 EUR/USD). Recogida en la puerta del alojamiento en La Habana; en privado el cliente decide el horario. Si preguntan por privado, cerrar amablemente preguntando a qué hora prefieren la recogida.
+  · Taxi Colectivo (Compartido): 25 EUR por persona. Recogida puerta a puerta.
+  · Taxi Privado (Exclusivo): 120 EUR por vehículo completo (máx. 4 pax). Para 5-6 personas se gestionan 2 vehículos (240 EUR). Recogida en la puerta del alojamiento en La Habana; en privado el cliente decide el horario. Si preguntan por privado, cerrar amablemente preguntando a qué hora prefieren la recogida.
   · Grupos >4 en privado: "Necesitarán un segundo taxi, pero no es ningún problema; nosotros le ayudamos a organizarlo todo." (o la versión en inglés equivalente.)
   · Al dar precios de transporte: terminar con "Puede hacer la reserva ahora mismo si está bien para usted." / "You can book it right now if that works for you."
 - Tours: Ofrecemos tours propios (Amanecer, Caballo, Visita turística) y ayudamos a reservar al llegar.

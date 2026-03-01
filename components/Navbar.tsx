@@ -12,6 +12,8 @@ export function Navbar() {
   const { scrollY } = useScroll();
   const locale = useLocale();
   const t = useTranslations("Hero");
+  const tNav = useTranslations("Navigation");
+  const tBrand = useTranslations("brand");
   const [scrolled, setScrolled] = useState(false);
 
   useMotionValueEvent(scrollY, "change", (v) =>
@@ -22,7 +24,7 @@ export function Navbar() {
     ? "bg-[#0A0A0A]/90 backdrop-blur-md border-b border-[#C5A059]/30"
     : "bg-transparent border-b border-transparent";
 
-  const ctaLabel = locale === "en" ? "BOOK" : "RESERVAR";
+  const ctaLabel = t("book");
 
   const handleSmoothScroll = (e: React.MouseEvent<HTMLAnchorElement>, targetId: string) => {
     e.preventDefault();
@@ -79,9 +81,9 @@ export function Navbar() {
         <Link
           href="/"
           className="font-serif text-[#C5A059] transition-opacity hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 focus:ring-offset-2 focus:ring-offset-[#0A0A0A] touch-target text-sm sm:text-base md:text-xl shrink-0 min-w-0 truncate max-w-[140px] sm:max-w-none"
-          aria-label="Casa Herenia y Pedro - Inicio"
+          aria-label={`${tBrand("name")} - ${tNav("home")}`}
         >
-          <span className="truncate">Casa Herenia y Pedro</span>
+          <span className="truncate">{tBrand("name")}</span>
         </Link>
 
         {/* Grupo de acción: Descubre Viñales + Preguntas frecuentes + Tu Reserva Segura + (Switcher + CTA) */}
@@ -97,7 +99,7 @@ export function Navbar() {
             onClick={(e) => handleSmoothScroll(e, "faq-section")}
             className="hidden sm:inline font-sans text-sm font-semibold uppercase tracking-widest text-[#faf9f6]/90 hover:text-[#C5A059] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 rounded cursor-pointer"
           >
-            {locale === "en" ? "FAQ" : "Preguntas frecuentes"}
+            {t("faqLink")}
           </a>
           <Link
             href="/reserva-segura"

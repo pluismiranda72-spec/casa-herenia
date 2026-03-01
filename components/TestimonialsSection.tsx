@@ -69,30 +69,30 @@ export default function TestimonialsSection() {
         <div className="flex justify-center my-8">
           <div className="w-full max-w-md border border-[#C5A059]/30 bg-white/5 rounded-lg py-4 px-8 flex flex-col items-center justify-center text-center gap-2">
             <p className="font-sans text-[10px] font-bold uppercase tracking-[0.2em] text-[#C5A059]/70">
-              TRIPADVISOR
+              {t("tripadvisorLabel")}
             </p>
             <div className="flex items-center justify-center gap-2" aria-hidden>
               {Array.from({ length: 5 }).map((_, i) => (
                 <Star key={i} className="w-4 h-4 text-[#C5A059] fill-[#C5A059] shrink-0" aria-hidden />
               ))}
-              <span className="font-sans text-sm font-bold text-white ml-0.5">5.0</span>
+              <span className="font-sans text-sm font-bold text-white ml-0.5">{t("rating")}</span>
             </div>
             <div className="flex flex-col items-center gap-0.5">
               <p
                 className="font-serif text-base md:text-lg text-white leading-tight"
                 style={{ fontFamily: "var(--font-playfair), serif" }}
               >
-                N.º 1 de 62 hostales en Viñales
+                {t("rankingVinales")}
               </p>
               <p
                 className="font-serif text-base md:text-lg text-white leading-tight"
                 style={{ fontFamily: "var(--font-playfair), serif" }}
               >
-                N.º 2 de 418 hostales en Cuba
+                {t("rankingCuba")}
               </p>
             </div>
             <p className="font-sans text-xs text-white/50">
-              (285 opiniones)
+              {t("reviewsCount")}
             </p>
           </div>
         </div>

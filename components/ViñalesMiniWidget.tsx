@@ -3,7 +3,7 @@
 import { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
-import { useLocale } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { createClient } from "@/lib/supabase/client";
 import { ChevronLeft, ChevronRight, Play } from "lucide-react";
 import { optimizeCloudinaryUrl } from "@/utils/cloudinary";
@@ -32,9 +32,13 @@ function displayTitle(title: string, titleEn: string | null, locale: string): st
 function CardImage({
   post,
   isInstagram,
+  ariaPrev,
+  ariaNext,
 }: {
   post: Post;
   isInstagram: boolean;
+  ariaPrev: string;
+  ariaNext: string;
 }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const urls = (post.gallery_urls && post.gallery_urls.length > 1)
@@ -82,7 +86,7 @@ function CardImage({
                   e.stopPropagation();
                   go(-1);
                 }}
-                aria-label="Foto anterior"
+                aria-label={ariaPrev}
                 className="absolute left-1 top-1/2 -translate-y-1/2 z-10 w-6 h-6 rounded-full bg-black/20 text-white flex items-center justify-center hover:bg-black/50 transition-colors"
               >
                 <ChevronLeft className="w-3.5 h-3.5" />
@@ -94,7 +98,7 @@ function CardImage({
                   e.stopPropagation();
                   go(1);
                 }}
-                aria-label="Foto siguiente"
+                aria-label={ariaNext}
                 className="absolute right-1 top-1/2 -translate-y-1/2 z-10 w-6 h-6 rounded-full bg-black/20 text-white flex items-center justify-center hover:bg-black/50 transition-colors"
               >
                 <ChevronRight className="w-3.5 h-3.5" />
@@ -123,6 +127,7 @@ function CardImage({
 
 export default function ViñalesMiniWidget() {
   const locale = useLocale();
+  const t = useTranslations("Valley");
   const [posts, setPosts] = useState<Post[]>([]);
   const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -149,25 +154,25 @@ export default function ViñalesMiniWidget() {
     (
     <section
       className="w-full bg-[#0A0A0A]/95 border-t border-[#C5A059]/20 py-8 px-4"
-      aria-label="Descubre Viñales"
+      aria-label={t("sectionAria")}
     >
       <div className="container mx-auto">
         <div className="flex items-center justify-between gap-4 mb-6">
           <h2 className="font-serif text-xl md:text-2xl text-white">
-            Historias del Valle
+            {t("valleyStories")}
           </h2>
           <div className="flex flex-row items-baseline gap-6 sm:gap-10">
             <Link
               href="/descubre"
               className="shrink-0 border border-[#C5A059] text-[#C5A059] font-sans text-xs uppercase tracking-widest px-4 py-2.5 hover:bg-[#C5A059] hover:text-[#0A0A0A] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50"
             >
-              DESCUBRE VIÑALES
+              {t("discoverCta")}
             </Link>
             <a
               href="#faq-section"
               className="shrink-0 font-sans text-xs uppercase tracking-widest text-[#C5A059] hover:text-amber-600 transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50"
             >
-              Preguntas frecuentes
+              {t("faqLink")}
             </a>
           </div>
         </div>
@@ -178,7 +183,7 @@ export default function ViñalesMiniWidget() {
               <button
                 type="button"
                 onClick={() => scroll("left")}
-                aria-label="Anterior"
+                aria-label={t("prev")}
                 className="absolute left-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-black/50 hover:bg-[#C5A059] text-white flex items-center justify-center transition-colors -left-4 md:-left-2"
               >
                 <ChevronLeft className="w-5 h-5" />
@@ -186,7 +191,7 @@ export default function ViñalesMiniWidget() {
               <button
                 type="button"
                 onClick={() => scroll("right")}
-                aria-label="Siguiente"
+                aria-label={t("next")}
                 className="absolute right-0 top-1/2 -translate-y-1/2 z-10 w-8 h-8 rounded-full bg-black/50 hover:bg-[#C5A059] text-white flex items-center justify-center transition-colors -right-4 md:-right-2"
               >
                 <ChevronRight className="w-5 h-5" />
@@ -203,7 +208,7 @@ export default function ViñalesMiniWidget() {
                 const isInstagram = post.type === "instagram" && post.instagram_url;
                 const cardContent = (
                   <>
-                    <CardImage post={post} isInstagram={!!isInstagram} />
+                    <CardImage post={post} isInstagram={!!isInstagram} ariaPrev={t("ariaPrev")} ariaNext={t("ariaNext")} />
                     <p
                       className="mt-3 font-serif text-sm text-gray-200 text-center line-clamp-2"
                       style={{ fontFamily: "var(--font-playfair), 'Playfair Display', serif" }}
@@ -238,10 +243,10 @@ export default function ViñalesMiniWidget() {
             ) : (
               <div className="min-w-[240px] max-w-[240px] flex flex-col shrink-0">
                 <div className="w-full aspect-[4/3] rounded-md bg-[#1a1a1a] flex items-center justify-center text-[#C5A059]/60 font-serif text-sm px-4 text-center">
-                  Próximamente nuevas historias
+                  {t("comingSoonStories")}
                 </div>
                 <p className="mt-3 font-serif text-sm text-gray-400 text-center">
-                  Próximamente
+                  {t("comingSoon")}
                 </p>
               </div>
             )}

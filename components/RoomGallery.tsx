@@ -8,6 +8,7 @@ import { PROPERTIES } from "@/data/properties";
 import type { Property } from "@/data/properties";
 import RoomDetailsModal from "@/components/RoomDetailsModal";
 import { optimizeCloudinaryUrl } from "@/utils/cloudinary";
+import { CURRENCY_SYMBOL } from "@/lib/constants/currency";
 
 export default function RoomGallery() {
   const t = useTranslations("Rooms");
@@ -59,7 +60,7 @@ export default function RoomGallery() {
                         {name}
                       </h3>
                       <p className="mt-1 font-sans font-semibold text-gray-200">
-                        {property.pricePerNight}{property.currency}{t("perNight")}
+                        {property.pricePerNight}{CURRENCY_SYMBOL}{t("perNight")}
                       </p>
                       <p className="mt-2 font-sans text-sm text-gray-200">
                         {desc}

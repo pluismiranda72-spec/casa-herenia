@@ -1,10 +1,20 @@
 {
-  "Navigation": {
-    "home": "Home",
-    "rooms": "Stays",
-    "blog": "Journal",
-    "book": "RESERVE"
+  "brand": { "name": "Casa Herenia y Pedro" },
+  "common": { "loading": "Loading...", "error": "An error occurred", "bookingError": "Error processing the booking." },
+  "Contact": {
+    "title": "Contact Us",
+    "name": "Full Name",
+    "email": "Email Address",
+    "message": "Your Message",
+    "placeholder_name": "Your name...",
+    "placeholder_email": "your@email.com",
+    "placeholder_message": "How can we help you?",
+    "button_send": "Send Message",
+    "success": "Message sent! We will get back to you soon.",
+    "error": "Error sending. Please try again.",
+    "pageDescription": "Get in touch with Casa Herenia y Pedro. We will get back to you soon."
   },
+  "Navigation": { "home": "Home", "rooms": "Stays", "blog": "Journal", "book": "RESERVE" },
   "Awards": { "title": "Our Awards" },
   "Hero": {
     "title": "Welcome to",
@@ -13,56 +23,123 @@
     "description": "Wake up among mogotes and plantations. The Viñales Valley at your feet in an exclusive stay, where luxury means feeling at home from the very first coffee.",
     "historyLink": "Our History",
     "cta": "BOOK NOW",
+    "book": "BOOK",
+    "faqLink": "FAQ",
     "discoverCta": "DISCOVER VIÑALES",
     "safeBookingCta": "YOUR 100% SECURE BOOKING"
   },
   "Rooms": {
     "title": "Our Stays",
+    "perNight": " / night",
+    "viewDetails": "View Details",
     "detailsBtn": "View Details",
     "closeBtn": "CLOSE",
-    "suite1": {
-      "title": "JUNIOR SUITE I",
-      "price": "55€ / night",
-      "desc": "Exclusive and cozy atmosphere. Bilingual service, En-suite bathroom, A/C, 2 double beds, and complimentary minibar."
-    },
-    "suite2": {
-      "title": "JUNIOR SUITE II",
-      "price": "55€ / night",
-      "desc": "Exclusive and cozy atmosphere. Bilingual service, En-suite bathroom, A/C, 2 double beds, and complimentary minibar."
-    },
-    "villa": {
-      "title": "TWO-BEDROOM SUITE",
-      "price": "120€ / night",
-      "desc": "Total privacy. An intimate, quiet, and exclusive environment with flexible check-in and local guide."
-    }
+    "room_1": { "name": "JUNIOR SUITE I", "desc": "Exclusive and cozy atmosphere. Bilingual service, En-suite bathroom, A/C, 2 double beds, and complimentary minibar." },
+    "room_2": { "name": "JUNIOR SUITE II", "desc": "Exclusive and cozy atmosphere. Bilingual service, En-suite bathroom, A/C, 2 double beds, and complimentary minibar." },
+    "full_villa": { "name": "TWO-BEDROOM SUITE", "desc": "Total privacy. An intimate, quiet, and exclusive environment with flexible check-in and local guide." },
+    "suite1": { "title": "JUNIOR SUITE I", "price": "55€ / night", "desc": "Exclusive and cozy atmosphere. Bilingual service, En-suite bathroom, A/C, 2 double beds, and complimentary minibar." },
+    "suite2": { "title": "JUNIOR SUITE II", "price": "55€ / night", "desc": "Exclusive and cozy atmosphere. Bilingual service, En-suite bathroom, A/C, 2 double beds, and complimentary minibar." },
+    "villa": { "title": "TWO-BEDROOM SUITE", "price": "120€ / night", "desc": "Total privacy. An intimate, quiet, and exclusive environment with flexible check-in and local guide." }
   },
-  "Benefits": {
-    "title": "Exclusive Amenities",
-    "power": "24H Backup Power",
-    "ac": "Air Conditioning",
-    "wifi": "Stable Wi-Fi",
-    "breakfast": "Exquisite Breakfast",
-    "streaming": "TV with Streaming Access"
+  "Benefits": { "title": "Exclusive Amenities", "power": "24H Backup Power", "ac": "Air Conditioning", "wifi": "Stable Wi-Fi", "breakfast": "Exquisite Breakfast", "streaming": "TV with Streaming Access" },
+  "Testimonials": {
+    "title": "What our guests say",
+    "verifiedStay": "Verified Stay",
+    "t1": { "quote": "I found a peace I didn't know I needed. The service was impeccable and every detail was designed to make us feel at home. We will definitely return.", "author": "Sophie Laurent" },
+    "t2": { "quote": "The combination of nature and comfort is unique. Sleeping to the sound of the forest and breakfast with those views… An experience that reconnected us as a family.", "author": "Marco Benedetti" },
+    "t3": { "quote": "Exquisite treatment and a place that radiates calm from the first moment. The team took care of every small detail. I recommend Casa Herenia y Pedro with all my heart.", "author": "Elena Kowalski" },
+    "ctaOpinions": "VIEW HOUSE REVIEWS",
+    "ctaTripAdvisor": "READ ON TRIPADVISOR",
+    "tripadvisorLabel": "TRIPADVISOR",
+    "rating": "5.0",
+    "rankingVinales": "No. 1 of 62 B&Bs in Viñales",
+    "rankingCuba": "No. 2 of 418 B&Bs in Cuba",
+    "reviewsCount": "(285 reviews)"
   },
-  "Reviews": {
-    "title": "Guest Reviews",
-    "tripadvisorBtn": "READ ON TRIPADVISOR",
-    "internalBtn": "VIEW ALL REVIEWS"
-  },
-  "Blog": {
-    "title": "Valley Stories",
-    "cta": "DISCOVER VIÑALES"
-  },
+  "Reviews": { "title": "Guest Reviews", "tripadvisorBtn": "READ ON TRIPADVISOR", "internalBtn": "VIEW ALL REVIEWS" },
+  "Blog": { "title": "Valley Stories", "cta": "DISCOVER VIÑALES" },
   "Location": {
     "title": "Worry-Free Arrival",
     "subtitle": "We pick you up at the door of your accommodation and take you to our home.",
+    "transportTitle": "Transport Options",
+    "taxiPrivate": "Private Taxi: 120 EUR per vehicle (max. 4 pax). For groups of 5-6 people, 2 vehicles will be arranged.",
+    "taxiColectivo": "Shared Taxi: 25 EUR per person",
+    "reserveTrip": "Book Transport",
     "private": "Private Taxi",
     "collective": "Collective Taxi",
     "perPerson": "per person",
     "bookBtn": "Book Transfer"
   },
   "Footer": {
-    "contact": "Questions? Write to us anytime.",
-    "rights": "All rights reserved."
+    "brandName": "Casa Herenia y Pedro",
+    "tagline": "A unique experience in the heart of nature.",
+    "ourStory": "Our Story",
+    "quickLinks": "Quick links",
+    "home": "Home",
+    "rooms": "Stays",
+    "book": "Reserve",
+    "contact": "Contact",
+    "contactFormLink": "Contact form",
+    "questions": "Questions? Write to us anytime.",
+    "legal": "Legal notice",
+    "privacy": "Privacy",
+    "rights": "All rights reserved.",
+    "navAria": "Site links"
+  },
+  "FAQ": {
+    "title": "Frequently Asked Questions",
+    "q1": { "question": "How does payment work and do I need to carry a lot of cash?", "answer": "When you book online with us, you pay for your stay 100% securely via a European payment gateway. You will only need cash for minor local expenses. Forget the stress of travelling with large amounts of money." },
+    "q2": { "question": "Will I have internet connection at the house?", "answer": "Yes. We know how important it is to stay connected. We have a stable WiFi network and 24H backup power so you can communicate with your family or work without relying on public networks." },
+    "q3": { "question": "How do I get to Viñales from Havana or elsewhere in the country?", "answer": "We take care of everything. We arrange secure transfers; from Havana by private taxi (120€) for four people or collective (25€) per person, right to our door." }
+  },
+  "Valley": {
+    "valleyStories": "Valley Stories",
+    "discoverCta": "DISCOVER VIÑALES",
+    "faqLink": "FAQ",
+    "comingSoonStories": "New stories coming soon",
+    "comingSoon": "Coming soon",
+    "ariaPrev": "Previous photo",
+    "ariaNext": "Next photo",
+    "prev": "Previous",
+    "next": "Next",
+    "sectionAria": "Discover Viñales"
+  },
+  "Gracias": {
+    "title": "Booking Confirmed!",
+    "body": "Dear {name}: Your booking at our home is confirmed for {checkin} to {checkout}. Thank you for choosing us; it is a real pleasure. We will be in touch soon to finalise details and help with anything you need. Kind regards, Pedro and Herenia.",
+    "backHome": "Back to Home",
+    "defaultName": "guest",
+    "defaultCheckin": "[check-in date]",
+    "defaultCheckout": "[check-out date]"
+  },
+  "Taxi": {
+    "title": "Book Your Transfer",
+    "close": "Close",
+    "nameLabel": "Full Name",
+    "namePlaceholder": "Enter your full name",
+    "whatsappLabel": "WhatsApp Number (with country code)",
+    "whatsappPlaceholder": "+34 612 345 678",
+    "addressLabel": "Pickup address (Havana)",
+    "addressPlaceholder": "Pickup Address or Hotel",
+    "dateLabel": "Date of Travel",
+    "serviceTypeLabel": "Service Type",
+    "colectivo": "Shared Taxi",
+    "privado": "Private Taxi",
+    "colectivoPrice": "25 EUR per person",
+    "privadoPrice": "120 EUR per vehicle (max. 6 pax)",
+    "passengersLabel": "Number of Passengers",
+    "passengersHintPrivado": "Up to 6 passengers.",
+    "passengersHintColectivo": "Price is calculated per person. Up to 8 passengers.",
+    "totalLabel": "Total Price",
+    "confirmPayment": "Confirm Payment",
+    "submit": "Request Transfer",
+    "sending": "Sending…",
+    "successSent": "Request received. We will contact you.",
+    "successContact": "We will get in touch via WhatsApp to confirm.",
+    "closeBtn": "Close",
+    "redirecting": "Redirecting to payment…",
+    "redirectHint": "If you are not redirected in a few seconds, close this window and try again.",
+    "fillAllFields": "Please fill in all required fields before proceeding to payment.",
+    "multiTaxiInfo": "For more than 4 passengers, the booking automatically includes 2 private taxis for your comfort."
   }
 }
