@@ -17,13 +17,14 @@ export default function RoomGallery() {
   return (
     <section
       id="estancias"
-      className="w-full py-12 md:py-24 px-4 md:px-6 bg-brand-white"
+      className="w-full !bg-gray-100 py-16"
+      style={{ backgroundColor: "#f3f4f6" }}
       aria-labelledby="room-gallery-heading"
     >
-      <div className="container mx-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2
           id="room-gallery-heading"
-          className="font-serif text-2xl sm:text-3xl md:text-4xl text-brand-black text-center mb-8 md:mb-12"
+          className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 tracking-tight text-center mb-8 md:mb-12"
         >
           {t("title")}
         </h2>
@@ -35,7 +36,7 @@ export default function RoomGallery() {
             return (
               <motion.article
                 key={property.id}
-                className="group relative overflow-hidden rounded-xl shadow-lg"
+                className="group relative overflow-hidden rounded-xl bg-white shadow-sm"
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-40px" }}

@@ -44,16 +44,16 @@ export default function AwardsSection() {
 
   return (
     <section
-      className="w-full py-16 md:py-20 px-4 md:px-6 bg-[#F9F9F9] relative group/aw"
+      className="w-full !bg-gray-100 py-16"
+      style={{ backgroundColor: "#f3f4f6" }}
       aria-labelledby="awards-heading"
     >
-      <div className="container mx-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative group/aw">
         <h2
           id="awards-heading"
-          className="font-serif text-black uppercase tracking-widest text-sm text-center mb-12"
-          style={{ fontFamily: "var(--font-playfair), serif" }}
+          className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 tracking-tight text-center mb-8 md:mb-12"
         >
-          NUESTROS PREMIOS
+          Nuestros Premios
         </h2>
 
         {awards.length === 0 ? (
@@ -80,7 +80,7 @@ export default function AwardsSection() {
                 key={award.id}
                 className="flex-shrink-0 w-1/2 sm:w-1/3 md:w-[calc((100%-1.5rem*4)/5)] flex flex-col items-center justify-center min-w-0"
               >
-                <div className="relative w-full h-32 md:h-40">
+                <div className="relative w-full h-32 md:h-40 bg-white rounded-lg shadow-sm overflow-hidden">
                   <Image
                     src={optimizeCloudinaryUrl(award.image_url)}
                     alt={`Premio ${award.position}`}

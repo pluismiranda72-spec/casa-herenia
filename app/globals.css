@@ -17,6 +17,8 @@ body {
   @apply bg-brand-white text-brand-black font-sans antialiased;
 }
 
+/* Let section backgrounds with !bg-gray-100 override body; they use !important in Tailwind */
+
 /* Área táctil mínima 44px para accesibilidad */
 @layer utilities {
   .touch-target {

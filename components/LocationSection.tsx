@@ -12,13 +12,15 @@ export default function LocationSection() {
   return (
     <section
       id="ubicacion"
-      className="w-full bg-gray-50 py-12 md:py-20 px-4 md:px-6"
+      className="w-full !bg-gray-100 py-16"
+      style={{ backgroundColor: "#f3f4f6" }}
       aria-labelledby="location-heading"
     >
-      <div className="container mx-auto max-w-2xl text-center">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div className="max-w-2xl mx-auto text-center">
         <h2
           id="location-heading"
-          className="font-serif text-2xl sm:text-3xl md:text-4xl text-[#0A0A0A] mb-4"
+          className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 tracking-tight text-center mb-8 md:mb-12"
         >
           {t("title")}
         </h2>
@@ -46,6 +48,7 @@ export default function LocationSection() {
         >
           {t("reserveTrip")}
         </button>
+      </div>
       </div>
 
       <TaxiBookingModal

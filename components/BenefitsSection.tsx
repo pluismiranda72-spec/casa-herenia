@@ -16,13 +16,14 @@ export default function BenefitsSection() {
 
   return (
     <section
-      className="w-full py-12 md:py-24 px-4 md:px-6 bg-white"
+      className="w-full !bg-gray-100 py-16"
+      style={{ backgroundColor: "#f3f4f6" }}
       aria-labelledby="benefits-heading"
     >
-      <div className="container mx-auto">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2
           id="benefits-heading"
-          className="font-serif text-2xl sm:text-3xl md:text-4xl text-brand-black text-center mb-8 md:mb-16"
+          className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 tracking-tight text-center mb-8 md:mb-12"
         >
           {t("title")}
         </h2>
@@ -35,7 +36,7 @@ export default function BenefitsSection() {
                 key={item.id}
                 className="flex flex-col items-center text-center min-w-0"
               >
-                <div className="rounded-full bg-gray-50 p-3 md:p-4 flex items-center justify-center mb-3 md:mb-4">
+                <div className="rounded-full bg-white shadow-sm p-3 md:p-4 flex items-center justify-center mb-3 md:mb-4">
                   <Icon
                     className="w-10 h-10 md:w-12 md:h-12 text-[#C5A059] shrink-0"
                     strokeWidth={1.5}
