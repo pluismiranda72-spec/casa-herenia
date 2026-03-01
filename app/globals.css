@@ -8,16 +8,16 @@ html {
 
 :root {
   --brand-black: #0a0a0a;
-  --brand-white: #f9f9f9;
+  --brand-white: #ffffff; /* Blanco puro para que el gris resalte */
+  --brand-light-gray: #f4f4f5; /* El gris elegante que buscamos */
   --brand-gold: #c5a059;
 }
 
 body {
   scroll-behavior: auto !important;
-  @apply bg-brand-white text-brand-black font-sans antialiased;
+  /* Ahora el fondo de la web es blanco de verdad */
+  @apply bg-[var(--brand-white)] text-brand-black font-sans antialiased;
 }
-
-/* Let section backgrounds with !bg-gray-100 override body; they use !important in Tailwind */
 
 /* Área táctil mínima 44px para accesibilidad */
 @layer utilities {
@@ -25,4 +25,3 @@ body {
     @apply min-h-[44px] min-w-[44px];
   }
 }
-

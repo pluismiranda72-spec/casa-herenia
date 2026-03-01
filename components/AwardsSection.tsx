@@ -44,8 +44,8 @@ export default function AwardsSection() {
 
   return (
     <section
-      className="w-full !bg-gray-100 py-16"
-      style={{ backgroundColor: "#f3f4f6" }}
+      className="w-full bg-[#f4f4f5] py-16"
+      style={{ backgroundColor: "#f4f4f5" }}
       aria-labelledby="awards-heading"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative group/aw">
