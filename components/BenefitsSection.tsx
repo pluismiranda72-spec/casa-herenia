@@ -30,7 +30,7 @@ export default function BenefitsSection() {
 
   return (
     <section
-      className="w-full bg-[#f4f4f5] py-16"
+      className="w-full bg-[#f4f4f5] pt-8 pb-16 md:py-16"
       style={{ backgroundColor: "#f4f4f5" }}
       aria-labelledby="benefits-heading"
     >
@@ -42,7 +42,7 @@ export default function BenefitsSection() {
           {t("title")}
         </h2>
 
-        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:flex md:flex-row md:flex-nowrap md:justify-around md:items-start md:gap-4 max-w-5xl mx-auto">
+        <div className="grid grid-cols-3 gap-x-2 gap-y-4 sm:grid-cols-3 md:flex md:flex-row md:flex-nowrap md:justify-around md:items-start md:gap-4 max-w-5xl mx-auto">
           {BENEFITS.map((item) => {
             const Icon = item.icon;
             return (
@@ -50,14 +50,14 @@ export default function BenefitsSection() {
                 key={item.id}
                 className="flex flex-col items-center text-center min-w-0"
               >
-                <div className="rounded-full bg-white shadow-sm p-2.5 md:p-2 flex items-center justify-center mb-3 md:mb-3">
+                <div className="rounded-full bg-white shadow-sm p-2 md:p-2 flex items-center justify-center mb-2 md:mb-3">
                   <Icon
-                    className="w-8 h-8 md:w-6 md:h-6 text-[#C5A059] shrink-0"
+                    className="w-5 h-5 md:w-6 md:h-6 text-[#C5A059] shrink-0"
                     strokeWidth={1.5}
                     aria-hidden
                   />
                 </div>
-                <h3 className="font-sans text-[11px] sm:text-xs md:text-sm font-medium text-gray-800">
+                <h3 className="font-sans text-[10px] leading-tight sm:text-xs md:text-sm font-medium text-gray-800">
                   {t(item.key)}
                 </h3>
               </div>
