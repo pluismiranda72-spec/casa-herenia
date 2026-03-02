@@ -7,6 +7,9 @@ import { useTranslations } from "next-intl";
 
 const TESTIMONIAL_KEYS = ["t1", "t2", "t3"] as const;
 
+const GOOGLE_MAPS_PLACE_URL =
+  "https://www.google.com/maps/place/?q=place_id:ChIJhWJgbm1Ry4gRLOA-sNgRKFo";
+
 function Stars({ count = 5 }: { count?: number }) {
   return (
     <div className="flex gap-0.5" aria-hidden>
@@ -59,7 +62,18 @@ export default function TestimonialsSection() {
                 &ldquo;{t(`${key}.quote`)}&rdquo;
               </blockquote>
               <cite className="mt-6 not-italic block font-sans text-sm font-bold uppercase tracking-widest text-[#C5A059]">
-                — {t(`${key}.author`)}
+                <span className="block">{t(`${key}.author`)}</span>
+                <span className="block mt-1 font-normal normal-case tracking-normal">
+                  {t("verifiedGuestPrefix")}
+                  <a
+                    href={GOOGLE_MAPS_PLACE_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-inherit no-underline hover:opacity-80 transition-opacity cursor-pointer"
+                  >
+                    {t("googleMapsLinkText")}
+                  </a>
+                </span>
               </cite>
             </motion.article>
           ))}
