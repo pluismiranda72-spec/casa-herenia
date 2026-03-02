@@ -1,6 +1,16 @@
 "use client";
 
-import { Zap, Snowflake, Wifi, Coffee, Tv } from "lucide-react";
+import {
+  Zap,
+  Snowflake,
+  Wifi,
+  Coffee,
+  Tv,
+  Droplets,
+  Shirt,
+  Cookie,
+  Languages,
+} from "lucide-react";
 import { useTranslations } from "next-intl";
 
 const BENEFITS = [
@@ -9,6 +19,10 @@ const BENEFITS = [
   { id: "wifi", icon: Wifi, key: "wifi" as const },
   { id: "breakfast", icon: Coffee, key: "breakfast" as const },
   { id: "streaming", icon: Tv, key: "streaming" as const },
+  { id: "water", icon: Droplets, key: "water" as const },
+  { id: "laundry", icon: Shirt, key: "laundry" as const },
+  { id: "snack", icon: Cookie, key: "snack" as const },
+  { id: "english", icon: Languages, key: "english" as const },
 ];
 
 export default function BenefitsSection() {
@@ -28,7 +42,7 @@ export default function BenefitsSection() {
           {t("title")}
         </h2>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-wrap md:justify-center gap-6 md:gap-10 max-w-5xl mx-auto">
+        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 md:flex md:flex-row md:flex-nowrap md:justify-around md:items-start md:gap-4 max-w-5xl mx-auto">
           {BENEFITS.map((item) => {
             const Icon = item.icon;
             return (
@@ -36,14 +50,14 @@ export default function BenefitsSection() {
                 key={item.id}
                 className="flex flex-col items-center text-center min-w-0"
               >
-                <div className="rounded-full bg-white shadow-sm p-3 md:p-4 flex items-center justify-center mb-3 md:mb-4">
+                <div className="rounded-full bg-white shadow-sm p-2.5 md:p-2 flex items-center justify-center mb-3 md:mb-3">
                   <Icon
-                    className="w-10 h-10 md:w-12 md:h-12 text-[#C5A059] shrink-0"
+                    className="w-8 h-8 md:w-6 md:h-6 text-[#C5A059] shrink-0"
                     strokeWidth={1.5}
                     aria-hidden
                   />
                 </div>
-                <h3 className="font-sans text-xs sm:text-sm md:text-base font-medium text-gray-800">
+                <h3 className="font-sans text-[11px] sm:text-xs md:text-sm font-medium text-gray-800">
                   {t(item.key)}
                 </h3>
               </div>

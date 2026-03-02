@@ -49,8 +49,12 @@
     "power": "Energía de Respaldo 24H",
     "ac": "Aire Acondicionado",
     "wifi": "Wifi Estable",
-    "breakfast": "Desayuno Exquisito",
-    "streaming": "TV con acceso a Streaming"
+    "breakfast": "Desayuno continental incluido",
+    "streaming": "TV con acceso a Streaming",
+    "water": "Agua embotellada de cortesía",
+    "laundry": "Lavandería incluida",
+    "snack": "Merienda de bienvenida",
+    "english": "Hablamos Inglés"
   },
   "Testimonials": {
     "title": "Lo que dicen nuestros huéspedes",

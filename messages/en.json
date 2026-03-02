@@ -41,7 +41,18 @@
     "suite2": { "title": "JUNIOR SUITE II", "price": "55€ / night", "desc": "Exclusive and cozy atmosphere. Bilingual service, En-suite bathroom, A/C, 2 double beds, and complimentary minibar." },
     "villa": { "title": "TWO-BEDROOM SUITE", "price": "120€ / night", "desc": "Total privacy. An intimate, quiet, and exclusive environment with flexible check-in and local guide." }
   },
-  "Benefits": { "title": "Exclusive Amenities", "power": "24H Backup Power", "ac": "Air Conditioning", "wifi": "Stable Wi-Fi", "breakfast": "Exquisite Breakfast", "streaming": "TV with Streaming Access" },
+  "Benefits": {
+    "title": "Exclusive Amenities",
+    "power": "24H Backup Power",
+    "ac": "Air Conditioning",
+    "wifi": "Stable Wi-Fi",
+    "breakfast": "Continental breakfast included",
+    "streaming": "TV with Streaming Access",
+    "water": "Complimentary bottled water",
+    "laundry": "Laundry included",
+    "snack": "Welcome snack",
+    "english": "We speak English"
+  },
   "Testimonials": {
     "title": "What our guests say",
     "verifiedStay": "Verified Stay",
@@ -103,6 +114,33 @@
     "prev": "Previous",
     "next": "Next",
     "sectionAria": "Discover Viñales"
+  },
+  "Calendar": {
+    "selectRoom": "Choose your stay",
+    "guests": "Guests",
+    "dates": "Dates",
+    "adult": "adult",
+    "adults": "adults",
+    "stay": "Stay",
+    "checkIn": "Check-in",
+    "checkOut": "Check-out",
+    "nights": "Nights",
+    "guestsCount": "Guests",
+    "total": "Total",
+    "extraSupplement": "Extra guest supplement",
+    "extraSupplementLine": "+ Extra guest supplement ({fee}€/person)",
+    "perNight": "× {nights} nights",
+    "name": "Name *",
+    "email": "Email *",
+    "phone": "Phone",
+    "optional": "Optional",
+    "yourName": "Your name",
+    "yourEmail": "you@example.com",
+    "chooseStayAndDates": "Choose a stay and dates.",
+    "confirmBooking": "Confirm booking",
+    "redirectingStripe": "Redirecting to Stripe…",
+    "reservationSummary": "Booking summary",
+    "reservasPageTitle": "Book Now"
   },
   "Gracias": {
     "title": "Booking Confirmed!",
