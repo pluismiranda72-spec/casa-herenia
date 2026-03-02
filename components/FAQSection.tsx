@@ -16,7 +16,7 @@ export default function FAQSection() {
   return (
     <section
       id="faq-section"
-      className="w-full bg-[#0A0A0A]/95 border-t border-[#C5A059]/20 py-16 px-4"
+      className="w-full bg-[#0A0A0A]/95 border-t border-[#C5A059]/20 pt-8 pb-0 md:pt-12 md:pb-0 px-4"
       aria-labelledby="faq-heading"
     >
       <div className="max-w-4xl mx-auto">

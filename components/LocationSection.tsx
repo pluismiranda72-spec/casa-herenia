@@ -12,7 +12,7 @@ export default function LocationSection() {
   return (
     <section
       id="ubicacion"
-      className="w-full bg-[#f4f4f5] py-16"
+      className="w-full bg-[#f4f4f5] pt-8 pb-0 md:pt-12 md:pb-0"
       style={{ backgroundColor: "#f4f4f5" }}
       aria-labelledby="location-heading"
     >

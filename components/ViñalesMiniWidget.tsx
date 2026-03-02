@@ -34,11 +34,13 @@ function CardImage({
   isInstagram,
   ariaPrev,
   ariaNext,
+  altText,
 }: {
   post: Post;
   isInstagram: boolean;
   ariaPrev: string;
   ariaNext: string;
+  altText: string;
 }) {
   const [currentSlide, setCurrentSlide] = useState(0);
   const urls = (post.gallery_urls && post.gallery_urls.length > 1)
@@ -69,10 +71,10 @@ function CardImage({
             >
               <Image
                 src={url}
-                alt=""
+                alt={altText}
                 fill
                 className="object-cover transition-transform duration-300 group-hover/card:scale-105"
-                sizes="240px"
+                sizes="(max-width: 480px) 240px, 240px"
                 unoptimized={url.startsWith("http")}
               />
             </div>
@@ -153,7 +155,7 @@ export default function ViñalesMiniWidget() {
   return (
     (
     <section
-      className="w-full bg-[#0A0A0A]/95 border-t border-[#C5A059]/20 py-8 px-4"
+      className="w-full bg-[#0A0A0A]/95 border-t border-[#C5A059]/20 pt-8 pb-0 md:pt-12 md:pb-0 px-4"
       aria-label={t("sectionAria")}
     >
       <div className="container mx-auto">
@@ -208,7 +210,7 @@ export default function ViñalesMiniWidget() {
                 const isInstagram = post.type === "instagram" && post.instagram_url;
                 const cardContent = (
                   <>
-                    <CardImage post={post} isInstagram={!!isInstagram} ariaPrev={t("ariaPrev")} ariaNext={t("ariaNext")} />
+                    <CardImage post={post} isInstagram={!!isInstagram} ariaPrev={t("ariaPrev")} ariaNext={t("ariaNext")} altText={displayTitle(post.title, post.title_en, locale)} />
                     <p
                       className="mt-3 font-serif text-sm text-gray-200 text-center line-clamp-2"
                       style={{ fontFamily: "var(--font-playfair), 'Playfair Display', serif" }}

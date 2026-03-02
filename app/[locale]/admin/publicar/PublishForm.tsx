@@ -361,7 +361,7 @@ export default function PublishForm() {
                   key={i}
                   className="w-20 h-20 rounded-lg overflow-hidden border border-white/20 shrink-0"
                 >
-                  <img src={src} alt="" className="w-full h-full object-cover" />
+                  <img src={src} alt="" className="w-full h-full object-cover" loading="lazy" decoding="async" />
                 </div>
               ))}
             </div>
@@ -374,9 +374,9 @@ export default function PublishForm() {
         {showSinglePreview && (
           <div className="mt-4 relative">
             {mediaType === "image" ? (
-              <img src={preview} alt="Vista previa" className="max-h-64 rounded-lg object-cover mx-auto" />
+              <img src={preview} alt="Vista previa" className="max-h-64 rounded-lg object-cover mx-auto" loading="lazy" decoding="async" />
             ) : (
-              <video src={preview} controls className="max-h-64 rounded-lg mx-auto" />
+              <video src={preview} controls className="max-h-64 rounded-lg mx-auto" preload="none" />
             )}
             <p className="mt-2 font-sans text-xs text-white/60">
               {progress > 0 && progress < 100 && `Comprimiendo... ${progress}%`}

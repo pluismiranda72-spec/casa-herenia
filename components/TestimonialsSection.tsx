@@ -26,7 +26,7 @@ export default function TestimonialsSection() {
 
   return (
     <section
-      className="w-full py-12 md:py-24 px-4 md:px-6 bg-[#0A0A0A]"
+      className="w-full pt-8 pb-0 md:pt-12 md:pb-0 px-4 md:px-6 bg-[#0A0A0A]"
       aria-labelledby="testimonials-heading"
     >
       <div className="container mx-auto">

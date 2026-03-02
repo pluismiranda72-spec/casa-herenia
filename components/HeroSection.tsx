@@ -9,7 +9,7 @@ export default function HeroSection() {
   const t = useTranslations("Hero");
 
   return (
-    <section className="relative h-screen w-full overflow-hidden">
+    <section className="relative w-full h-[60vh] md:h-screen overflow-hidden">
       {/* 1. Imagen de Fondo (Placeholder de Lujo) — bg-stone-900 evita pantalla blanca mientras carga */}
       <div className="absolute inset-0 bg-stone-900">
         <Image
@@ -17,8 +17,10 @@ export default function HeroSection() {
           alt="Vista panorámica de Casa Herenia y Pedro"
           fill
           className="object-cover"
-          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 100vw, 100vw"
-          priority
+          sizes="(max-width: 768px) 100vw, 100vw"
+          priority={true}
+          fetchPriority="high"
+          quality={80}
         />
         {/* Overlay Oscuro para que se lea el texto */}
         <div className="absolute inset-0 bg-black/40 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />

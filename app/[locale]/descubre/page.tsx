@@ -80,9 +80,11 @@ export default async function DescubrePage({ params }: Props) {
                       <video
                         src={post.media_url}
                         className="w-full h-full object-cover"
+                        preload="none"
+                        poster={BLUR_DATA}
                         muted
                         playsInline
-                        preload="metadata"
+                        loop
                       />
                     ) : (
                       <div className="w-full h-full flex items-center justify-center text-[#C5A059] font-serif text-2xl">

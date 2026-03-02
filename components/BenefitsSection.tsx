@@ -30,7 +30,7 @@ export default function BenefitsSection() {
 
   return (
     <section
-      className="w-full bg-[#f4f4f5] pt-8 pb-16 md:py-16"
+      className="w-full bg-[#f4f4f5] pt-8 pb-0 md:pt-12 md:pb-0"
       style={{ backgroundColor: "#f4f4f5" }}
       aria-labelledby="benefits-heading"
     >
