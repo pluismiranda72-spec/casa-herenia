@@ -8,7 +8,7 @@ import { useTranslations } from "next-intl";
 const TESTIMONIAL_KEYS = ["t1", "t2", "t3"] as const;
 
 const GOOGLE_MAPS_PLACE_URL =
-  "https://www.google.com/maps/place/?q=place_id:ChIJhWJgbm1Ry4gRLOA-sNgRKFo";
+  "https://search.google.com/local/reviews?placeid=ChIJhWJgbm1Ry4gRLOA-sNgRKFo";
 
 function Stars({ count = 5 }: { count?: number }) {
   return (
