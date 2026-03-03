@@ -183,6 +183,8 @@
     "messageAria": "Mensaje para Aura"
   },
   "Calendar": {
+    "selectRoomTitle": "Elige tu estancia",
+    "selectRoomAmenities": "con: A/C / Desayuno incluido / Agua embotellada de cortesía / Wifi 24H",
     "selectRoom": "Elige tu estancia",
     "guests": "Huéspedes",
     "dates": "Fechas",
