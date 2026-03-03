@@ -69,7 +69,7 @@ export default function TestimonialsSection() {
                     href={GOOGLE_MAPS_PLACE_URL}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="text-inherit no-underline hover:opacity-80 transition-opacity cursor-pointer"
+                    className="relative z-10 inline-block px-2 -mx-2 py-2 -my-2 text-inherit no-underline hover:opacity-80 transition-opacity cursor-pointer touch-manipulation"
                   >
                     {t("googleMapsLinkText")}
                   </a>
