@@ -190,8 +190,14 @@
     "messageAria": "Mensaje para Aura"
   },
   "Calendar": {
-    "selectRoomTitle": "Elige tu estancia",
+    "selectRoomTitle": "Tu reserva incluye:",
     "selectRoomAmenities": "con: A/C / Desayuno incluido / Agua embotellada de cortesía / Wifi 24H",
+    "selectRoomWith": "Elige tu estancia con:",
+    "amenitiesLine": "A/C / Desayuno incluido / Agua embotellada de cortesía / 24 H Power / WiFi",
+    "amenityAc": "A/C",
+    "amenityBreakfast": "Desayuno incluido",
+    "amenityWater": "Agua embotellada de cortesía",
+    "amenityWifi": "Wifi 24H",
     "selectRoom": "Elige tu estancia",
     "guests": "Huéspedes",
     "dates": "Fechas",

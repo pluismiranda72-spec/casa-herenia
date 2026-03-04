@@ -125,8 +125,14 @@
     "sectionAria": "Discover Viñales"
   },
   "Calendar": {
-    "selectRoomTitle": "Choose your stay",
+    "selectRoomTitle": "Your reservation includes:",
     "selectRoomAmenities": "with: A/C / Breakfast included / Complimentary bottled water / 24H Wifi",
+    "selectRoomWith": "Choose your stay with:",
+    "amenitiesLine": "A/C / Breakfast included / Complimentary bottled water / 24 H Power / WiFi",
+    "amenityAc": "A/C",
+    "amenityBreakfast": "Breakfast included",
+    "amenityWater": "Complimentary bottled water",
+    "amenityWifi": "24H Wifi",
     "selectRoom": "Choose your stay",
     "guests": "Guests",
     "dates": "Dates",

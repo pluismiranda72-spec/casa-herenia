@@ -118,13 +118,15 @@ export default function ReservasPage() {
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
           <div className="lg:col-span-2 space-y-8">
-            <section className="text-center lg:text-left">
-              <h2 className="font-serif text-xl sm:text-2xl text-[#C5A059]">
-                {t("selectRoomTitle")}
-              </h2>
-              <p className="mt-1 font-sans text-xs sm:text-sm font-light uppercase tracking-widest opacity-80 text-[#C5A059]">
-                {t("selectRoomAmenities")}
-              </p>
+            <section className="text-left">
+              <div className="flex flex-col items-start justify-start w-full max-w-6xl mx-auto mb-12 mt-10 text-left">
+                <h2 className="font-serif text-xl sm:text-2xl text-[#C5A059]">
+                  {t("selectRoomTitle")}
+                </h2>
+                <p className="font-serif text-xl sm:text-2xl text-[#C5A059]">
+                  {t("amenitiesLine")}
+                </p>
+              </div>
               <div className="flex flex-wrap gap-3">
                 {PROPERTIES.map((p) => (
                   <button
