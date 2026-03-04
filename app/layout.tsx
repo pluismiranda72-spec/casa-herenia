@@ -1,4 +1,4 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Playfair_Display, Montserrat } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -17,26 +17,37 @@ const montserrat = Montserrat({
   display: "swap",
 });
 
+const SITE_URL = "https://www.casahereniaypedro.com";
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+};
+
 export const metadata: Metadata = {
-  title: "Casa Herenia y Pedro | Alojamiento Premium en Viñales | Reserva Segura",
+  metadataBase: new URL(SITE_URL),
+  title: "Casa Herenia y Pedro | Lujo, Confort y Energía 24/7 en Viñales",
   description:
-    "Reserva tu casa particular en Viñales con total seguridad. Gestión europea, confirmación inmediata y vistas exclusivas al Valle. Pago 100% protegido.",
+    "La mejor casa particular en Viñales, Cuba. A/C garantizado por paneles solares, desayuno incluido y pago en EUR. Reserva segura en el corazón del valle.",
   keywords: [
-    "alojamiento exclusivo Viñales",
-    "casa particular premium Viñales",
-    "reserva segura Viñales",
-    "estancia Viñales pago tarjeta",
-    "Casa Herenia y Pedro",
+    "casa particular viñales",
+    "alojamiento lujo cuba",
+    "vinales tours",
+    "bed and breakfast vinales",
+    "aire acondicionado 24h cuba",
+    "independent energy casa cuba",
   ],
+  robots: { index: true, follow: true },
+  alternates: { canonical: SITE_URL },
   openGraph: {
-    title: "Casa Herenia y Pedro | Tu Refugio de Lujo en Viñales",
+    title: "Casa Herenia y Pedro | Tu refugio de lujo en Viñales",
     description:
-      "Descubre el lujo tranquilo en Cuba. Reserva directa con garantía europea, sin intermediarios y con confirmación inmediata.",
-    url: "https://www.casahereniaypedro.com",
+      "Electricidad garantizada, confort total y la mejor atención en Cuba. ¡Reserva ahora!",
+    url: SITE_URL,
     siteName: "Casa Herenia y Pedro",
     images: [
       {
-        url: "https://www.casahereniaypedro.com/fondo.jpg",
+        url: "/fondo.jpg",
         width: 1200,
         height: 630,
         alt: "Vista panorámica del Valle de Viñales desde Casa Herenia y Pedro",
@@ -47,10 +58,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Casa Herenia y Pedro | Alojamiento Premium en Viñales",
+    title: "Casa Herenia y Pedro | Tu refugio de lujo en Viñales",
     description:
-      "Reserva directa con garantía europea. El lujo de sentirse en casa frente a los mogotes de Viñales.",
-    images: ["https://www.casahereniaypedro.com/fondo.jpg"],
+      "Electricidad garantizada, confort total y la mejor atención en Cuba. ¡Reserva ahora!",
+    images: ["/fondo.jpg"],
   },
 };
 

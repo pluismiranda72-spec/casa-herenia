@@ -1,5 +1,12 @@
 {
   "brand": { "name": "Casa Herenia y Pedro" },
+  "SEO": {
+    "title": "Casa Herenia y Pedro | Luxury Stay & 24/7 Power in Viñales",
+    "description": "Best casa particular in Viñales, Cuba. Solar-powered A/C, breakfast included, EUR payments. Book your stay in the heart of the valley.",
+    "keywords": "casa particular viñales, luxury accommodation cuba, vinales tours, bed and breakfast vinales, 24h air conditioning cuba, independent energy casa cuba",
+    "ogTitle": "Casa Herenia y Pedro | Your luxury retreat in Viñales",
+    "ogDescription": "Guaranteed electricity, full comfort and the best hospitality in Cuba. Book now!"
+  },
   "common": { "loading": "Loading...", "error": "An error occurred", "bookingError": "Error processing the booking." },
   "Contact": {
     "title": "Contact Us",

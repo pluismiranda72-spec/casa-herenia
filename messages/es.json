@@ -1,5 +1,12 @@
 {
   "brand": { "name": "Casa Herenia y Pedro" },
+  "SEO": {
+    "title": "Casa Herenia y Pedro | Lujo, Confort y Energía 24/7 en Viñales",
+    "description": "La mejor casa particular en Viñales, Cuba. A/C garantizado por paneles solares, desayuno incluido y pago en EUR. Reserva segura en el corazón del valle.",
+    "keywords": "casa particular viñales, alojamiento lujo cuba, vinales tours, bed and breakfast vinales, aire acondicionado 24h cuba, independent energy casa cuba",
+    "ogTitle": "Casa Herenia y Pedro | Tu refugio de lujo en Viñales",
+    "ogDescription": "Electricidad garantizada, confort total y la mejor atención en Cuba. ¡Reserva ahora!"
+  },
   "common": { "loading": "Cargando...", "error": "Ha ocurrido un error", "bookingError": "Error al procesar la reserva." },
   "Contact": {
     "title": "Contáctanos",
