@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Playfair_Display, Montserrat } from "next/font/google";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -82,6 +83,12 @@ export default function RootLayout({
         {children}
         <Analytics />
         <SpeedInsights />
+        {/* Metricool Tracking Script */}
+        <Script id="metricool-tracker" strategy="afterInteractive">
+          {`
+            function loadScript(a){var b=document.getElementsByTagName("head")[0],c=document.createElement("script");c.type="text/javascript",c.src="https://tracker.metricool.com/resources/be.js",c.onreadystatechange=a,c.onload=a,b.appendChild(c)}loadScript(function(){beTracker.t({hash:"fdf28228ce793eceee86fa3eebe82ee3"})});
+          `}
+        </Script>
       </body>
     </html>
   );
