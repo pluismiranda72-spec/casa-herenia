@@ -179,6 +179,7 @@
   },
   "Chat": {
     "title": "Aura · Concierge",
+    "askAuraHeading": "¿Tienes más dudas? Pregúntale a nuestro asistente Aura",
     "ariaChat": "Chat con Aura",
     "close": "Cerrar chat",
     "placeholder": "Escribe tu mensaje...",

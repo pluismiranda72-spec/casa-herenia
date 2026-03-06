@@ -94,13 +94,12 @@ export function Navbar() {
           >
             {t("discoverCta")}
           </Link>
-          <a
-            href="#faq-section"
-            onClick={(e) => handleSmoothScroll(e, "faq-section")}
-            className="hidden sm:inline font-sans text-sm font-semibold uppercase tracking-widest text-[#faf9f6]/90 hover:text-[#C5A059] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 rounded cursor-pointer"
+          <Link
+            href="/faq"
+            className="hidden sm:inline font-sans text-sm font-semibold uppercase tracking-widest text-[#faf9f6]/90 hover:text-[#C5A059] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 rounded"
           >
             {t("faqLink")}
-          </a>
+          </Link>
           <Link
             href="/reserva-segura"
             className="hidden sm:inline font-sans text-sm font-semibold uppercase tracking-widest text-[#faf9f6]/90 hover:text-[#C5A059] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 rounded"

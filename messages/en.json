@@ -112,6 +112,19 @@
     "q2": { "question": "Will I have internet connection at the house?", "answer": "Yes. We know how important it is to stay connected. We have a stable WiFi network and 24H backup power so you can communicate with your family or work without relying on public networks." },
     "q3": { "question": "How do I get to Viñales from Havana or elsewhere in the country?", "answer": "We take care of everything. We arrange secure transfers; from Havana by private taxi (120€) for four people or collective (25€) per person, right to our door." }
   },
+  "Chat": {
+    "title": "Aura · Concierge",
+    "askAuraHeading": "Have more questions? Ask our assistant Aura",
+    "ariaChat": "Chat with Aura",
+    "close": "Close chat",
+    "placeholder": "Type your message...",
+    "send": "Send",
+    "greeting": "Hi. I'm Aura. Ask me about check-in, wifi, breakfast or the house.",
+    "error": "Something went wrong. Please try again in a moment.",
+    "writing": "Aura is typing...",
+    "openChat": "Open chat with Aura",
+    "messageAria": "Message for Aura"
+  },
   "Valley": {
     "valleyStories": "Valley Stories",
     "discoverCta": "DISCOVER VIÑALES",

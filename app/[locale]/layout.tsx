@@ -4,7 +4,8 @@ import { notFound } from "next/navigation";
 import { routing } from "@/i18n/routing";
 import { Navbar } from "@/components/Navbar";
 import Footer from "@/components/Footer";
-import ChatWidget from "@/components/ChatWidget";
+import WhatsAppButton from "@/components/WhatsAppButton";
+import AuraFAQFloating from "@/components/AuraFAQFloating";
 import type { Metadata } from "next";
 
 const SITE_URL = "https://www.casahereniaypedro.com";
@@ -58,7 +59,8 @@ export default async function LocaleLayout({ children, params }: Props) {
       <Navbar />
       {children}
       <Footer />
-      <ChatWidget />
+      <AuraFAQFloating />
+      <WhatsAppButton />
     </NextIntlClientProvider>
   );
 }

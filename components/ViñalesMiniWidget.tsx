@@ -170,12 +170,12 @@ export default function ViñalesMiniWidget() {
             >
               {t("discoverCta")}
             </Link>
-            <a
-              href="#faq-section"
+            <Link
+              href="/faq"
               className="shrink-0 font-sans text-xs uppercase tracking-widest text-[#C5A059] hover:text-amber-600 transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50"
             >
               {t("faqLink")}
-            </a>
+            </Link>
           </div>
         </div>
 
