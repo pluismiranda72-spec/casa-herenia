@@ -1,8 +1,16 @@
 import { NextRequest, NextResponse } from "next/server";
-import ical, { ICalCalendarMethod } from "ical-generator";
+import ical from "ical-generator";
 import { createServiceRoleClient } from "@/lib/supabase/admin";
+import { randomUUID } from "crypto";
 
 export const dynamic = "force-dynamic";
+
+/** Anonymous slug → calendar display name. No property/domain data. */
+const SLUG_TO_CALNAME: Record<string, string> = {
+  "room-1": "Sync_Node_01",
+  "room-2": "Sync_Node_02",
+  "full-villa": "Sync_Node_03",
+};
 
 const SLUG_TO_IDS: Record<string, string[]> = {
   "room-1": ["room_1", "full_villa"],
@@ -10,9 +18,8 @@ const SLUG_TO_IDS: Record<string, string[]> = {
   "full-villa": ["room_1", "room_2", "full_villa"],
 };
 
-function parseDate(ymd: string): Date {
-  const d = new Date(ymd + "T12:00:00.000Z");
-  return d;
+function parseDateUTC(ymd: string): Date {
+  return new Date(ymd + "T12:00:00.000Z");
 }
 
 function addDays(ymd: string, days: number): string {
@@ -28,7 +35,9 @@ export async function GET(
   const { room: roomSlug } = await context.params;
   const normalized = roomSlug?.toLowerCase().trim();
   const roomIds = normalized && SLUG_TO_IDS[normalized];
-  if (!roomIds) {
+  const calName = normalized && SLUG_TO_CALNAME[normalized];
+
+  if (!roomIds || !calName) {
     return NextResponse.json(
       { error: "Invalid room. Use room-1, room-2 or full-villa." },
       { status: 400 }
@@ -44,9 +53,15 @@ export async function GET(
   }
 
   const calendar = ical({
-    name: "Availability Calendar",
-    prodId: "//Rental//Availability//EN",
-    method: ICalCalendarMethod.PUBLISH,
+    name: calName,
+    description: "Automated availability feed",
+    prodId: "-//Standard_Node//EN",
+    timezone: "UTC",
+    method: "PUBLISH",
+    x: [
+      ["X-WR-CALNAME", calName],
+      ["X-WR-CALDESC", "Automated availability feed"],
+    ],
   });
 
   const { data: bookings } = await supabase
@@ -59,9 +74,10 @@ export async function GET(
     const checkIn = String(b.check_in);
     const checkOut = String(b.check_out);
     calendar.createEvent({
-      start: parseDate(checkIn),
-      end: parseDate(checkOut),
-      summary: "RESERVED",
+      start: parseDateUTC(checkIn),
+      end: parseDateUTC(checkOut),
+      summary: "Blocked",
+      id: randomUUID(),
       allDay: true,
     });
   }
@@ -76,9 +92,10 @@ export async function GET(
     const endInclusive = String(bl.end_date);
     const endExclusive = addDays(endInclusive, 1);
     calendar.createEvent({
-      start: parseDate(start),
-      end: parseDate(endExclusive),
-      summary: "CLOSED",
+      start: parseDateUTC(start),
+      end: parseDateUTC(endExclusive),
+      summary: "Blocked",
+      id: randomUUID(),
       allDay: true,
     });
   }

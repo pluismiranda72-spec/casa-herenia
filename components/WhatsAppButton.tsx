@@ -7,7 +7,7 @@
 export default function WhatsAppButton() {
   return (
     <a
-      href="https://wa.me/36624070468?text=¡Hola! Me gustaría consultar disponibilidad en la casa."
+      href="https://wa.me/34624070468?text=¡Hola! Me gustaría consultar disponibilidad en la casa."
       target="_blank"
       rel="noopener noreferrer"
       className="pointer-events-auto fixed bottom-4 right-4 z-[9999] flex h-12 w-12 items-center justify-center rounded-2xl bg-[#25D366] p-3 text-white shadow-lg shadow-green-500/20 transition-all duration-300 hover:scale-105 hover:bg-[#20ba5a] focus:outline-none focus:ring-2 focus:ring-[#25D366] focus:ring-offset-2 focus:ring-offset-[#0A0A0A] touch-target md:h-14 md:w-14 md:p-4"
