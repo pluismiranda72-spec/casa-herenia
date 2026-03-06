@@ -23,6 +23,7 @@ const SITE_URL = "https://www.casahereniaypedro.com";
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  maximumScale: 1,
 };
 
 export const metadata: Metadata = {

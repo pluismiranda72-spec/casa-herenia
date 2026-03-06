@@ -4,6 +4,8 @@
 
 html {
   scroll-behavior: auto !important;
+  overflow-x: hidden;
+  width: 100%;
 }
 
 :root {
@@ -15,6 +17,8 @@ html {
 
 body {
   scroll-behavior: auto !important;
+  overflow-x: hidden;
+  width: 100%;
   /* Ahora el fondo de la web es blanco de verdad */
   @apply bg-[var(--brand-white)] text-brand-black font-sans antialiased;
 }
