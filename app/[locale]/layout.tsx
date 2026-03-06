@@ -59,7 +59,9 @@ export default async function LocaleLayout({ children, params }: Props) {
       <Navbar />
       {children}
       <Footer />
-      <AuraFAQFloating />
+      <div className="hidden md:block">
+        <AuraFAQFloating />
+      </div>
       <WhatsAppButton />
     </NextIntlClientProvider>
   );
