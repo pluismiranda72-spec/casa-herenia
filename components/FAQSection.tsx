@@ -2,6 +2,7 @@
 
 import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
+import AuraFAQFloating from "@/components/AuraFAQFloating";
 
 const FAQ_KEYS = ["q1", "q2", "q3"] as const;
 
@@ -16,7 +17,7 @@ export default function FAQSection() {
   return (
     <section
       id="faq-section"
-      className="w-full bg-[#0A0A0A]/95 border-t border-[#C5A059]/20 pt-8 pb-0 md:pt-12 md:pb-0 px-4"
+      className="relative w-full bg-[#0A0A0A]/95 border-t border-[#C5A059]/20 pt-8 pb-24 md:pt-12 md:pb-28 px-4"
       aria-labelledby="faq-heading"
     >
       <div className="max-w-4xl mx-auto">
@@ -48,6 +49,10 @@ export default function FAQSection() {
             </details>
           ))}
         </div>
+      </div>
+      {/* Aura: desktop only, bottom-right of FAQ section; fully hidden on mobile */}
+      <div className="hidden md:block absolute bottom-6 right-6 z-10">
+        <AuraFAQFloating embedded />
       </div>
     </section>
   );

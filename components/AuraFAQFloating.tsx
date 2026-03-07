@@ -5,13 +5,15 @@ import AuraFAQButton from "@/components/AuraFAQButton";
 import ChatWidget from "@/components/ChatWidget";
 
 /**
- * Aura floating trigger + chat panel — visible on all pages.
+ * Aura trigger + chat panel. When embedded, button is positioned by parent (FAQ section).
  */
-export default function AuraFAQFloating() {
+type Props = { embedded?: boolean };
+
+export default function AuraFAQFloating({ embedded }: Props) {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <AuraFAQButton onOpenAura={() => setOpen(true)} />
+      <AuraFAQButton onOpenAura={() => setOpen(true)} embedded={embedded} />
       <ChatWidget open={open} onOpenChange={setOpen} />
     </>
   );

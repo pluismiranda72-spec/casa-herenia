@@ -5,7 +5,6 @@ import { routing } from "@/i18n/routing";
 import { Navbar } from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import WhatsAppButton from "@/components/WhatsAppButton";
-import AuraFAQFloating from "@/components/AuraFAQFloating";
 import type { Metadata } from "next";
 
 const SITE_URL = "https://www.casahereniaypedro.com";
@@ -59,9 +58,6 @@ export default async function LocaleLayout({ children, params }: Props) {
       <Navbar />
       {children}
       <Footer />
-      <div className="hidden md:block">
-        <AuraFAQFloating />
-      </div>
       <WhatsAppButton />
     </NextIntlClientProvider>
   );
