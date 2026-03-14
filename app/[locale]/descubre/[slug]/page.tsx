@@ -6,34 +6,33 @@ import type { Metadata } from "next";
 const VIDEO_POSTER_PLACEHOLDER =
   "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAgEDBAMBAAAAAAAAAAAAAQIDAAQRBRIhMQYTQVFh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAZEQACAwEAAAAAAAAAAAAAAAABAgADESH/2gADAwEAAhEDEEA/ALmi6tqF1pVrcXN5PNNIm53eRiSfZooqJZQp/9k=";
 
+const CITY_LINKS = [
+  { name: "La Habana", url: "https://www.travelwithpau.com/la-habana/" },
+  { name: "Viñales", url: "https://www.instagram.com/casa_herenia_y_pedro?igsh=ejBpeTUydWl3Yzdt" },
+  { name: "Cienfuegos", url: "https://www.surfingtheplanet.com/que-ver-cienfuegos/" },
+  { name: "Trinidad", url: "https://imanesdeviaje.com/que-ver-en-trinidad-cuba/" },
+  { name: "Varadero", url: "https://lostraveleros.com/que-hacer-en-varadero/" },
+] as const;
+
 /**
- * Coloca el enlace solo en el nombre de la ciudad que encabeza cada sección numerada.
- * Reemplazos estáticos con .replace(); sin regex dinámicos ni split.
+ * UI/UX Fix: En lugar de usar una etiqueta <style> que bloquea el renderizado,
+ * inyectamos clases nativas de Tailwind para el color azul claro y el efecto hover.
  */
 function processCityContent(content: string): string {
   if (!content) return "";
-  let out = content
-    .replace(
-      "1. La Habana",
-      "1. <a href='https://www.travelwithpau.com/la-habana/' class='city-link' target='_blank' rel='noopener noreferrer'>La Habana</a>"
-    )
-    .replace(
-      "2. Viñales",
-      "2. <a href='https://www.instagram.com/casa_herenia_y_pedro?igsh=ejBpeTUydWl3Yzdt' class='city-link' target='_blank' rel='noopener noreferrer'>Viñales</a>"
-    )
-    .replace(
-      "3. Cienfuegos",
-      "3. <a href='https://www.surfingtheplanet.com/que-ver-cienfuegos/' class='city-link' target='_blank' rel='noopener noreferrer'>Cienfuegos</a>"
-    )
-    .replace(
-      "4. Trinidad",
-      "4. <a href='https://imanesdeviaje.com/que-ver-en-trinidad-cuba/' class='city-link' target='_blank' rel='noopener noreferrer'>Trinidad</a>"
-    )
-    .replace(
-      "5. Varadero",
-      "5. <a href='https://lostraveleros.com/que-hacer-en-varadero/' class='city-link' target='_blank' rel='noopener noreferrer'>Varadero</a>"
-    );
-  return out.replace(/\n/g, "<br />");
+
+  let processedHtml = content.replace(/<a\b[^>]*>(.*?)<\/a>/gi, "$1");
+
+  CITY_LINKS.forEach(({ name, url }) => {
+    const regexPattern = new RegExp(`(\\d+\\.\\s*)(${name})`, "i");
+
+    processedHtml = processedHtml.replace(regexPattern, (match, prefix, cityName) => {
+      // Usamos clases de Tailwind para máxima velocidad y evitar bloqueo de CSS
+      return `${prefix}<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-[#38B6FF] font-semibold no-underline hover:underline transition-all duration-200 ease-in-out">${cityName}</a>`;
+    });
+  });
+
+  return processedHtml;
 }
 
 type Props = { params: Promise<{ locale: string; slug: string }> };
@@ -55,7 +54,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 export default async function PostPage({ params }: Props) {
   const { slug, locale } = await params;
   const supabase = await createClient();
-  const { data: post, error } = await supabase.from("posts").select("*").eq("slug", slug).maybeSingle();
+  
+  // Optimizamos pidiendo solo las columnas estrictamente necesarias para dibujar la página
+  const { data: post, error } = await supabase.from("posts").select("title, title_en, excerpt, excerpt_en, content, content_en, media_url, media_type").eq("slug", slug).maybeSingle();
 
   if (error || !post) notFound();
 
@@ -99,27 +100,10 @@ export default async function PostPage({ params }: Props) {
         )}
 
         {content && (
-          <>
-            <style dangerouslySetInnerHTML={{ __html: `
-              .descubre-post-content .city-link {
-                color: #38B6FF !important;
-                text-decoration: none;
-                font-weight: 600;
-                transition: all 0.2s ease-in-out;
-              }
-              .descubre-post-content .city-link:hover {
-                text-decoration: underline !important;
-                color: #269ae6 !important; /* Un azul un poco más oscuro al pasar el ratón */
-              }
-              .descubre-post-content {
-                line-height: 1.8;
-              }
-            `}} />
-            <div
-              className="descubre-post-content font-sans prose prose-lg max-w-none text-[#0A0A0A]/90"
-              dangerouslySetInnerHTML={{ __html: processCityContent(content) }}
-            />
-          </>
+          <div
+            className="descubre-post-content font-sans prose prose-lg max-w-none text-[#0A0A0A]/90 leading-[1.8]"
+            dangerouslySetInnerHTML={{ __html: processCityContent(content) }}
+          />
         )}
       </article>
     </main>
