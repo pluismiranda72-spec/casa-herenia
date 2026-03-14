@@ -1,4 +1,4 @@
-import { createClient } from "@/lib/supabase/server";
+import { createClient } from "@supabase/supabase-js";
 import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
@@ -40,7 +40,9 @@ type Props = { params: Promise<{ locale: string; slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, locale } = await params;
-  const supabase = await createClient();
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+  const supabase = createClient(supabaseUrl, supabaseKey);
   const { data } = await supabase.from("posts").select("title, title_en, excerpt, excerpt_en").eq("slug", slug).maybeSingle();
   
   const title = locale === "en" ? data?.title_en || data?.title : data?.title;
@@ -54,8 +56,10 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PostPage({ params }: Props) {
   const { slug, locale } = await params;
-  const supabase = await createClient();
-  
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+  const supabase = createClient(supabaseUrl, supabaseKey);
+
   // Optimizamos pidiendo solo las columnas estrictamente necesarias para dibujar la página
   const { data: post, error } = await supabase.from("posts").select("title, title_en, excerpt, excerpt_en, content, content_en, media_url, media_type").eq("slug", slug).maybeSingle();
 
