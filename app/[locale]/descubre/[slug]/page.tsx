@@ -77,15 +77,17 @@ export default async function PostPage({ params }: Props) {
                 src={post.media_url}
                 alt={title}
                 fill
-                className="object-cover"
+                className="object-cover bg-gray-200"
                 priority
-                sizes="(max-width: 900px) 100vw, 800px"
+                fetchPriority="high"
+                quality={75}
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
               />
             ) : (
               <video
                 src={post.media_url}
                 controls
-                className="w-full h-full object-cover"
+                className="w-full h-full object-cover bg-gray-200"
                 poster={VIDEO_POSTER_PLACEHOLDER}
               />
             )}
