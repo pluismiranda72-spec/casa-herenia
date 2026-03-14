@@ -27,8 +27,7 @@ function processCityContent(content: string): string {
     const regexPattern = new RegExp(`(\\d+\\.\\s*)(${name})`, "i");
 
     processedHtml = processedHtml.replace(regexPattern, (match, prefix, cityName) => {
-      // Usamos clases de Tailwind para máxima velocidad y evitar bloqueo de CSS
-      return `${prefix}<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-[#38B6FF] font-semibold no-underline hover:underline transition-all duration-200 ease-in-out">${cityName}</a>`;
+      return `<br /><br />${prefix}<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-[#38B6FF] font-semibold no-underline hover:underline transition-all duration-200 ease-in-out">${cityName}</a>`;
     });
   });
 
