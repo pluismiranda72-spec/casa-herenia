@@ -1,9 +1,51 @@
 import { createClient } from "@supabase/supabase-js";
 import Image from "next/image";
 import { notFound } from "next/navigation";
+import { unstable_cache } from "next/cache";
 import type { Metadata } from "next";
 
 export const revalidate = 60;
+
+const LOCALES = ["es", "en"] as const;
+
+function getSupabase() {
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
+  return createClient(supabaseUrl, supabaseKey);
+}
+
+async function fetchPostBySlug(slug: string) {
+  const supabase = getSupabase();
+  const { data, error } = await supabase
+    .from("posts")
+    .select("title, title_en, excerpt, excerpt_en, content, content_en, media_url, media_type")
+    .eq("slug", slug)
+    .maybeSingle();
+  if (error || !data) return null;
+  return data;
+}
+
+const getCachedPost = (slug: string) =>
+  unstable_cache(
+    () => fetchPostBySlug(slug),
+    ["descubre-post", slug],
+    { revalidate: 60, tags: ["descubre-posts"] }
+  );
+
+async function getAllPostSlugs(): Promise<string[]> {
+  try {
+    const supabase = getSupabase();
+    const { data } = await supabase.from("posts").select("slug").order("created_at", { ascending: false });
+    return (data ?? []).map((r) => r.slug as string);
+  } catch {
+    return [];
+  }
+}
+
+export async function generateStaticParams() {
+  const slugs = await getAllPostSlugs();
+  return slugs.flatMap((slug) => LOCALES.map((locale) => ({ locale, slug })));
+}
 
 const VIDEO_POSTER_PLACEHOLDER =
   "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAgEDBAMBAAAAAAAAAAAAAQIDAAQRBRIhMQYTQVFh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAZEQACAwEAAAAAAAAAAAAAAAABAgADESH/2gADAwEAAhEDEEA/ALmi6tqF1pVrcXN5PNNIm53eRiSfZooqJZQp/9k=";
@@ -40,11 +82,7 @@ type Props = { params: Promise<{ locale: string; slug: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, locale } = await params;
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-  const supabase = createClient(supabaseUrl, supabaseKey);
-  const { data } = await supabase.from("posts").select("title, title_en, excerpt, excerpt_en").eq("slug", slug).maybeSingle();
-  
+  const data = await getCachedPost(slug)();
   const title = locale === "en" ? data?.title_en || data?.title : data?.title;
   const description = locale === "en" ? data?.excerpt_en || data?.excerpt : data?.excerpt;
 
@@ -56,14 +94,8 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function PostPage({ params }: Props) {
   const { slug, locale } = await params;
-  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
-  const supabaseKey = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!;
-  const supabase = createClient(supabaseUrl, supabaseKey);
-
-  // Optimizamos pidiendo solo las columnas estrictamente necesarias para dibujar la página
-  const { data: post, error } = await supabase.from("posts").select("title, title_en, excerpt, excerpt_en, content, content_en, media_url, media_type").eq("slug", slug).maybeSingle();
-
-  if (error || !post) notFound();
+  const post = await getCachedPost(slug)();
+  if (!post) notFound();
 
   const title = locale === "en" ? post.title_en || post.title : post.title;
   const excerpt = locale === "en" ? post.excerpt_en || post.excerpt : post.excerpt;
