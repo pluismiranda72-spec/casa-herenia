@@ -78,7 +78,7 @@ export default async function PostPage({ params }: Props) {
                 alt={title}
                 fill
                 className="object-cover bg-gray-200"
-                priority
+                priority={true}
                 fetchPriority="high"
                 quality={75}
                 sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 800px"
