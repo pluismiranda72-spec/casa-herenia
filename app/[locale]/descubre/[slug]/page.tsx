@@ -3,6 +3,8 @@ import Image from "next/image";
 import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 
+export const revalidate = 60;
+
 const VIDEO_POSTER_PLACEHOLDER =
   "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAgGBgcGBQgHBwcJCQgKDBQNDAsLDBkSEw8UHRofHh0aHBwgJC4nICIsIxwcKDcpLDAxNDQ0Hyc5PTgyPC4zNDL/2wBDAQkJCQwLDBgNDRgyIRwhMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjIyMjL/wAARCAAIAAoDASIAAhEBAxEB/8QAFgABAQEAAAAAAAAAAAAAAAAAAAUH/8QAIhAAAgEDBAMBAAAAAAAAAAAAAQIDAAQRBRIhMQYTQVFh/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAZEQACAwEAAAAAAAAAAAAAAAABAgADESH/2gADAwEAAhEDEEA/ALmi6tqF1pVrcXN5PNNIm53eRiSfZooqJZQp/9k=";
 
@@ -14,22 +16,22 @@ const CITY_LINKS = [
   { name: "Varadero", url: "https://lostraveleros.com/que-hacer-en-varadero/" },
 ] as const;
 
-/**
- * UI/UX Fix: En lugar de usar una etiqueta <style> que bloquea el renderizado,
- * inyectamos clases nativas de Tailwind para el color azul claro y el efecto hover.
- */
+// Optimización: Pre-compilamos los patrones Regex fuera de la función de renderizado
+const CITY_PATTERNS = CITY_LINKS.map((link) => ({
+  ...link,
+  regex: new RegExp(`(\\d+\\.\\s*)(${link.name})`, "i"),
+}));
+
 function processCityContent(content: string): string {
   if (!content) return "";
 
   let processedHtml = content.replace(/<a\b[^>]*>(.*?)<\/a>/gi, "$1");
 
-  CITY_LINKS.forEach(({ name, url }) => {
-    const regexPattern = new RegExp(`(\\d+\\.\\s*)(${name})`, "i");
-
-    processedHtml = processedHtml.replace(regexPattern, (match, prefix, cityName) => {
+  for (const { regex, url } of CITY_PATTERNS) {
+    processedHtml = processedHtml.replace(regex, (match, prefix, cityName) => {
       return `<br /><br />${prefix}<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-[#38B6FF] font-semibold no-underline hover:underline transition-all duration-200 ease-in-out">${cityName}</a>`;
     });
-  });
+  }
 
   return processedHtml;
 }
