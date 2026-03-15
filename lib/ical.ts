@@ -1,5 +1,5 @@
 import ical from "node-ical";
-import { createServiceRoleClient } from "@/lib/supabase/admin";
+import { supabaseAdmin } from "@/lib/supabase/admin";
 
 export type PropertyUnit = "room_1" | "room_2" | "full_villa";
 
@@ -9,6 +9,7 @@ export type BlockedDatesByUnit = Record<PropertyUnit, Date[]>;
 /** Formato serializado para la API: YYYY-MM-DD por unidad. */
 export type BlockedDatesByUnitYmd = Record<PropertyUnit, string[]>;
 
+// En Vercel: usar AIRBNB_ICAL_ROOM1, AIRBNB_ICAL_ROOM2, AIRBNB_ICAL_FULL (o legacy URL_1, URL_2, URL_PACK)
 const ENV_ROOM1 = "AIRBNB_ICAL_ROOM1";
 const ENV_ROOM2 = "AIRBNB_ICAL_ROOM2";
 const ENV_FULL = "AIRBNB_ICAL_FULL";
@@ -96,30 +97,72 @@ const EMPTY_BLOCKED: BlockedDatesByUnit = {
   full_villa: [],
 };
 
-/** Rango devuelto por la RPC get_occupied_dates (RGPD: sin acceso directo a bookings/manual_blocks). */
-type OccupiedRange = { start_date: string; end_date: string };
+/** Rango devuelto por la RPC get_occupied_dates; room_id opcional (si falta, se trata como full_villa). */
+type OccupiedRange = { start_date: string; end_date: string; room_id?: string };
 
-/** Fechas ocupadas vía RPC segura get_occupied_dates (sustituye SELECT a bookings y manual_blocks). */
-async function getOccupiedDatesFromRpc(): Promise<BlockedDatesByUnit> {
-  const supabase = createServiceRoleClient();
-  if (!supabase) return EMPTY_BLOCKED;
-
-  const { data, error } = await supabase.rpc("get_occupied_dates");
-  if (error || !Array.isArray(data) || data.length === 0) return EMPTY_BLOCKED;
-
-  const allDates = new Set<number>();
-  for (const row of data as OccupiedRange[]) {
-    const start = String(row.start_date);
-    const end = String(row.end_date);
-    const dates = rangeToBlockedDates(start, end);
-    dates.forEach((d) => allDates.add(d.getTime()));
+/** Dependencia: room_1 bloquea room_1 + full_villa; room_2 bloquea room_2 + full_villa; full_villa bloquea las tres. */
+function addBlockedDatesByRoom(
+  acc: { room_1: Set<number>; room_2: Set<number>; full_villa: Set<number> },
+  roomId: string,
+  dates: Date[]
+): void {
+  const timestamps = dates.map((d) => d.getTime());
+  const room = (roomId === "room_1" || roomId === "room_2" || roomId === "full_villa" ? roomId : "full_villa") as PropertyUnit;
+  if (room === "room_1") {
+    timestamps.forEach((t) => { acc.room_1.add(t); acc.full_villa.add(t); });
+  } else if (room === "room_2") {
+    timestamps.forEach((t) => { acc.room_2.add(t); acc.full_villa.add(t); });
+  } else {
+    timestamps.forEach((t) => { acc.room_1.add(t); acc.room_2.add(t); acc.full_villa.add(t); });
   }
-  const dateList = [...allDates].sort((a, b) => a - b).map((t) => new Date(t));
+}
 
+/** Fechas ocupadas vía RPC get_occupied_dates (con room_id); si falla, fallback a bookings con filtro por habitación y estado. */
+async function getOccupiedDatesFromRpc(): Promise<BlockedDatesByUnit> {
+  const acc = { room_1: new Set<number>(), room_2: new Set<number>(), full_villa: new Set<number>() };
+
+  const { data, error } = await supabaseAdmin.rpc("get_occupied_dates");
+  if (!error && Array.isArray(data) && data.length > 0) {
+    for (const row of data as OccupiedRange[]) {
+      const start = String(row.start_date);
+      const end = String(row.end_date);
+      const roomId = row.room_id ?? "full_villa";
+      const dates = rangeToBlockedDates(start, end);
+      addBlockedDatesByRoom(acc, roomId, dates);
+    }
+    return {
+      room_1: [...acc.room_1].sort((a, b) => a - b).map((t) => new Date(t)),
+      room_2: [...acc.room_2].sort((a, b) => a - b).map((t) => new Date(t)),
+      full_villa: [...acc.full_villa].sort((a, b) => a - b).map((t) => new Date(t)),
+    };
+  }
+  if (error) {
+    console.warn("[ical] RPC get_occupied_dates falló:", error.message, "→ fallback a tabla bookings");
+  }
+
+  const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000).toISOString();
+  const { data: confirmed } = await supabaseAdmin
+    .from("bookings")
+    .select("check_in, check_out, room_id")
+    .eq("status", "confirmed");
+  const { data: pendingRecent } = await supabaseAdmin
+    .from("bookings")
+    .select("check_in, check_out, room_id")
+    .eq("status", "pending_payment")
+    .gte("created_at", thirtyMinutesAgo);
+  const rows = [...(confirmed ?? []), ...(pendingRecent ?? [])];
+  if (rows.length === 0) return EMPTY_BLOCKED;
+  for (const row of rows) {
+    const start = String(row.check_in);
+    const end = String(row.check_out);
+    const roomId = row.room_id ?? "full_villa";
+    const dates = rangeToBlockedDates(start, end);
+    addBlockedDatesByRoom(acc, roomId, dates);
+  }
   return {
-    room_1: [...dateList],
-    room_2: [...dateList],
-    full_villa: [...dateList],
+    room_1: [...acc.room_1].sort((a, b) => a - b).map((t) => new Date(t)),
+    room_2: [...acc.room_2].sort((a, b) => a - b).map((t) => new Date(t)),
+    full_villa: [...acc.full_villa].sort((a, b) => a - b).map((t) => new Date(t)),
   };
 }
 
@@ -131,14 +174,14 @@ async function fetchAndParseCalendar(
 ): Promise<ParsedCalendar> {
   const url = getIcalUrl(envKey);
   if (!url) {
-    console.log(`[ical] ${label}: no URL (env ${envKey} no definida)`);
+    console.error(`[ical] ${label}: URL no definida — variable de entorno ${envKey} (o legacy) no configurada en Vercel`);
     return { eventCount: 0, blockedDates: [] };
   }
   const safeUrl = url.replace(/\?t=[^&]+/, "?t=***");
   console.log(`[ical] Leyendo ${label}: ${safeUrl}`);
 
   try {
-    const res = await fetch(url, { next: { revalidate: 3600 } });
+    const res = await fetch(url, { next: { revalidate: 0 } });
     if (!res.ok) {
       console.log(`[ical] ${label}: HTTP ${res.status}`);
       return { eventCount: 0, blockedDates: [] };
@@ -181,7 +224,10 @@ async function fetchAndParseCalendar(
     );
     return { eventCount, blockedDates };
   } catch (e) {
-    console.log(`[ical] ${label}: error`, e);
+    const reason = url
+      ? `Error de red o parseo iCal (URL definida): ${e instanceof Error ? e.message : String(e)}`
+      : `URL no definida (env ${envKey})`;
+    console.error(`[ical] ${label}:`, reason, e);
     return { eventCount: 0, blockedDates: [] };
   }
 }
