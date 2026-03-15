@@ -97,10 +97,15 @@ const EMPTY_BLOCKED: BlockedDatesByUnit = {
   full_villa: [],
 };
 
-/** Rango devuelto por la RPC get_occupied_dates; room_id opcional (si falta, se trata como full_villa). */
+/** Rango de la RPC o de bookings; room_id obligatorio para filtrar por habitación. */
 type OccupiedRange = { start_date: string; end_date: string; room_id?: string };
 
-/** Dependencia: room_1 bloquea room_1 + full_villa; room_2 bloquea room_2 + full_villa; full_villa bloquea las tres. */
+/**
+ * Filtrado por habitación (room_id). Crucial: una reserva en room_1 NO bloquea room_2.
+ * - room_1 → solo room_1 y full_villa
+ * - room_2 → solo room_2 y full_villa
+ * - full_villa → las tres unidades
+ */
 function addBlockedDatesByRoom(
   acc: { room_1: Set<number>; room_2: Set<number>; full_villa: Set<number> },
   roomId: string,
@@ -117,27 +122,40 @@ function addBlockedDatesByRoom(
   }
 }
 
-/** Fechas ocupadas vía RPC get_occupied_dates (con room_id); si falla, fallback a bookings con filtro por habitación y estado. */
+/**
+ * Fechas ocupadas por unidad (room_id). Nunca se devuelve el mismo dateList para todas.
+ * - room_1 → bloquea solo room_1 y full_villa (room_2 queda libre).
+ * - room_2 → bloquea solo room_2 y full_villa (room_1 queda libre).
+ * - full_villa → bloquea las tres.
+ * Usa siempre supabaseAdmin (nunca createServiceRoleClient).
+ */
 async function getOccupiedDatesFromRpc(): Promise<BlockedDatesByUnit> {
-  const acc = { room_1: new Set<number>(), room_2: new Set<number>(), full_villa: new Set<number>() };
+  const dateListByUnit = {
+    room_1: new Set<number>(),
+    room_2: new Set<number>(),
+    full_villa: new Set<number>(),
+  };
 
   const { data, error } = await supabaseAdmin.rpc("get_occupied_dates");
-  if (!error && Array.isArray(data) && data.length > 0) {
-    for (const row of data as OccupiedRange[]) {
+  const useRpc = !error && Array.isArray(data) && data.length > 0;
+  const rowsRpc = useRpc ? (data as OccupiedRange[]) : [];
+  const allHaveRoomId = rowsRpc.length > 0 && rowsRpc.every((r) => r.room_id != null && String(r.room_id).trim() !== "");
+
+  if (useRpc && allHaveRoomId) {
+    for (const row of rowsRpc) {
       const start = String(row.start_date);
       const end = String(row.end_date);
-      const roomId = row.room_id ?? "full_villa";
+      const roomId = String(row.room_id).trim();
       const dates = rangeToBlockedDates(start, end);
-      addBlockedDatesByRoom(acc, roomId, dates);
+      addBlockedDatesByRoom(dateListByUnit, roomId, dates);
     }
-    return {
-      room_1: [...acc.room_1].sort((a, b) => a - b).map((t) => new Date(t)),
-      room_2: [...acc.room_2].sort((a, b) => a - b).map((t) => new Date(t)),
-      full_villa: [...acc.full_villa].sort((a, b) => a - b).map((t) => new Date(t)),
-    };
+    return buildResultFromSets(dateListByUnit);
   }
+
   if (error) {
-    console.warn("[ical] RPC get_occupied_dates falló:", error.message, "→ fallback a tabla bookings");
+    console.warn("[ical] RPC get_occupied_dates falló:", error.message, "→ fallback por room_id en bookings");
+  } else if (useRpc && !allHaveRoomId) {
+    console.warn("[ical] RPC sin room_id → fallback leyendo room_id de bookings");
   }
 
   const thirtyMinutesAgo = new Date(Date.now() - 30 * 60 * 1000).toISOString();
@@ -151,18 +169,28 @@ async function getOccupiedDatesFromRpc(): Promise<BlockedDatesByUnit> {
     .eq("status", "pending_payment")
     .gte("created_at", thirtyMinutesAgo);
   const rows = [...(confirmed ?? []), ...(pendingRecent ?? [])];
-  if (rows.length === 0) return EMPTY_BLOCKED;
+
   for (const row of rows) {
+    const roomIdRaw = row.room_id;
+    if (roomIdRaw == null || String(roomIdRaw).trim() === "") continue;
+    const roomId = String(roomIdRaw).trim();
     const start = String(row.check_in);
     const end = String(row.check_out);
-    const roomId = row.room_id ?? "full_villa";
     const dates = rangeToBlockedDates(start, end);
-    addBlockedDatesByRoom(acc, roomId, dates);
+    addBlockedDatesByRoom(dateListByUnit, roomId, dates);
   }
+
+  return buildResultFromSets(dateListByUnit);
+}
+
+/** Devuelve un array distinto por unidad; nunca se comparte el mismo dateList entre room_1, room_2 y full_villa. */
+function buildResultFromSets(
+  sets: { room_1: Set<number>; room_2: Set<number>; full_villa: Set<number> }
+): BlockedDatesByUnit {
   return {
-    room_1: [...acc.room_1].sort((a, b) => a - b).map((t) => new Date(t)),
-    room_2: [...acc.room_2].sort((a, b) => a - b).map((t) => new Date(t)),
-    full_villa: [...acc.full_villa].sort((a, b) => a - b).map((t) => new Date(t)),
+    room_1: [...sets.room_1].sort((a, b) => a - b).map((t) => new Date(t)),
+    room_2: [...sets.room_2].sort((a, b) => a - b).map((t) => new Date(t)),
+    full_villa: [...sets.full_villa].sort((a, b) => a - b).map((t) => new Date(t)),
   };
 }
 
@@ -181,7 +209,7 @@ async function fetchAndParseCalendar(
   console.log(`[ical] Leyendo ${label}: ${safeUrl}`);
 
   try {
-    const res = await fetch(url, { next: { revalidate: 0 } });
+    const res = await fetch(url, { next: { revalidate: 0 } }); // temporal: ver cambios Airbnb al instante (sin caché 1h; era 3600)
     if (!res.ok) {
       console.log(`[ical] ${label}: HTTP ${res.status}`);
       return { eventCount: 0, blockedDates: [] };
