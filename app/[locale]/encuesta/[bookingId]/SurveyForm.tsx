@@ -4,7 +4,10 @@ import { useState, useEffect } from "react";
 import { useRouter } from "@/i18n/navigation";
 import { useFormState } from "react-dom";
 import { Star } from "lucide-react";
+import { Turnstile } from "@marsidev/react-turnstile";
 import { submitReview } from "@/app/actions/submitReview";
+
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
 const CATEGORIES = [
   { key: "Limpieza", label: "Limpieza" },
@@ -26,6 +29,7 @@ export default function SurveyForm({ bookingId, defaultAuthorName }: SurveyFormP
     Ubicación: 5,
     Confort: 5,
   });
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   useEffect(() => {
     if (state?.success) router.push("/?thanks=review");
@@ -38,6 +42,16 @@ export default function SurveyForm({ bookingId, defaultAuthorName }: SurveyFormP
       <input type="hidden" name="booking_id" value={bookingId} />
       <input type="hidden" name="rating" value={rating || ""} />
       <input type="hidden" name="categories" value={JSON.stringify(categories)} />
+      <input type="hidden" name="turnstile_token" value={turnstileToken ?? ""} />
+      {TURNSTILE_SITE_KEY && (
+        <div className="min-h-0 overflow-hidden [&_iframe]:!block">
+          <Turnstile
+            siteKey={TURNSTILE_SITE_KEY}
+            options={{ action: "submit", theme: "light", size: "invisible" }}
+            onSuccess={(token) => setTurnstileToken(token)}
+          />
+        </div>
+      )}
 
       <label className="block">
         <span className="font-sans text-sm text-[#C5A059] mb-2 block">Nombre (como desea aparecer) *</span>
@@ -142,7 +156,7 @@ export default function SurveyForm({ bookingId, defaultAuthorName }: SurveyFormP
 
       <button
         type="submit"
-        disabled={!rating}
+        disabled={!rating || (!!TURNSTILE_SITE_KEY && !turnstileToken)}
         className="w-full min-h-[52px] rounded-lg bg-[#C5A059] text-[#0A0A0A] font-sans font-semibold hover:bg-[#C5A059]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors cursor-pointer"
       >
         Publicar opinión

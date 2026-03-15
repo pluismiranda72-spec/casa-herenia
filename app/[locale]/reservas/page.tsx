@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { useLocale, useTranslations, useFormatter } from "next-intl";
 import { DayPicker } from "react-day-picker";
+import { Turnstile } from "@marsidev/react-turnstile";
 import { es, enUS } from "date-fns/locale";
 import { useBookingStore } from "@/stores/booking-store";
 import { PROPERTIES } from "@/data/properties";
@@ -13,6 +14,8 @@ import CancellationPolicyModal from "@/components/CancellationPolicyModal";
 import { isRedirectError } from "next/dist/client/components/redirect";
 import { CURRENCY_SYMBOL } from "@/lib/constants/currency";
 import "react-day-picker/style.css";
+
+const TURNSTILE_SITE_KEY = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ?? "";
 
 function formatYmd(d: Date): string {
   const y = d.getFullYear();
@@ -85,6 +88,7 @@ export default function ReservasPage() {
   const dayPickerLocale = locale === "en" ? enUS : es;
   const [isPending, setIsPending] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
+  const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -92,6 +96,7 @@ export default function ReservasPage() {
     setIsPending(true);
     const form = e.currentTarget;
     const formData = new FormData(form);
+    if (turnstileToken) formData.set("turnstile_token", turnstileToken);
     try {
       await createBooking(null, formData);
     } catch (err) {
@@ -311,6 +316,16 @@ export default function ReservasPage() {
                   {t("chooseStayAndDates")}
                 </p>
               )}
+              {TURNSTILE_SITE_KEY && (
+                <div className="min-h-0 overflow-hidden [&_iframe]:!block">
+                  <Turnstile
+                    siteKey={TURNSTILE_SITE_KEY}
+                    options={{ action: "submit", theme: "light", size: "invisible" }}
+                    onSuccess={(token) => setTurnstileToken(token)}
+                  />
+                </div>
+              )}
+              <input type="hidden" name="turnstile_token" value={turnstileToken ?? ""} />
               {submitError && (
                 <p className="font-sans text-sm text-red-400" role="alert">
                   {submitError}
@@ -318,7 +333,7 @@ export default function ReservasPage() {
               )}
               <button
                 type="submit"
-                disabled={!canSubmit || isPending}
+                disabled={!canSubmit || isPending || (!!TURNSTILE_SITE_KEY && !turnstileToken)}
                 className="w-full min-h-[48px] rounded-lg bg-[#C5A059] text-[#0A0A0A] font-sans font-semibold hover:bg-[#C5A059]/90 disabled:opacity-50 disabled:cursor-not-allowed transition-colors touch-target"
               >
                 {isPending ? t("redirectingStripe") : t("confirmBooking")}

@@ -2,9 +2,11 @@
 
 import { stripe } from '@/lib/stripe';
 import { GLOBAL_CURRENCY } from '@/lib/constants/currency';
-import { createClient } from '@/lib/supabase/server';
+// IMPORTANTE: Cambiamos el cliente normal por el de administrador que creamos
+import { supabaseAdmin as supabase } from '@/lib/supabase/admin'; 
 import { redirect } from 'next/navigation';
 import { headers } from 'next/headers';
+import { verifyTurnstileToken } from '@/lib/turnstile';
 
 export async function createBooking(
   _prevState: unknown,
@@ -12,6 +14,14 @@ export async function createBooking(
 ) {
   if (!process.env.STRIPE_SECRET_KEY) {
     throw new Error('Falta la clave de Stripe');
+  }
+
+  // 1. Verificación del Escudo Cloudflare
+  if (process.env.TURNSTILE_SECRET_KEY) {
+    const turnstileToken = (formData.get('turnstile_token') as string) ?? null;
+    if (!await verifyTurnstileToken(turnstileToken)) {
+      throw new Error('Validación de seguridad fallida. Inténtalo de nuevo.');
+    }
   }
 
   const headerList = await headers();
@@ -24,11 +34,12 @@ export async function createBooking(
   let sessionUrl: string | null = null;
 
   try {
-    const supabase = await createClient();
+    // Ya no necesitamos 'await createClient()' porque usamos supabaseAdmin directamente
     const payload = Object.fromEntries(formData.entries()) as Record<string, string>;
     const guest_phone = payload.guest_phone?.trim() || null;
     const locale = (payload.locale === 'en' ? 'en' : 'es') as 'es' | 'en';
 
+    // 2. Inserción con Privilegios de Administrador (Bypass RLS)
     const { data: booking, error } = await supabase
       .from('bookings')
       .insert({
@@ -45,7 +56,10 @@ export async function createBooking(
       .select()
       .single();
 
-    if (error) throw new Error(error.message);
+    if (error) {
+      console.error('❌ Error de Supabase:', error.message);
+      throw new Error(error.message);
+    }
 
     const roomName =
       payload.room_id === 'room_1'
@@ -56,7 +70,7 @@ export async function createBooking(
             ? 'Villa Completa'
             : payload.room_id;
 
-    // All payments in EUR only (GLOBAL_CURRENCY). No dynamic currency or Price IDs.
+    // 3. Pasarela de Pago Stripe (Todo en EUR)
     const session = await stripe.checkout.sessions.create({
       line_items: [
         {

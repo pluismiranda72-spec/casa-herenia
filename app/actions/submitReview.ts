@@ -2,6 +2,7 @@
 
 import { z } from "zod";
 import { createClient } from "@/lib/supabase/server";
+import { verifyTurnstileToken } from "@/lib/turnstile";
 
 const reviewSchema = z.object({
   booking_id: z.string().uuid(),
@@ -18,6 +19,13 @@ export async function submitReview(
   _prevState: SubmitReviewState | null,
   formData: FormData
 ): Promise<SubmitReviewState> {
+  if (process.env.TURNSTILE_SECRET_KEY) {
+    const turnstileToken = (formData.get("turnstile_token") as string) ?? null;
+    if (!(await verifyTurnstileToken(turnstileToken))) {
+      return { success: false, error: "Validación de seguridad fallida. Inténtalo de nuevo." };
+    }
+  }
+
   const raw = {
     booking_id: formData.get("booking_id"),
     author_name: formData.get("author_name"),
