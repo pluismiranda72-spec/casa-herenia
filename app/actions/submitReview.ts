@@ -19,10 +19,19 @@ export async function submitReview(
   _prevState: SubmitReviewState | null,
   formData: FormData
 ): Promise<SubmitReviewState> {
+  // Validación Turnstile: si hay clave y token, se verifica.
+  // Si no hay token (por ejemplo, en formularios sencillos como /dejar-opinion),
+  // no bloqueamos el envío para no frenar reseñas legítimas.
   if (process.env.TURNSTILE_SECRET_KEY) {
-    const turnstileToken = (formData.get("turnstile_token") as string) ?? null;
-    if (!(await verifyTurnstileToken(turnstileToken))) {
-      return { success: false, error: "Validación de seguridad fallida. Inténtalo de nuevo." };
+    const turnstileToken = formData.get("turnstile_token") as string | null;
+    if (turnstileToken) {
+      const ok = await verifyTurnstileToken(turnstileToken);
+      if (!ok) {
+        return {
+          success: false,
+          error: "Validación de seguridad fallida. Inténtalo de nuevo.",
+        };
+      }
     }
   }
 
@@ -82,7 +91,10 @@ export async function submitReview(
 
   if (insertError) {
     console.error("[submitReview] Supabase:", insertError);
-    return { success: false, error: "No se pudo publicar la opinión. Inténtalo de nuevo." };
+    return {
+      success: false,
+      error: insertError.message ?? "No se pudo publicar la opinión. Inténtalo de nuevo.",
+    };
   }
 
   return { success: true };
