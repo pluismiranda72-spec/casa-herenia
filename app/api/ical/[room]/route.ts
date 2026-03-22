@@ -44,72 +44,83 @@ export async function GET(
     );
   }
 
-  const supabase = createServiceRoleClient();
-  if (!supabase) {
+  try {
+    const supabase = createServiceRoleClient();
+    if (!supabase) {
+      return NextResponse.json(
+        { error: "Calendar unavailable." },
+        { status: 503 }
+      );
+    }
+
+    const calendar = ical({
+      name: calName,
+      description: "Automated availability feed",
+      prodId: "-//Standard_Node//EN",
+      timezone: "UTC",
+      method: "PUBLISH",
+      x: [
+        ["X-WR-CALNAME", calName],
+        ["X-WR-CALDESC", "Automated availability feed"],
+      ],
+    });
+
+    const { data: bookings } = await supabase
+      .from("bookings")
+      .select("check_in, check_out")
+      .eq("status", "confirmed")
+      .in("room_id", roomIds);
+
+    for (const b of bookings ?? []) {
+      const checkIn = String(b.check_in);
+      const checkOut = String(b.check_out);
+      calendar.createEvent({
+        start: parseDateUTC(checkIn),
+        end: parseDateUTC(checkOut),
+        summary: "Blocked",
+        id: randomUUID(),
+        allDay: true,
+      });
+    }
+
+    const { data: blocks } = await supabase
+      .from("manual_blocks")
+      .select("start_date, end_date")
+      .in("room_id", roomIds);
+
+    for (const bl of blocks ?? []) {
+      const start = String(bl.start_date);
+      const endInclusive = String(bl.end_date);
+      const endExclusive = addDays(endInclusive, 1);
+      calendar.createEvent({
+        start: parseDateUTC(start),
+        end: parseDateUTC(endExclusive),
+        summary: "Blocked",
+        id: randomUUID(),
+        allDay: true,
+      });
+    }
+
+    const body = calendar.toString();
+
+    return new NextResponse(body, {
+      status: 200,
+      headers: {
+        "Content-Type": "text/calendar; charset=utf-8",
+        "Content-Disposition": 'attachment; filename="calendar.ics"',
+        "Cache-Control": "no-cache, no-store, must-revalidate",
+        Pragma: "no-cache",
+        Expires: "0",
+      },
+    });
+  } catch (error) {
+    console.error("Error generating iCal:", error);
     return NextResponse.json(
-      { error: "Calendar unavailable." },
-      { status: 503 }
+      {
+        error: "Internal Server Error",
+        details: error instanceof Error ? error.message : "Unknown error",
+      },
+      { status: 500 }
     );
   }
-
-  const calendar = ical({
-    name: calName,
-    description: "Automated availability feed",
-    prodId: "-//Standard_Node//EN",
-    timezone: "UTC",
-    method: "PUBLISH",
-    x: [
-      ["X-WR-CALNAME", calName],
-      ["X-WR-CALDESC", "Automated availability feed"],
-    ],
-  });
-
-  const { data: bookings } = await supabase
-    .from("bookings")
-    .select("check_in, check_out")
-    .eq("status", "confirmed")
-    .in("room_id", roomIds);
-
-  for (const b of bookings ?? []) {
-    const checkIn = String(b.check_in);
-    const checkOut = String(b.check_out);
-    calendar.createEvent({
-      start: parseDateUTC(checkIn),
-      end: parseDateUTC(checkOut),
-      summary: "Blocked",
-      id: randomUUID(),
-      allDay: true,
-    });
-  }
-
-  const { data: blocks } = await supabase
-    .from("manual_blocks")
-    .select("start_date, end_date")
-    .in("room_id", roomIds);
-
-  for (const bl of blocks ?? []) {
-    const start = String(bl.start_date);
-    const endInclusive = String(bl.end_date);
-    const endExclusive = addDays(endInclusive, 1);
-    calendar.createEvent({
-      start: parseDateUTC(start),
-      end: parseDateUTC(endExclusive),
-      summary: "Blocked",
-      id: randomUUID(),
-      allDay: true,
-    });
-  }
-
-  const body = calendar.toString();
-
-  return new NextResponse(body, {
-    status: 200,
-    headers: {
-      "Content-Type": "text/calendar; charset=utf-8",
-      "Content-Disposition": 'attachment; filename="calendar.ics"',
-      "Cache-Control": "no-cache, no-store, must-revalidate",
-      Pragma: "no-cache",
-      Expires: "0",
-    },
-  });
 }
