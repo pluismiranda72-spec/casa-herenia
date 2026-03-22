@@ -1,7 +1,6 @@
 "use client";
 
 import { motion } from "framer-motion";
-import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
@@ -9,31 +8,26 @@ export default function HeroSection() {
   const t = useTranslations("Hero");
 
   return (
-    <section className="relative w-full h-[60vh] md:h-screen overflow-hidden">
-      {/* 1. Imagen de Fondo (Placeholder de Lujo) — bg-stone-900 evita pantalla blanca mientras carga */}
-      <div className="absolute inset-0 bg-stone-900">
-        <Image
-          src="/fondo.jpg"
-          alt="Vista panorámica de Casa Herenia y Pedro"
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, 100vw"
-          priority={true}
-          fetchPriority="high"
-          quality={80}
-        />
-        {/* Overlay Oscuro para que se lea el texto */}
-        <div className="absolute inset-0 bg-black/40 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-      </div>
+    <section className="relative w-full h-[80vh] md:h-screen overflow-hidden bg-gray-900">
+      {/* 1. La Imagen de Fondo (Ruta exacta corregida) */}
+      <img
+        src="/images/hero-habitacion.jpeg"
+        alt="Habitación principal con vista al Valle de Viñales"
+        className="absolute inset-0 w-full h-full object-cover z-0"
+        loading="eager"
+      />
 
-      {/* 2. Contenido Central — py-8 en móvil para evitar solapamiento en landscape; sm:py-16 en tablet/desktop */}
-      <div className="relative z-10 flex h-full min-h-0 flex-col items-center justify-center overflow-y-auto px-5 py-8 sm:py-16 sm:px-6 md:px-8 text-center text-white">
-        <div className="space-y-4 w-full max-w-2xl">
+      {/* 2. Superposición Oscura (Overlay) para LEGIBILIDAD */}
+      <div className="absolute inset-0 bg-black/40 z-10" aria-hidden="true" />
+
+      {/* 3. Contenedor de Texto y Botones (Mantiene el diseño UI centrado) */}
+      <div className="relative z-20 container mx-auto flex h-full min-h-0 flex-col items-center justify-center overflow-y-auto px-4 py-8 text-center text-white sm:px-6 sm:py-16 md:px-8">
+        <div className="w-full max-w-2xl space-y-4">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.2 }}
-            className="font-serif text-3xl sm:text-4xl md:text-6xl lg:text-7xl font-bold tracking-tight"
+            className="font-serif text-3xl font-bold tracking-tight text-white sm:text-4xl md:text-6xl lg:text-7xl"
           >
             {t("title")} <br />
             <span className="text-[#C5A059]">{t("brand")}</span>
@@ -43,7 +37,7 @@ export default function HeroSection() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.4 }}
-            className="font-sans text-base sm:text-lg md:text-xl text-gray-200 font-light px-2 text-center"
+            className="px-2 text-center font-sans text-base font-light text-gray-200 sm:text-lg md:text-xl"
           >
             {t("description")}
           </motion.p>
@@ -53,24 +47,24 @@ export default function HeroSection() {
           initial={{ opacity: 0, scale: 0.9 }}
           animate={{ opacity: 1, scale: 1 }}
           transition={{ duration: 0.5, delay: 0.6 }}
-          className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center w-full mt-6 sm:mt-10"
+          className="mt-6 flex w-full flex-col items-center justify-center gap-4 sm:mt-10 sm:flex-row sm:gap-6"
         >
           <Link
             href="/reservas"
             prefetch={true}
-            className="w-full sm:w-auto bg-transparent border-2 border-white text-white px-6 py-3 sm:px-8 sm:py-4 rounded-none font-sans font-semibold tracking-widest hover:bg-[#6A8D55] hover:border-[#6A8D55] transition-all duration-300 ease-in-out text-sm sm:text-base inline-block text-center"
+            className="inline-block w-full border-2 border-white bg-transparent px-6 py-3 text-center font-sans text-sm font-semibold tracking-widest text-white transition-all duration-300 ease-in-out hover:border-[#6A8D55] hover:bg-[#6A8D55] sm:w-auto sm:px-8 sm:py-4 sm:text-base"
           >
             {t("cta")}
           </Link>
           <Link
             href="/descubre"
-            className="md:hidden w-full sm:w-auto shrink-0 border border-[#C5A059] text-[#C5A059] font-sans text-xs uppercase tracking-widest px-4 py-2.5 sm:px-6 sm:py-3 hover:bg-[#C5A059] hover:text-[#0A0A0A] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 focus:ring-offset-2 focus:ring-offset-transparent inline-block text-center"
+            className="inline-block w-full shrink-0 border border-[#C5A059] px-4 py-2.5 text-center font-sans text-xs uppercase tracking-widest text-[#C5A059] transition-colors hover:bg-[#C5A059] hover:text-[#0A0A0A] focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 focus:ring-offset-2 focus:ring-offset-transparent sm:w-auto sm:px-6 sm:py-3 md:hidden"
           >
             {t("discoverCta")}
           </Link>
           <Link
             href="/reserva-segura"
-            className="md:hidden w-full sm:w-auto shrink-0 border border-[#C5A059] text-[#C5A059] font-sans text-xs uppercase tracking-widest px-4 py-2.5 sm:px-6 sm:py-3 hover:bg-[#C5A059] hover:text-[#0A0A0A] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 focus:ring-offset-2 focus:ring-offset-transparent inline-block text-center"
+            className="inline-block w-full shrink-0 border border-[#C5A059] px-4 py-2.5 text-center font-sans text-xs uppercase tracking-widest text-[#C5A059] transition-colors hover:bg-[#C5A059] hover:text-[#0A0A0A] focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 focus:ring-offset-2 focus:ring-offset-transparent sm:w-auto sm:px-6 sm:py-3 md:hidden"
           >
             {t("safeBookingCta")}
           </Link>

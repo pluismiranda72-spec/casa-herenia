@@ -9,6 +9,7 @@ import type { Property } from "@/data/properties";
 import RoomDetailsModal from "@/components/RoomDetailsModal";
 import { optimizeCloudinaryUrl } from "@/utils/cloudinary";
 import { CURRENCY_SYMBOL } from "@/lib/constants/currency";
+import { Link } from "@/i18n/navigation";
 
 export default function RoomGallery() {
   const t = useTranslations("Rooms");
@@ -17,17 +18,53 @@ export default function RoomGallery() {
   return (
     <section
       id="estancias"
-      className="w-full bg-[#f4f4f5] pt-8 pb-0 md:pt-12 md:pb-0"
-      style={{ backgroundColor: "#f4f4f5" }}
+      className="relative w-full overflow-hidden py-16 md:py-24"
       aria-labelledby="room-gallery-heading"
     >
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div className="absolute inset-0 z-0">
+        <img
+          src="/images/06.jpeg"
+          alt=""
+          className="absolute inset-0 z-0 h-full w-full object-cover"
+          loading="eager"
+        />
+        {/* Nuevo overlay oscuro para legibilidad sin tinte verde */}
+        <div
+          className="absolute inset-0 bg-black/30 z-10"
+          aria-hidden="true"
+        />
+      </div>
+      <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <h2
           id="room-gallery-heading"
-          className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 tracking-tight text-center mb-8 md:mb-12"
+          className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight text-center mb-8 md:mb-12"
         >
           {t("title")}
         </h2>
+
+        {/* Contenedor para centrar el botón y darle espaciado */}
+        <div className="flex justify-center mt-8 mb-12 w-full">
+          <Link
+            href="/oferta-especial"
+            className="group inline-flex items-center gap-2 px-6 py-2.5 border-2 border-emerald-600 text-white font-semibold rounded-full text-sm transition-all duration-300 ease-in-out hover:bg-emerald-100/90 hover:text-emerald-900 hover:border-emerald-100 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+          >
+            <svg
+              className="w-4 h-4 text-white group-hover:text-emerald-900 group-hover:scale-110 transition-transform"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+              aria-hidden
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M12 8v13m0-13V6a2 2 0 112 2h-2zm0 0V6a2 2 0 10-2 2h2z"
+              />
+            </svg>
+            Oferta Especial
+          </Link>
+        </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
           {PROPERTIES.map((property, index) => {
