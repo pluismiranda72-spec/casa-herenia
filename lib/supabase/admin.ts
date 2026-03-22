@@ -11,3 +11,8 @@ export const supabaseAdmin = createClient(
     }
   }
 )
+
+/** Alias usado por rutas API y acciones que esperan un factory (mismo cliente que supabaseAdmin). */
+export function createServiceRoleClient() {
+  return supabaseAdmin;
+}
