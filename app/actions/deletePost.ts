@@ -45,5 +45,6 @@ export async function deletePost(id: string): Promise<DeletePostState> {
 
   revalidatePath("/descubre");
   revalidatePath("/admin/publicar");
+  revalidatePath("/admin/editar-publicaciones");
   return { success: true };
 }
