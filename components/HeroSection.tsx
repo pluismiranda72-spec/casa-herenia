@@ -33,14 +33,16 @@ export default function HeroSection() {
             <span className="text-[#C5A059]">{t("brand")}</span>
           </motion.h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.4 }}
-            className="px-2 text-center font-sans text-base font-light leading-relaxed text-gray-200"
-          >
-            {t("description")}
-          </motion.p>
+          <div className="mx-auto max-w-2xl">
+            <motion.p
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.8, delay: 0.4 }}
+              className="px-2 text-center font-sans text-base font-light leading-relaxed text-gray-200"
+            >
+              {t("description")}
+            </motion.p>
+          </div>
         </div>
 
         <motion.div
