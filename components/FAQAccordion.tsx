@@ -10,11 +10,6 @@ const faqData = [
       "Al reservar online con nosotros, pagas el alojamiento de forma 100% segura mediante pasarela europea. Solo necesitarás efectivo para gastos menores locales. Olvídate del estrés de viajar con grandes sumas de dinero.",
   },
   {
-    question: "¿Tendré conexión a Internet en la casa?",
-    answer:
-      "Sí. Sabemos lo importante que es estar conectado. Contamos con una red WiFi estable y energía de respaldo 24H para que puedas comunicarte con tu familia o trabajar, sin depender de las redes públicas.",
-  },
-  {
     question: "¿Cómo llego a Viñales desde el aeropuerto o La Habana?",
     answer:
       "Nos encargamos de todo. Gestionamos traslados seguros en taxi privado (120€) o colectivo (25€) directo hasta nuestra puerta. Sin regateos ni sorpresas, con conductores de nuestra absoluta confianza.",

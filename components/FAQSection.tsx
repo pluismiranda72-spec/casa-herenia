@@ -4,7 +4,15 @@ import { ChevronDown } from "lucide-react";
 import { useTranslations } from "next-intl";
 import AuraFAQFloating from "@/components/AuraFAQFloating";
 
-const FAQ_KEYS = ["q1", "q2", "q3"] as const;
+const FAQ_KEYS = [
+  "q1",
+  "q3",
+  "q4",
+  "q5",
+  "q6",
+  "q7",
+  "q8",
+] as const;
 
 export default function FAQSection() {
   const t = useTranslations("FAQ");
@@ -42,7 +50,7 @@ export default function FAQSection() {
                 </span>
               </summary>
               <div className="pb-4 pr-12">
-                <p className="font-sans text-base text-gray-400 leading-relaxed break-words">
+                <p className="font-sans text-base text-gray-400 leading-relaxed break-words whitespace-pre-line">
                   {item.answer}
                 </p>
               </div>

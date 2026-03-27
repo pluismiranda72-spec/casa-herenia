@@ -118,13 +118,29 @@
       "question": "¿Cómo funciona el pago y necesito llevar mucho efectivo?",
       "answer": "Al reservar online con nosotros, pagas el alojamiento de forma 100% segura mediante pasarela europea. Solo necesitarás efectivo para gastos menores locales. Olvídate del estrés de viajar con grandes sumas de dinero."
     },
-    "q2": {
-      "question": "¿Tendré conexión a Internet en la casa?",
-      "answer": "Sí. Sabemos lo importante que es estar conectado. Contamos con una red WiFi estable y energía de respaldo 24H para que puedas comunicarte con tu familia o trabajar, sin depender de las redes públicas."
-    },
     "q3": {
       "question": "¿Cómo llego a Viñales desde La Habana u otro lugar del país?",
       "answer": "Nos encargamos de todo. Gestionamos traslados seguros; desde La Habana en taxi privado (120€) para cuatro personas o colectivo (25€) por persona, directo hasta nuestra puerta."
+    },
+    "q4": {
+      "question": "¿Es seguro reservar una casa particular en Viñales desde el extranjero?",
+      "answer": "Sí, totalmente seguro. En nuestra casa ofrecemos un sistema de reserva segura con confirmación inmediata, para que llegues a Viñales con todo organizado. Además, contamos con años de experiencia recibiendo viajeros internacionales y con opiniones verificadas en plataformas como Tripadvisor, Airbnb y Google, lo que garantiza transparencia y confianza en todo el proceso; además, también existen otras casas serias y bien valoradas."
+    },
+    "q5": {
+      "question": "¿Cómo es la conexión a internet y el wifi en la casa?",
+      "answer": "En Cuba, el acceso a internet puede variar, incluso hay lugares en que no tendrás acceso a internet y otros que te cobrarán el servicio. En nuestra casa disponemos de wifi 24h para los huéspedes, con el mejor servicio posible en Viñales. Además, te orientamos sobre cómo conectarte fácilmente y aprovechar al máximo tu estancia sin complicaciones."
+    },
+    "q6": {
+      "question": "¿Podemos organizar actividades como rutas a caballo o excursiones en Viñales directamente con la casa?",
+      "answer": "Sí, y es una de nuestras principales ventajas. Organizamos rutas a caballo en Viñales, visitas a plantaciones de tabaco, excursiones y transporte, todo con guías locales profesionales y que hablan inglés. De esta forma, no tendrás que buscar nada al llegar y podrás disfrutar de experiencias auténticas desde el primer día."
+    },
+    "q7": {
+      "question": "¿Qué incluye la estancia en Casa Herenia y Pedro?",
+      "answer": "A diferencia de otros alojamientos, aquí vivirás una experiencia más completa:\n✔ Habitación privada con confort garantizado.\n✔ Desayuno completo.\n✔ Wi-fi 24h con respaldo energético.\n✔ Agua embotellada.\n✔ Atención personalizada directa con los anfitriones.\n✔ Asesoramiento para tu viaje en Cuba.\n✔ Ayuda con transporte, excursiones y recomendaciones locales.\n👉 No es solo dormir: es vivir la experiencia cubana con comodidad y seguridad."
+    },
+    "q8": {
+      "question": "¿Es necesario reservar con antelación en Viñales?",
+      "answer": "Sí, especialmente si buscas una casa bien valorada. Viñales es uno de los destinos más demandados de Cuba y las mejores casas suelen completar su disponibilidad con antelación.\n👉 Recomendamos reservar antes de viajar, para asegurar tu estancia, evitar imprevistos y garantizar una experiencia organizada desde el primer momento."
     }
   },
   "Valley": {

@@ -109,8 +109,27 @@
   "FAQ": {
     "title": "Frequently Asked Questions",
     "q1": { "question": "How does payment work and do I need to carry a lot of cash?", "answer": "When you book online with us, you pay for your stay 100% securely via a European payment gateway. You will only need cash for minor local expenses. Forget the stress of travelling with large amounts of money." },
-    "q2": { "question": "Will I have internet connection at the house?", "answer": "Yes. We know how important it is to stay connected. We have a stable WiFi network and 24H backup power so you can communicate with your family or work without relying on public networks." },
-    "q3": { "question": "How do I get to Viñales from Havana or elsewhere in the country?", "answer": "We take care of everything. We arrange secure transfers; from Havana by private taxi (120€) for four people or collective (25€) per person, right to our door." }
+    "q3": { "question": "How do I get to Viñales from Havana or elsewhere in the country?", "answer": "We take care of everything. We arrange secure transfers; from Havana by private taxi (120€) for four people or collective (25€) per person, right to our door." },
+    "q4": {
+      "question": "Is it safe to book a casa particular in Viñales from abroad?",
+      "answer": "Yes, completely safe. At our house we offer a secure booking system with instant confirmation, so you arrive in Viñales with everything organised. We also have years of experience hosting international travellers and verified reviews on platforms such as Tripadvisor, Airbnb and Google, which ensures transparency and trust throughout the process; there are also other serious, well-rated casas."
+    },
+    "q5": {
+      "question": "What is the internet connection and Wi‑Fi like at the house?",
+      "answer": "In Cuba, internet access can vary: in some places you will have no access and elsewhere you may be charged for the service. At our house we provide 24h Wi‑Fi for guests, with the best service we can offer in Viñales. We also guide you on how to connect easily and make the most of your stay without hassle."
+    },
+    "q6": {
+      "question": "Can we arrange activities such as horse riding routes or excursions in Viñales directly with the house?",
+      "answer": "Yes, and it is one of our main strengths. We organise horse riding routes in Viñales, visits to tobacco plantations, excursions and transport, all with professional local guides who speak English. That way you will not have to arrange anything when you arrive and you can enjoy authentic experiences from day one."
+    },
+    "q7": {
+      "question": "What does a stay at Casa Herenia y Pedro include?",
+      "answer": "Unlike other places to stay, here you get a fuller experience:\n✔ Private room with guaranteed comfort.\n✔ Full breakfast.\n✔ 24h Wi‑Fi with backup power.\n✔ Bottled water.\n✔ Personal attention directly from the hosts.\n✔ Advice for your trip in Cuba.\n✔ Help with transport, excursions and local recommendations.\n👉 It is not just a place to sleep: it is living the Cuban experience with comfort and safety."
+    },
+    "q8": {
+      "question": "Is it necessary to book in advance in Viñales?",
+      "answer": "Yes, especially if you want a well-rated casa. Viñales is one of the most sought-after destinations in Cuba and the best casas often fill up in advance.\n👉 We recommend booking before you travel, to secure your stay, avoid surprises and ensure an organised experience from the very start."
+    }
   },
   "Chat": {
     "title": "Aura · Concierge",
