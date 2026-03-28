@@ -11,6 +11,23 @@ import { optimizeCloudinaryUrl } from "@/utils/cloudinary";
 import { CURRENCY_SYMBOL } from "@/lib/constants/currency";
 import { Link } from "@/i18n/navigation";
 
+function RoomsTitle({ title }: { title: string }) {
+  const colonIndex = title.indexOf(":");
+  if (colonIndex === -1) {
+    return <>{title}</>;
+  }
+  const beforeColon = title.slice(0, colonIndex + 1);
+  const afterColon = title.slice(colonIndex + 1).trimStart();
+  return (
+    <>
+      {beforeColon}
+      {" "}
+      <br className="block sm:hidden" />
+      {afterColon}
+    </>
+  );
+}
+
 export default function RoomGallery() {
   const t = useTranslations("Rooms");
   const [selectedRoom, setSelectedRoom] = useState<Property | null>(null);
@@ -37,9 +54,9 @@ export default function RoomGallery() {
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <h2
           id="room-gallery-heading"
-          className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-white tracking-tight text-center mb-8 md:mb-12 max-w-full min-w-0 break-words leading-snug px-1 sm:px-0"
+          className="font-serif text-[1.15rem] sm:text-3xl font-bold text-white tracking-tight text-center leading-snug mb-8 md:mb-12"
         >
-          {t("title")}
+          <RoomsTitle title={t("title")} />
         </h2>
 
         {/* Contenedor para centrar el botón y darle espaciado */}
