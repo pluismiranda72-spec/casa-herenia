@@ -35,7 +35,7 @@ export default function TestimonialsSection() {
       <div className="container mx-auto">
         <h2
           id="testimonials-heading"
-          className="font-serif text-2xl sm:text-3xl md:text-4xl text-white text-center mb-8 md:mb-12"
+          className="font-serif text-lg sm:text-3xl text-white text-center mb-8 md:mb-12 max-w-[280px] mx-auto sm:max-w-none leading-tight text-balance"
         >
           {t("title")}
         </h2>
