@@ -17,6 +17,7 @@ type Post = {
   media_type: string | null;
   type: string | null;
   instagram_url: string | null;
+  is_redirect: boolean | null;
   gallery_urls: string[] | null;
 };
 
@@ -137,7 +138,9 @@ export default function ViñalesMiniWidget() {
     const supabase = createClient();
     supabase
       .from("posts")
-      .select("id, title, title_en, slug, media_url, media_type, type, instagram_url, gallery_urls")
+      .select(
+        "id, title, title_en, slug, media_url, media_type, type, instagram_url, is_redirect, gallery_urls"
+      )
       .order("created_at", { ascending: false })
       .limit(10)
       .then(({ data }) => setPosts(data ?? []));
@@ -207,10 +210,18 @@ export default function ViñalesMiniWidget() {
           >
             {hasPosts ? (
               posts.map((post) => {
-                const isInstagram = post.type === "instagram" && post.instagram_url;
+                const externalUrl = post.instagram_url?.trim() ?? "";
+                const useExternal =
+                  Boolean(post.is_redirect) && Boolean(externalUrl);
                 const cardContent = (
                   <>
-                    <CardImage post={post} isInstagram={!!isInstagram} ariaPrev={t("ariaPrev")} ariaNext={t("ariaNext")} altText={displayTitle(post.title, post.title_en, locale)} />
+                    <CardImage
+                      post={post}
+                      isInstagram={useExternal}
+                      ariaPrev={t("ariaPrev")}
+                      ariaNext={t("ariaNext")}
+                      altText={displayTitle(post.title, post.title_en, locale)}
+                    />
                     <p
                       className="mt-3 font-serif text-sm text-gray-200 text-center line-clamp-2"
                       style={{ fontFamily: "var(--font-playfair), 'Playfair Display', serif" }}
@@ -219,11 +230,11 @@ export default function ViñalesMiniWidget() {
                     </p>
                   </>
                 );
-                if (isInstagram) {
+                if (useExternal) {
                   return (
                     <a
                       key={post.id}
-                      href={post.instagram_url!}
+                      href={externalUrl}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex flex-col min-w-[240px] max-w-[240px] shrink-0 group"

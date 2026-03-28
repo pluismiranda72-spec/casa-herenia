@@ -27,7 +27,9 @@ export default async function DescubrePage({ params }: Props) {
   const supabase = await createClient();
   const { data: posts } = await supabase
     .from("posts")
-    .select("id, title, title_en, slug, excerpt, excerpt_en, media_url, media_type, created_at")
+    .select(
+      "id, title, title_en, slug, excerpt, excerpt_en, media_url, media_type, created_at, is_redirect, instagram_url"
+    )
     .order("created_at", { ascending: false });
 
   const list = posts ?? [];
@@ -56,14 +58,16 @@ export default async function DescubrePage({ params }: Props) {
           </p>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-            {list.map((post, i) => (
-              <article
-                key={post.id}
-                className={`rounded-xl overflow-hidden bg-white shadow-md hover:shadow-lg transition-shadow ${
-                  (i % 5 === 0 || i % 5 === 3) ? "lg:col-span-2" : ""
-                }`}
-              >
-                <Link href={`/descubre/${post.slug}`} className="block">
+            {list.map((post, i) => {
+              const externalUrl =
+                typeof post.instagram_url === "string"
+                  ? post.instagram_url.trim()
+                  : "";
+              const useExternal =
+                Boolean(post.is_redirect) && Boolean(externalUrl);
+
+              const cardInner = (
+                <>
                   <div className="relative aspect-[4/3] md:aspect-[3/2] bg-gray-200">
                     {post.media_url && post.media_type === "image" ? (
                       <Image
@@ -105,9 +109,33 @@ export default async function DescubrePage({ params }: Props) {
                       </p>
                     )}
                   </div>
-                </Link>
-              </article>
-            ))}
+                </>
+              );
+
+              return (
+                <article
+                  key={post.id}
+                  className={`rounded-xl overflow-hidden bg-white shadow-md hover:shadow-lg transition-shadow ${
+                    i % 5 === 0 || i % 5 === 3 ? "lg:col-span-2" : ""
+                  }`}
+                >
+                  {useExternal ? (
+                    <a
+                      href={externalUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="block"
+                    >
+                      {cardInner}
+                    </a>
+                  ) : (
+                    <Link href={`/descubre/${post.slug}`} className="block">
+                      {cardInner}
+                    </Link>
+                  )}
+                </article>
+              );
+            })}
           </div>
         )}
       </div>

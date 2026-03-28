@@ -27,6 +27,8 @@ export default function PublicarPage() {
   const [slug, setSlug] = useState("");
   const [category, setCategory] = useState<string>(CATEGORIES[0]);
   const [content, setContent] = useState("");
+  const [titleEn, setTitleEn] = useState("");
+  const [contentEn, setContentEn] = useState("");
   /** Enlace de redirección (obligatorio si isRedirect; opcional si no) */
   const [instagramUrl, setInstagramUrl] = useState("");
   /** Publicación solo miniatura + salto a Instagram (sin artículo obligatorio) */
@@ -116,6 +118,8 @@ export default function PublicarPage() {
     formData.append("slug", slug);
     formData.append("category", category);
     formData.append("content", content);
+    formData.append("title_en", titleEn);
+    formData.append("content_en", contentEn);
     formData.append("instagram_url", instagramUrl.trim());
     formData.append("instagramUrl", instagramUrl.trim());
     formData.append("is_redirect", isRedirect ? "true" : "false");
@@ -142,6 +146,8 @@ export default function PublicarPage() {
         setTitle("");
         setSlug("");
         setContent("");
+        setTitleEn("");
+        setContentEn("");
         setInstagramUrl("");
         setIsRedirect(false);
         setCoverImage(null);
@@ -248,6 +254,9 @@ export default function PublicarPage() {
 
       <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-3 gap-8">
         <div className="md:col-span-2 space-y-6">
+          <h2 className="text-sm font-bold text-gray-900 tracking-wide border-b border-gray-200 pb-2">
+            Textos en Español
+          </h2>
           <div className="bg-white p-6 rounded-xl border shadow-sm">
             <label className="block text-sm font-bold text-gray-900 mb-2">
               Título de la Publicación
@@ -309,6 +318,39 @@ export default function PublicarPage() {
                 theme="snow"
                 value={content}
                 onChange={setContent}
+                modules={quillModules}
+                className="h-full rounded-lg"
+              />
+            </div>
+          </div>
+
+          <h2 className="text-sm font-bold text-gray-900 tracking-wide border-b border-gray-200 pb-2 pt-2">
+            Textos en Inglés
+          </h2>
+          <div className="bg-white p-6 rounded-xl border shadow-sm">
+            <label className="block text-sm font-bold text-gray-900 mb-2">
+              Title (English)
+            </label>
+            <input
+              type="text"
+              value={titleEn}
+              onChange={(e) => setTitleEn(e.target.value)}
+              placeholder="Optional — shown when the site is in English"
+              className="w-full px-4 py-3 border rounded-lg focus:ring-emerald-400 font-medium"
+            />
+          </div>
+          <div className="bg-white p-6 rounded-xl border shadow-sm">
+            <label className="block text-sm font-bold text-gray-900 mb-2">
+              Content (English)
+            </label>
+            <p className="text-xs text-gray-500 mb-2">
+              Opcional. Si lo dejas vacío, en inglés se mostrará el texto en español.
+            </p>
+            <div className="h-72 mb-10">
+              <ReactQuill
+                theme="snow"
+                value={contentEn}
+                onChange={setContentEn}
                 modules={quillModules}
                 className="h-full rounded-lg"
               />

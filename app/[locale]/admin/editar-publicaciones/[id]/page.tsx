@@ -131,6 +131,8 @@ export default async function EditarPublicacionPage({ params }: PageProps) {
         category,
         isRedirect,
         content: post.content ?? "",
+        titleEn: post.title_en ?? "",
+        contentEn: post.content_en ?? "",
         instagramUrl: post.instagram_url ?? "",
         coverImagePreview: post.media_url ?? null,
         galleryImage1Preview: galleryUrls[0] ?? null,

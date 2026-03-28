@@ -1,5 +1,5 @@
 -- Ejecutar en el panel SQL de Supabase (Dashboard > SQL Editor)
--- Tabla de premios para la sección "Nuestros Premios" (CMS)
+-- Tabla de premios para la sección "Reconocimientos Internacionales que Avalan Nuestra Calidad" (CMS)
 
 CREATE TABLE IF NOT EXISTS public.awards (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),

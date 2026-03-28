@@ -1,6 +1,10 @@
 import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
+import {
+  parseInstagramUrlFromFormData,
+  parseIsRedirectFromFormData,
+} from "@/lib/api/descubrePostForm";
 
 export const runtime = "nodejs";
 
@@ -65,12 +69,14 @@ export async function POST(request: Request) {
     const category =
       String(formData.get("category") ?? "").trim() || "Sin categoría";
     const content = String(formData.get("content") ?? "");
-    const instagramUrlRaw =
-      formData.get("instagram_url") ?? formData.get("instagramUrl");
-    const instagramUrl =
-      typeof instagramUrlRaw === "string" ? instagramUrlRaw.trim() : "";
+    const titleEnRaw = formData.get("title_en");
+    const contentEnRaw = formData.get("content_en");
+    const titleEn =
+      typeof titleEnRaw === "string" ? titleEnRaw.trim() : "";
+    const contentEn = String(contentEnRaw ?? "");
+    const instagramUrl = parseInstagramUrlFromFormData(formData);
     const status = String(formData.get("status") ?? "publicado").trim();
-    const isRedirect = parseBool(formData.get("is_redirect"));
+    const isRedirect = parseIsRedirectFromFormData(formData);
 
     const coverImagePresent = parseBool(formData.get("coverImagePresent"));
     const galleryImage1Present = parseBool(
@@ -110,7 +116,14 @@ export async function POST(request: Request) {
       .eq("id", id)
       .maybeSingle();
 
-    if (fetchError || !existing) {
+    if (fetchError) {
+      console.error("[api/update-post] fetch post:", fetchError);
+      return NextResponse.json(
+        { success: false, error: fetchError.message, code: fetchError.code },
+        { status: 500 }
+      );
+    }
+    if (!existing) {
       return NextResponse.json(
         { success: false, error: "No se encontró la publicación." },
         { status: 404 }
@@ -129,7 +142,9 @@ export async function POST(request: Request) {
       );
     }
 
-    async function uploadToBlogMedia(file: File): Promise<string | null> {
+    async function uploadToBlogMedia(
+      file: File
+    ): Promise<{ ok: true; url: string } | { ok: false; message: string }> {
       const ext = file.name.split(".").pop()?.toLowerCase() || "jpg";
       const safeName = `${Date.now()}-${slugify(file.name.slice(0, 40))}.${ext}`;
 
@@ -142,14 +157,17 @@ export async function POST(request: Request) {
 
       if (uploadError) {
         console.error("[api/update-post] Storage:", uploadError);
-        return null;
+        return {
+          ok: false,
+          message: uploadError.message || "Error al subir archivo a Storage.",
+        };
       }
 
       const { data: urlData } = supabaseAdmin.storage
         .from("blog-media")
         .getPublicUrl(uploadData.path);
 
-      return urlData.publicUrl;
+      return { ok: true, url: urlData.publicUrl };
     }
 
     const existingMediaUrl: string | null = existing.media_url ?? null;
@@ -164,13 +182,14 @@ export async function POST(request: Request) {
     let mediaType: string | null = null;
     if (coverImagePresent) {
       if (coverImageFile) {
-        mediaUrl = await uploadToBlogMedia(coverImageFile);
-        if (!mediaUrl) {
+        const uploaded = await uploadToBlogMedia(coverImageFile);
+        if (!uploaded.ok) {
           return NextResponse.json(
-            { success: false, error: "No se pudo subir la imagen de portada." },
+            { success: false, error: uploaded.message },
             { status: 500 }
           );
         }
+        mediaUrl = uploaded.url;
       } else {
         mediaUrl = existingMediaUrl;
       }
@@ -180,16 +199,16 @@ export async function POST(request: Request) {
     const galleryUrls: string[] = [];
     if (galleryImage1Present) {
       if (galleryImage1File) {
-        const url = await uploadToBlogMedia(galleryImage1File);
-        if (url) galleryUrls.push(url);
+        const uploaded = await uploadToBlogMedia(galleryImage1File);
+        if (uploaded.ok) galleryUrls.push(uploaded.url);
       } else if (existingGallery1) {
         galleryUrls.push(existingGallery1);
       }
     }
     if (galleryImage2Present) {
       if (galleryImage2File) {
-        const url = await uploadToBlogMedia(galleryImage2File);
-        if (url) galleryUrls.push(url);
+        const uploaded = await uploadToBlogMedia(galleryImage2File);
+        if (uploaded.ok) galleryUrls.push(uploaded.url);
       } else if (existingGallery2) {
         galleryUrls.push(existingGallery2);
       }
@@ -223,12 +242,19 @@ export async function POST(request: Request) {
     const baseSlug = slug;
     let attempt = 0;
     while (true) {
-      const { data: existingSlug } = await supabaseAdmin
+      const { data: existingSlug, error: slugLookupError } = await supabaseAdmin
         .from("posts")
         .select("id")
         .eq("slug", slug)
         .maybeSingle();
 
+      if (slugLookupError) {
+        console.error("[api/update-post] slug lookup:", slugLookupError);
+        return NextResponse.json(
+          { success: false, error: slugLookupError.message, code: slugLookupError.code },
+          { status: 500 }
+        );
+      }
       if (!existingSlug || existingSlug.id === id) break;
       attempt++;
       slug = `${baseSlug}-${attempt}`;
@@ -243,17 +269,31 @@ export async function POST(request: Request) {
       ? content.trim() && content !== "<p><br></p>" ? content : null
       : content;
 
+    const contentEnEmpty =
+      !contentEn.trim() ||
+      contentEn.trim() === "<p><br></p>" ||
+      contentEn.trim() === "<p></p>";
+    const contentEnToStore = isRedirect
+      ? !contentEnEmpty && contentEn !== "<p><br></p>"
+        ? contentEn
+        : null
+      : contentEnEmpty
+        ? null
+        : contentEn;
+
     const updatePayload: Record<string, unknown> = {
       title,
       slug,
       excerpt,
       content: contentToStore,
+      title_en: titleEn || null,
+      content_en: contentEnToStore,
       media_url: coverImagePresent ? mediaUrl : null,
       media_type: coverImagePresent ? mediaType : null,
       type: isRedirect ? "redirect" : "standard",
       instagram_url: isRedirect ? instagramUrl : instagramUrl || null,
       gallery_urls: galleryUrlsToStore,
-      is_redirect: isRedirect,
+      is_redirect: Boolean(isRedirect),
     };
 
     const { error: updateError } = await supabaseAdmin
@@ -263,9 +303,10 @@ export async function POST(request: Request) {
 
     if (updateError) {
       console.error("[api/update-post] Supabase update:", updateError);
+      const status = updateError.code === "PGRST204" || updateError.code === "23502" ? 400 : 500;
       return NextResponse.json(
-        { success: false, error: updateError.message },
-        { status: 500 }
+        { success: false, error: updateError.message, code: updateError.code },
+        { status }
       );
     }
 

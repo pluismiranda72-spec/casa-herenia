@@ -83,8 +83,14 @@ type Props = { params: Promise<{ locale: string; slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug, locale } = await params;
   const data = await getCachedPost(slug)();
-  const title = locale === "en" ? data?.title_en || data?.title : data?.title;
-  const description = locale === "en" ? data?.excerpt_en || data?.excerpt : data?.excerpt;
+  const title =
+    locale === "en" && data?.title_en?.trim()
+      ? data.title_en
+      : data?.title ?? undefined;
+  const description =
+    locale === "en" && data?.excerpt_en?.trim()
+      ? data.excerpt_en
+      : data?.excerpt ?? undefined;
 
   return {
     title: title ? `${title} | Casa Herenia y Pedro` : "Descubre Viñales",
@@ -97,9 +103,16 @@ export default async function PostPage({ params }: Props) {
   const post = await getCachedPost(slug)();
   if (!post) notFound();
 
-  const title = locale === "en" ? post.title_en || post.title : post.title;
-  const excerpt = locale === "en" ? post.excerpt_en || post.excerpt : post.excerpt;
-  const content = locale === "en" ? post.content_en || post.content : post.content;
+  const title =
+    locale === "en" && post.title_en?.trim() ? post.title_en : post.title;
+  const excerpt =
+    locale === "en" && post.excerpt_en?.trim()
+      ? post.excerpt_en
+      : post.excerpt;
+  const content =
+    locale === "en" && post.content_en?.trim()
+      ? post.content_en
+      : post.content;
 
   return (
     <main className="min-h-screen bg-[#faf9f6] text-[#0A0A0A]">

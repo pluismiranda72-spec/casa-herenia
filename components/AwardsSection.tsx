@@ -5,6 +5,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import Image from "next/image";
 import { optimizeCloudinaryUrl } from "@/utils/cloudinary";
+import { useTranslations } from "next-intl";
 
 const SCROLL_STEP = 300;
 
@@ -16,6 +17,7 @@ type Award = {
 };
 
 export default function AwardsSection() {
+  const t = useTranslations("Awards");
   const scrollRef = useRef<HTMLDivElement>(null);
   const [awards, setAwards] = useState<Award[]>([]);
 
@@ -51,9 +53,9 @@ export default function AwardsSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative group/aw">
         <h2
           id="awards-heading"
-          className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 tracking-tight text-center mb-8 md:mb-12"
+          className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 tracking-tight text-center mb-8 md:mb-12 max-w-full px-1 sm:px-0 leading-snug"
         >
-          Nuestros Premios
+          {t("title")}
         </h2>
 
         {awards.length === 0 ? (
