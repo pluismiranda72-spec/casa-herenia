@@ -25,6 +25,23 @@ const BENEFITS = [
   { id: "english", icon: Languages, key: "english" as const },
 ];
 
+function BenefitsTitle({ title }: { title: string }) {
+  const colonIndex = title.indexOf(":");
+  if (colonIndex === -1) {
+    return <>{title}</>;
+  }
+  const beforeColon = title.slice(0, colonIndex + 1);
+  const afterColon = title.slice(colonIndex + 1).trimStart();
+  return (
+    <>
+      {beforeColon}
+      {" "}
+      <br className="block sm:hidden" />
+      {afterColon}
+    </>
+  );
+}
+
 export default function BenefitsSection() {
   const t = useTranslations("Benefits");
 
@@ -37,9 +54,9 @@ export default function BenefitsSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <h2
           id="benefits-heading"
-          className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 tracking-tight text-center mb-8 md:mb-12 max-w-full min-w-0 break-words leading-snug px-1 sm:px-0"
+          className="font-serif text-[1.15rem] sm:text-3xl font-bold text-gray-900 tracking-tight text-center leading-snug mb-8 md:mb-12"
         >
-          {t("title")}
+          <BenefitsTitle title={t("title")} />
         </h2>
 
         <div className="grid grid-cols-3 gap-x-2 gap-y-4 sm:grid-cols-3 md:flex md:flex-row md:flex-nowrap md:justify-around md:items-start md:gap-4 max-w-5xl mx-auto">
