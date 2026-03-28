@@ -35,9 +35,11 @@ export default function TestimonialsSection() {
       <div className="container mx-auto">
         <h2
           id="testimonials-heading"
-          className="font-serif text-[1.35rem] sm:text-3xl text-white text-center mb-8 md:mb-12 max-w-[340px] sm:max-w-none mx-auto leading-tight text-balance"
+          className="font-serif text-[1.3rem] sm:text-3xl text-white text-center mb-8 md:mb-12 leading-tight"
         >
-          {t("title")}
+          {t("titleLine1")}{" "}
+          <br className="block sm:hidden" />
+          {t("titleLine2")}
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">

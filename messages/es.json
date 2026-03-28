@@ -65,6 +65,8 @@
   },
   "Testimonials": {
     "title": "Opiniones de Nuestros Huéspedes en Viñales: Tripadvisor, Google y Airbnb",
+    "titleLine1": "Opiniones de Nuestros Huéspedes en Viñales:",
+    "titleLine2": "Tripadvisor, Google y Airbnb",
     "verifiedStay": "Verified Stay",
     "verifiedGuestPrefix": "Huésped Verificado — ",
     "googleMapsLinkText": "Google Maps",
