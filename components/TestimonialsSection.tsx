@@ -3,7 +3,7 @@
 import { Link } from "@/i18n/navigation";
 import { Star, Check } from "lucide-react";
 import { motion } from "framer-motion";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 
 const TESTIMONIAL_KEYS = ["t1", "t2", "t3"] as const;
 
@@ -26,6 +26,7 @@ function Stars({ count = 5 }: { count?: number }) {
 
 export default function TestimonialsSection() {
   const t = useTranslations("Testimonials");
+  const locale = useLocale();
 
   return (
     <section
@@ -35,11 +36,21 @@ export default function TestimonialsSection() {
       <div className="container mx-auto">
         <h2
           id="testimonials-heading"
-          className="font-serif text-[1.3rem] sm:text-3xl text-white text-center mb-8 md:mb-12 leading-tight"
+          className="font-serif text-[1.15rem] sm:text-3xl text-white text-center leading-snug mb-8 md:mb-12"
         >
-          {t("titleLine1")}{" "}
-          <br className="block sm:hidden" />
-          {t("titleLine2")}
+          {locale === "es" ? (
+            <>
+              Opiniones de Nuestros Huéspedes en{" "}
+              <br className="block sm:hidden" />
+              Viñales: Tripadvisor, Google y Airbnb
+            </>
+          ) : (
+            <>
+              {t("titleLine1")}{" "}
+              <br className="block sm:hidden" />
+              {t("titleLine2")}
+            </>
+          )}
         </h2>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-10">
