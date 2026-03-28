@@ -9,6 +9,24 @@ import { useTranslations } from "next-intl";
 
 const SCROLL_STEP = 300;
 
+function AwardsTitle({ title }: { title: string }) {
+  const words = title.trim().split(/\s+/).filter(Boolean);
+  if (words.length <= 1) {
+    return <>{title}</>;
+  }
+  const midIndex = Math.ceil(words.length / 2);
+  const firstHalf = words.slice(0, midIndex).join(" ");
+  const secondHalf = words.slice(midIndex).join(" ");
+  return (
+    <>
+      {firstHalf}
+      {" "}
+      <br className="block sm:hidden" />
+      {secondHalf}
+    </>
+  );
+}
+
 type Award = {
   id: string;
   image_url: string;
@@ -53,9 +71,9 @@ export default function AwardsSection() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative group/aw">
         <h2
           id="awards-heading"
-          className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 tracking-tight text-center mb-8 md:mb-12 max-w-full px-1 sm:px-0 leading-snug"
+          className="font-serif text-[1.15rem] sm:text-3xl font-bold text-gray-900 tracking-tight text-center leading-snug mb-8 md:mb-12"
         >
-          {t("title")}
+          <AwardsTitle title={t("title")} />
         </h2>
 
         {awards.length === 0 ? (
