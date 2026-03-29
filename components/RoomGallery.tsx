@@ -52,18 +52,20 @@ export default function RoomGallery() {
         />
       </div>
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-        <Link
+      <Link
           href="/reserva-segura"
-          className="block md:hidden w-full text-center font-serif text-[1.15rem] sm:text-3xl font-bold text-white tracking-tight leading-snug mb-4 no-underline transition-opacity hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent rounded-sm"
+          className="flex md:hidden relative z-10 w-fit mx-auto max-md:mt-4 max-md:-translate-y-[60px] max-md:mb-6 px-2 py-0.5 border border-white/80 rounded-md text-sm font-bold text-white tracking-wide no-underline transition-all hover:bg-white/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60"
         >
           {t("secureBookingMobile")}
         </Link>
-        <h2
-          id="room-gallery-heading"
-          className="font-serif text-[1.15rem] sm:text-3xl font-bold text-white tracking-tight text-center leading-snug mb-8 md:mb-12"
-        >
-          <RoomsTitle title={t("title")} />
-        </h2>
+        <div className="max-md:w-full md:contents">
+          <h2
+            id="room-gallery-heading"
+            className="max-md:-translate-y-[60px] font-serif text-[1.15rem] sm:text-3xl font-bold text-white tracking-tight text-center leading-snug mb-8 md:mb-12"
+          >
+            <RoomsTitle title={t("title")} />
+          </h2>
+        </div>
 
         {/* Contenedor para centrar el botón y darle espaciado */}
         <div className="flex justify-center mt-8 mb-12 w-full">
