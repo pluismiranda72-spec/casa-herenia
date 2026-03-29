@@ -98,14 +98,14 @@ export default function HeroSection() {
           
           <Link
             href="/descubre"
-            className="hidden md:inline-block w-full shrink-0 border border-transparent bg-transparent px-4 py-2.5 text-center font-sans text-xs uppercase tracking-widest text-[#C5A059] transition-colors hover:bg-transparent hover:text-amber-300 focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 focus:ring-offset-2 focus:ring-offset-transparent sm:w-auto sm:px-6 sm:py-3"
+            className="hidden md:hidden w-full shrink-0 border border-transparent bg-transparent px-4 py-2.5 text-center font-sans text-xs uppercase tracking-widest text-[#C5A059] transition-colors hover:bg-transparent hover:text-amber-300 focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 focus:ring-offset-2 focus:ring-offset-transparent sm:w-auto sm:px-6 sm:py-3"
           >
             {t("discoverCta")}
           </Link>
           
           <Link
             href="/reserva-segura"
-            className="hidden md:inline-block w-full shrink-0 border border-transparent bg-transparent px-4 py-2.5 text-center font-sans text-xs uppercase tracking-widest text-[#C5A059] transition-colors md:border md:border-[#C5A059] md:hover:bg-[#C5A059] md:hover:text-[#0A0A0A] focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 focus:ring-offset-2 focus:ring-offset-transparent sm:w-auto sm:px-6 sm:py-3"
+            className="hidden md:hidden w-full shrink-0 border border-transparent bg-transparent px-4 py-2.5 text-center font-sans text-xs uppercase tracking-widest text-[#C5A059] transition-colors md:border md:border-[#C5A059] md:hover:bg-[#C5A059] md:hover:text-[#0A0A0A] focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 focus:ring-offset-2 focus:ring-offset-transparent sm:w-auto sm:px-6 sm:py-3"
           >
             {t("safeBookingCta")}
           </Link>
