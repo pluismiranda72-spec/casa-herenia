@@ -4,6 +4,38 @@ import { motion } from "framer-motion";
 import { useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
+/** Divide la descripción en 4 bloques de palabras; saltos solo en móvil (md+ el texto fluye con espacios). */
+function HeroDescription({ text }: { text: string }) {
+  const words = text.trim().split(/\s+/).filter(Boolean);
+  if (words.length === 0) {
+    return <>{text}</>;
+  }
+  if (words.length < 4) {
+    return <>{text}</>;
+  }
+
+  const q1 = Math.ceil(words.length / 4);
+  const q2 = Math.ceil((words.length * 2) / 4);
+  const q3 = Math.ceil((words.length * 3) / 4);
+
+  const line1 = words.slice(0, q1).join(" ");
+  const line2 = words.slice(q1, q2).join(" ");
+  const line3 = words.slice(q2, q3).join(" ");
+  const line4 = words.slice(q3).join(" ");
+
+  return (
+    <>
+      {line1}{" "}
+      <br className="block md:hidden" />
+      {line2}{" "}
+      <br className="block md:hidden" />
+      {line3}{" "}
+      <br className="block md:hidden" />
+      {line4}
+    </>
+  );
+}
+
 export default function HeroSection() {
   const t = useTranslations("Hero");
 
@@ -33,14 +65,14 @@ export default function HeroSection() {
             <span className="text-[#C5A059]">{t("brand")}</span>
           </motion.h1>
 
-          <div className="mx-auto max-w-2xl">
+          <div className="mx-auto max-w-2xl md:max-w-4xl">
             <motion.p
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="px-2 text-center font-sans text-base font-light leading-relaxed text-gray-200"
+              className="px-2 text-center font-sans text-base font-light leading-snug text-gray-200"
             >
-              {t("description")}
+              <HeroDescription text={t("description")} />
             </motion.p>
           </div>
         </div>
