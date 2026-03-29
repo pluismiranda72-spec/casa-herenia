@@ -1,43 +1,12 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
-
-/** Divide la descripción en 4 bloques de palabras; saltos solo en móvil (md+ el texto fluye con espacios). */
-function HeroDescription({ text }: { text: string }) {
-  const words = text.trim().split(/\s+/).filter(Boolean);
-  if (words.length === 0) {
-    return <>{text}</>;
-  }
-  if (words.length < 4) {
-    return <>{text}</>;
-  }
-
-  const q1 = Math.ceil(words.length / 4);
-  const q2 = Math.ceil((words.length * 2) / 4);
-  const q3 = Math.ceil((words.length * 3) / 4);
-
-  const line1 = words.slice(0, q1).join(" ");
-  const line2 = words.slice(q1, q2).join(" ");
-  const line3 = words.slice(q2, q3).join(" ");
-  const line4 = words.slice(q3).join(" ");
-
-  return (
-    <>
-      {line1}{" "}
-      <br className="block md:hidden" />
-      {line2}{" "}
-      <br className="block md:hidden" />
-      {line3}{" "}
-      <br className="block md:hidden" />
-      {line4}
-    </>
-  );
-}
 
 export default function HeroSection() {
   const t = useTranslations("Hero");
+  const locale = useLocale();
 
   return (
     <section className="relative w-full h-[80vh] md:h-screen overflow-hidden bg-gray-900">
@@ -54,7 +23,7 @@ export default function HeroSection() {
 
       {/* 3. Contenedor de Texto y Botones (Mantiene el diseño UI centrado) */}
       <div className="relative z-20 container mx-auto flex h-full min-h-0 flex-col items-center justify-center overflow-y-auto px-4 py-8 text-center text-white sm:px-6 sm:py-16 md:px-8">
-        <div className="w-full max-w-2xl space-y-4">
+        <div className="w-full max-w-2xl md:max-w-5xl space-y-4">
           <motion.h1
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -65,15 +34,46 @@ export default function HeroSection() {
             <span className="text-[#C5A059]">{t("brand")}</span>
           </motion.h1>
 
-          <div className="mx-auto max-w-2xl md:max-w-4xl">
-            <motion.p
+          <div className="w-full mx-auto">
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: 0.4 }}
-              className="px-2 text-center font-sans text-base font-light leading-snug text-gray-200"
+              className="text-center"
             >
-              <HeroDescription text={t("description")} />
-            </motion.p>
+              {locale === "es" ? (
+                <p className="block md:hidden text-center w-full px-4 text-[1.05rem] leading-snug mx-auto text-white">
+                  Una de las mejores Casas Particulares.
+                  <br />
+                  Atención personalizada, Confort
+                  <br />
+                  y Reserva Segura en Viñales.
+                </p>
+              ) : (
+                <p className="block md:hidden text-center w-full px-4 text-[1.05rem] leading-snug mx-auto text-white">
+                  One of the best Casas Particulares.
+                  <br />
+                  Personalized attention, comfort
+                  <br />
+                  and secure booking in Viñales.
+                </p>
+              )}
+              <p
+                className="hidden md:block text-center w-full mx-auto px-4 md:max-w-xl lg:max-w-2xl md:text-[1.1rem] lg:text-[1.25rem] md:leading-snug font-sans font-light text-white"
+              >
+                {locale === "es" ? (
+                  <>
+                    Una de las mejores Casas Particulares en Viñales <br />
+                    Atención Personalizada, Confort y Reserva Segura
+                  </>
+                ) : (
+                  <>
+                    One of the best Casas Particulares in Viñales <br />
+                    Personalized Attention, Comfort, and Secure Booking
+                  </>
+                )}
+              </p>
+            </motion.div>
           </div>
         </div>
 
