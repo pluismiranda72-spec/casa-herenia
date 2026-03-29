@@ -162,8 +162,8 @@ export default function ViñalesMiniWidget() {
       aria-label={t("sectionAria")}
     >
       <div className="container mx-auto">
-        <div className="flex items-center justify-between gap-4 mb-6">
-          <h2 className="font-serif text-xl md:text-2xl text-white">
+        <div className="flex items-center justify-between gap-4 mb-6 max-md:justify-center">
+          <h2 className="hidden md:block font-serif text-xl md:text-2xl text-white">
             {t("valleyStories")}
           </h2>
           <div className="flex flex-row items-baseline gap-6 sm:gap-10">
@@ -175,7 +175,7 @@ export default function ViñalesMiniWidget() {
             </Link>
             <Link
               href="/faq"
-              className="shrink-0 font-sans text-xs uppercase tracking-widest text-[#C5A059] hover:text-amber-600 transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50"
+              className="hidden md:inline-block shrink-0 font-sans text-xs uppercase tracking-widest text-[#C5A059] hover:text-amber-600 transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50"
             >
               {t("faqLink")}
             </Link>
