@@ -42,16 +42,20 @@ export default function HeroSection() {
               className="text-center"
             >
               {locale === "es" ? (
-                <p className="block md:hidden text-center w-full px-4 text-[1.05rem] leading-snug mx-auto text-white">
-                  Una de las mejores Casas Particulares.
+                <p className="block md:hidden text-center w-full px-2 text-[0.9rem] tracking-tight leading-snug mx-auto text-white">
+                  <span className="whitespace-nowrap">
+                    Una de las mejores Casas Particulares.
+                  </span>
                   <br />
                   Atención personalizada, Confort
                   <br />
                   y Reserva Segura en Viñales.
                 </p>
               ) : (
-                <p className="block md:hidden text-center w-full px-4 text-[1.05rem] leading-snug mx-auto text-white">
-                  One of the best Casas Particulares.
+                <p className="block md:hidden text-center w-full px-2 text-[0.9rem] tracking-tight leading-snug mx-auto text-white">
+                  <span className="whitespace-nowrap">
+                    One of the best Casas Particulares.
+                  </span>
                   <br />
                   Personalized attention, comfort
                   <br />
