@@ -52,6 +52,12 @@ export default function RoomGallery() {
         />
       </div>
       <div className="relative z-10 mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <Link
+          href="/reserva-segura"
+          className="block md:hidden w-full text-center font-serif text-[1.15rem] sm:text-3xl font-bold text-white tracking-tight leading-snug mb-4 no-underline transition-opacity hover:opacity-90 focus:outline-none focus-visible:ring-2 focus-visible:ring-white/60 focus-visible:ring-offset-2 focus-visible:ring-offset-transparent rounded-sm"
+        >
+          {t("secureBookingMobile")}
+        </Link>
         <h2
           id="room-gallery-heading"
           className="font-serif text-[1.15rem] sm:text-3xl font-bold text-white tracking-tight text-center leading-snug mb-8 md:mb-12"

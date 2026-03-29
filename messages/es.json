@@ -36,6 +36,7 @@
   },
   "Rooms": {
     "title": "Habitaciones en Viñales: Confort, Baño Privado y Reserva Segura",
+    "secureBookingMobile": "Reserva 100% Segura",
     "perNight": "/ noche",
     "viewDetails": "Ver Detalles",
     "room_1": {
