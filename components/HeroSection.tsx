@@ -10,7 +10,7 @@ export default function HeroSection() {
 
   return (
     <section className="relative w-full h-[80vh] md:h-screen overflow-hidden bg-gray-900">
-      {/* 1. La Imagen de Fondo (Ruta exacta corregida) */}
+      {/* 1. La Imagen de Fondo */}
       <img
         src="/images/hero-habitacion.jpeg"
         alt="Habitación principal con vista al Valle de Viñales"
@@ -21,7 +21,7 @@ export default function HeroSection() {
       {/* 2. Superposición Oscura (Overlay) para LEGIBILIDAD */}
       <div className="absolute inset-0 bg-black/40 z-10" aria-hidden="true" />
 
-      {/* 3. Contenedor de Texto y Botones (Mantiene el diseño UI centrado) */}
+      {/* 3. Contenedor de Texto y Botones */}
       <div className="relative z-20 container mx-auto flex h-full min-h-0 flex-col items-center justify-center overflow-y-auto px-4 py-8 text-center text-white sm:px-6 sm:py-16 md:px-8">
         <div className="w-full max-w-2xl md:max-w-5xl space-y-4">
           <motion.h1
@@ -87,19 +87,22 @@ export default function HeroSection() {
           transition={{ duration: 0.5, delay: 0.6 }}
           className="mt-6 flex w-full flex-col items-center justify-center gap-4 sm:mt-10 sm:flex-row sm:gap-6"
         >
+          {/* BOTÓN RESERVAR AHORA: Bajado 10mm (ahora en -4px) respecto al punto anterior */}
           <Link
             href="/reservas"
             prefetch={true}
-            className="inline-block w-full border border-transparent bg-transparent px-6 py-3 text-center font-sans text-sm font-semibold tracking-widest text-white transition-all duration-300 ease-in-out md:border-2 md:border-white md:hover:border-[#6A8D55] md:hover:bg-[#6A8D55] sm:w-auto sm:px-8 sm:py-4 sm:text-base"
+            className="relative -translate-y-[4px] md:translate-y-0 inline-block max-md:block max-md:w-fit max-md:mx-auto max-md:border max-md:border-white/90 max-md:px-3 max-md:py-1 max-md:rounded-md border border-transparent bg-transparent px-6 py-3 text-center font-sans text-sm font-semibold tracking-widest text-white transition-all duration-300 ease-in-out md:border-2 md:border-white md:hover:border-[#6A8D55] md:hover:bg-[#6A8D55] md:w-auto sm:px-8 sm:py-4 sm:text-base"
           >
             {t("cta")}
           </Link>
+          
           <Link
             href="/descubre"
-            className="inline-block w-full shrink-0 border border-transparent bg-transparent px-4 py-2.5 text-center font-sans text-xs uppercase tracking-widest text-[#C5A059] transition-colors hover:bg-transparent hover:text-amber-300 focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 focus:ring-offset-2 focus:ring-offset-transparent sm:w-auto sm:px-6 sm:py-3 md:hidden"
+            className="hidden md:inline-block w-full shrink-0 border border-transparent bg-transparent px-4 py-2.5 text-center font-sans text-xs uppercase tracking-widest text-[#C5A059] transition-colors hover:bg-transparent hover:text-amber-300 focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 focus:ring-offset-2 focus:ring-offset-transparent sm:w-auto sm:px-6 sm:py-3"
           >
             {t("discoverCta")}
           </Link>
+          
           <Link
             href="/reserva-segura"
             className="hidden md:inline-block w-full shrink-0 border border-transparent bg-transparent px-4 py-2.5 text-center font-sans text-xs uppercase tracking-widest text-[#C5A059] transition-colors md:border md:border-[#C5A059] md:hover:bg-[#C5A059] md:hover:text-[#0A0A0A] focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 focus:ring-offset-2 focus:ring-offset-transparent sm:w-auto sm:px-6 sm:py-3"
