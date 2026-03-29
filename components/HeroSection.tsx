@@ -87,11 +87,11 @@ export default function HeroSection() {
           transition={{ duration: 0.5, delay: 0.6 }}
           className="mt-6 flex w-full flex-col items-center justify-center gap-4 sm:mt-10 sm:flex-row sm:gap-6"
         >
-          {/* BOTÓN RESERVAR AHORA: Bajado 10mm (ahora en -4px) respecto al punto anterior */}
+          {/* BOTÓN RESERVAR AHORA: Ajustado 5mm (15px) hacia abajo en móvil */}
           <Link
             href="/reservas"
             prefetch={true}
-            className="relative -translate-y-[4px] md:translate-y-0 inline-block max-md:block max-md:w-fit max-md:mx-auto max-md:border max-md:border-white/90 max-md:px-3 max-md:py-1 max-md:rounded-md border border-transparent bg-transparent px-6 py-3 text-center font-sans text-sm font-semibold tracking-widest text-white transition-all duration-300 ease-in-out md:border-2 md:border-white md:hover:border-[#6A8D55] md:hover:bg-[#6A8D55] md:w-auto sm:px-8 sm:py-4 sm:text-base"
+            className="relative translate-y-[15px] md:translate-y-0 max-md:w-fit max-md:mx-auto max-md:block max-md:border max-md:border-white/90 max-md:px-3 max-md:py-1 max-md:rounded-md inline-block w-full bg-transparent text-center font-sans text-sm font-semibold tracking-widest text-white transition-all duration-300 ease-in-out md:border-2 md:border-white md:hover:border-[#6A8D55] md:hover:bg-[#6A8D55] sm:w-auto sm:px-8 sm:py-4 sm:text-base"
           >
             {t("cta")}
           </Link>
