@@ -90,19 +90,19 @@ export default function HeroSection() {
           <Link
             href="/reservas"
             prefetch={true}
-            className="inline-block w-full border-2 border-white bg-transparent px-6 py-3 text-center font-sans text-sm font-semibold tracking-widest text-white transition-all duration-300 ease-in-out hover:border-[#6A8D55] hover:bg-[#6A8D55] sm:w-auto sm:px-8 sm:py-4 sm:text-base"
+            className="inline-block w-full border border-transparent bg-transparent px-6 py-3 text-center font-sans text-sm font-semibold tracking-widest text-white transition-all duration-300 ease-in-out md:border-2 md:border-white md:hover:border-[#6A8D55] md:hover:bg-[#6A8D55] sm:w-auto sm:px-8 sm:py-4 sm:text-base"
           >
             {t("cta")}
           </Link>
           <Link
             href="/descubre"
-            className="inline-block w-full shrink-0 border border-[#C5A059] px-4 py-2.5 text-center font-sans text-xs uppercase tracking-widest text-[#C5A059] transition-colors hover:bg-[#C5A059] hover:text-[#0A0A0A] focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 focus:ring-offset-2 focus:ring-offset-transparent sm:w-auto sm:px-6 sm:py-3 md:hidden"
+            className="inline-block w-full shrink-0 border border-transparent bg-transparent px-4 py-2.5 text-center font-sans text-xs uppercase tracking-widest text-[#C5A059] transition-colors hover:bg-transparent hover:text-amber-300 focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 focus:ring-offset-2 focus:ring-offset-transparent sm:w-auto sm:px-6 sm:py-3 md:hidden"
           >
             {t("discoverCta")}
           </Link>
           <Link
             href="/reserva-segura"
-            className="inline-block w-full shrink-0 border border-[#C5A059] px-4 py-2.5 text-center font-sans text-xs uppercase tracking-widest text-[#C5A059] transition-colors hover:bg-[#C5A059] hover:text-[#0A0A0A] focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 focus:ring-offset-2 focus:ring-offset-transparent sm:w-auto sm:px-6 sm:py-3 md:hidden"
+            className="inline-block w-full shrink-0 border border-transparent bg-transparent px-4 py-2.5 text-center font-sans text-xs uppercase tracking-widest text-[#C5A059] transition-colors hover:bg-transparent hover:text-amber-300 focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 focus:ring-offset-2 focus:ring-offset-transparent sm:w-auto sm:px-6 sm:py-3 md:hidden"
           >
             {t("safeBookingCta")}
           </Link>
