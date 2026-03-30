@@ -1,3 +1,4 @@
+import { showReservarExperienciaLabel } from "@/lib/descubre/reservarExperienciaTour";
 import { createClient } from "@supabase/supabase-js";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -114,6 +115,8 @@ export default async function PostPage({ params }: Props) {
       ? post.content_en
       : post.content;
 
+  const showReservarOverlay = showReservarExperienciaLabel(slug, title);
+
   return (
     <main className="min-h-screen bg-[#faf9f6] text-[#0A0A0A]">
       <article className="container mx-auto px-4 py-12 md:py-20 max-w-3xl">
@@ -141,6 +144,14 @@ export default async function PostPage({ params }: Props) {
                 className="w-full h-full object-cover bg-gray-200"
                 poster={VIDEO_POSTER_PLACEHOLDER}
               />
+            )}
+            {showReservarOverlay && post.media_type === "image" && (
+              <span
+                className="hidden md:block absolute top-4 left-4 z-20 text-white text-sm font-serif tracking-widest drop-shadow-md pointer-events-none"
+                style={{ fontFamily: "var(--font-playfair), serif" }}
+              >
+                Reservar experiencia
+              </span>
             )}
           </div>
         )}

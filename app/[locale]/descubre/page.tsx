@@ -1,4 +1,5 @@
 import { createClient } from "@/lib/supabase/server";
+import { showReservarExperienciaLabel } from "@/lib/descubre/reservarExperienciaTour";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import type { Metadata } from "next";
@@ -39,17 +40,31 @@ export default async function DescubrePage({ params }: Props) {
       <div className="container mx-auto px-4 py-12 md:py-20">
         <header className="text-center mb-12 md:mb-16">
           <h1
-            className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#0A0A0A] mb-4"
+            className="font-serif text-4xl md:text-5xl lg:text-6xl text-[#0A0A0A] mb-4 md:hidden"
             style={{ fontFamily: "var(--font-playfair), serif" }}
           >
             Descubre Viñales
           </h1>
-          <p
-            className="font-sans text-lg text-[#0A0A0A]/70 max-w-2xl mx-auto"
-            style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
-          >
-            Historias, fotos y momentos en el Valle.
-          </p>
+          <h1
+  className="hidden md:block text-center font-serif text-4xl md:text-5xl lg:text-6xl text-[#0A0A0A] mb-4"
+  style={{ fontFamily: "var(--font-playfair), serif" }}
+>
+Qué Hacer en Viñales y Cuba (Tours y Experiencias)
+</h1>
+<p
+              className="font-sans text-lg text-[#0A0A0A]/70 max-w-2xl mx-auto text-center md:hidden"
+              style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
+            >
+              Descubre los mejores tours en Viñales y Reserva Experiencias Auténticas<br />con Expertos locales, de forma fácil y segura.
+            </p>
+            <p
+              className="hidden md:block font-sans text-lg text-[#0A0A0A]/70 max-w-2xl mx-auto text-center"
+              style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
+            >
+              Descubre los mejores tours en Viñales y Reserva Experiencias Auténticas
+              <br />
+              con Expertos locales, de forma fácil y segura.
+            </p>
         </header>
 
         {list.length === 0 ? (
@@ -68,7 +83,7 @@ export default async function DescubrePage({ params }: Props) {
 
               const cardInner = (
                 <>
-                  <div className="relative aspect-[4/3] md:aspect-[3/2] bg-gray-200">
+                  <div className="relative aspect-[4/3] md:aspect-[3/2] bg-gray-200 overflow-hidden">
                     {post.media_url && post.media_type === "image" ? (
                       <Image
                         src={post.media_url}
@@ -95,6 +110,16 @@ export default async function DescubrePage({ params }: Props) {
                         Viñales
                       </div>
                     )}
+                    {showReservarExperienciaLabel(post.slug, postTitle(post, locale)) &&
+                      post.media_url &&
+                      post.media_type === "image" && (
+                        <span
+                          className="hidden md:block absolute top-4 left-4 z-20 text-white text-sm font-serif tracking-widest drop-shadow-md pointer-events-none"
+                          style={{ fontFamily: "var(--font-playfair), serif" }}
+                        >
+                          Reservar experiencia
+                        </span>
+                      )}
                   </div>
                   <div className="p-4 md:p-5">
                     <h2

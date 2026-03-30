@@ -163,19 +163,28 @@ export default function ViñalesMiniWidget() {
     >
       <div className="container mx-auto">
         <div className="flex items-center justify-between gap-4 mb-6 max-md:justify-center">
-          <h2 className="hidden md:block font-serif text-xl md:text-2xl text-white">
+          <h2 className="block md:hidden font-serif text-xl md:text-2xl text-white">
             {t("valleyStories")}
+          </h2>
+          <h2 className="hidden md:block font-serif text-xl md:text-2xl text-white">
+            Tours y Qué Hacer en Viñales (Reserva Experiencias)
           </h2>
           <div className="flex flex-row items-baseline gap-6 sm:gap-10">
             <Link
               href="/descubre"
-              className="shrink-0 border border-[#C5A059] text-[#C5A059] font-sans text-xs uppercase tracking-widest px-4 py-2.5 hover:bg-[#C5A059] hover:text-[#0A0A0A] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50"
+              className="shrink-0 border border-[#C5A059] text-[#C5A059] font-sans text-xs uppercase tracking-widest px-4 py-2.5 hover:bg-[#C5A059] hover:text-[#0A0A0A] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 md:hidden"
             >
               {t("discoverCta")}
             </Link>
             <Link
+              href="/descubre"
+              className="hidden md:inline-block shrink-0 border border-[#C5A059] text-[#C5A059] font-sans text-xs uppercase tracking-widest px-4 py-2.5 hover:bg-[#C5A059] hover:text-[#0A0A0A] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50"
+            >
+              {t("discoverCtaDesktop")}
+            </Link>
+            <Link
               href="/faq"
-              className="hidden md:inline-block shrink-0 font-sans text-xs uppercase tracking-widest text-[#C5A059] hover:text-amber-600 transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50"
+              className="hidden md:hidden shrink-0 font-sans text-xs uppercase tracking-widest text-[#C5A059] hover:text-amber-600 transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50"
             >
               {t("faqLink")}
             </Link>

@@ -90,9 +90,19 @@ export function Navbar() {
         <div className="flex flex-row items-center gap-x-6 sm:gap-x-8 gap-y-0 shrink-0">
           <Link
             href="/descubre"
-            className="hidden sm:inline font-sans text-sm font-semibold uppercase tracking-widest text-[#faf9f6]/90 hover:text-[#C5A059] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 rounded"
+            className="hidden sm:inline md:hidden font-sans text-sm font-semibold uppercase tracking-widest text-[#faf9f6]/90 hover:text-[#C5A059] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 rounded"
           >
             {t("discoverCta")}
+          </Link>
+          <Link
+            href="/descubre"
+            className="hidden md:inline-block text-center leading-tight font-sans text-sm font-semibold uppercase tracking-widest text-[#faf9f6]/90 hover:text-[#C5A059] transition-colors focus:outline-none focus:ring-2 focus:ring-[#C5A059]/50 rounded"
+          >
+            <span>
+              Tours y Qué Hacer en Viñales
+              <br />
+              (Reserva Experiencias)
+            </span>
           </Link>
           <Link
             href="/faq"
