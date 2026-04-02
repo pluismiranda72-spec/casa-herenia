@@ -1,5 +1,9 @@
 import { createClient } from "@/lib/supabase/server";
-import { showReservarExperienciaLabel } from "@/lib/descubre/reservarExperienciaTour";
+import ReservarExperienciaOverlayButton from "@/components/ReservarExperienciaOverlayButton";
+import {
+  isAmanecerAcuaticosTour,
+  showReservarExperienciaLabel,
+} from "@/lib/descubre/reservarExperienciaTour";
 import Image from "next/image";
 import { Link } from "@/i18n/navigation";
 import type { Metadata } from "next";
@@ -113,12 +117,15 @@ Qué Hacer en Viñales y Cuba (Tours y Experiencias)
                     {showReservarExperienciaLabel(post.slug, postTitle(post, locale)) &&
                       post.media_url &&
                       post.media_type === "image" && (
-                        <span
-                          className="hidden md:block absolute top-4 left-4 z-20 text-white text-sm font-serif tracking-widest drop-shadow-md pointer-events-none"
-                          style={{ fontFamily: "var(--font-playfair), serif" }}
-                        >
-                          Reservar experiencia
-                        </span>
+                        <ReservarExperienciaOverlayButton
+                          stopParentClick
+                          amanecerNav={
+                            isAmanecerAcuaticosTour(post.slug, postTitle(post, locale))
+                              ? "catalog"
+                              : undefined
+                          }
+                          slug={post.slug}
+                        />
                       )}
                   </div>
                   <div className="p-4 md:p-5">

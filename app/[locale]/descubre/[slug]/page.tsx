@@ -1,4 +1,9 @@
-import { showReservarExperienciaLabel } from "@/lib/descubre/reservarExperienciaTour";
+import BookingFormAmanecer from "@/components/BookingFormAmanecer";
+import ReservarExperienciaOverlayButton from "@/components/ReservarExperienciaOverlayButton";
+import {
+  isAmanecerAcuaticosTour,
+  showReservarExperienciaLabel,
+} from "@/lib/descubre/reservarExperienciaTour";
 import { createClient } from "@supabase/supabase-js";
 import Image from "next/image";
 import { notFound } from "next/navigation";
@@ -116,6 +121,7 @@ export default async function PostPage({ params }: Props) {
       : post.content;
 
   const showReservarOverlay = showReservarExperienciaLabel(slug, title);
+  const isAmanecerTour = isAmanecerAcuaticosTour(slug, title);
 
   return (
     <main className="min-h-screen bg-[#faf9f6] text-[#0A0A0A]">
@@ -146,12 +152,9 @@ export default async function PostPage({ params }: Props) {
               />
             )}
             {showReservarOverlay && post.media_type === "image" && (
-              <span
-                className="hidden md:block absolute top-4 left-4 z-20 text-white text-sm font-serif tracking-widest drop-shadow-md pointer-events-none"
-                style={{ fontFamily: "var(--font-playfair), serif" }}
-              >
-                Reservar experiencia
-              </span>
+              <ReservarExperienciaOverlayButton
+                amanecerNav={isAmanecerTour ? "detail" : undefined}
+              />
             )}
           </div>
         )}
@@ -169,6 +172,8 @@ export default async function PostPage({ params }: Props) {
           />
         )}
       </article>
+
+      {isAmanecerTour && <BookingFormAmanecer />}
     </main>
   );
 }
