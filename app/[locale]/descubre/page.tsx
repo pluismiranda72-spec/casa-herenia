@@ -2,6 +2,7 @@ import { createClient } from "@/lib/supabase/server";
 import ReservarExperienciaOverlayButton from "@/components/ReservarExperienciaOverlayButton";
 import {
   isAmanecerAcuaticosTour,
+  isRutaCaballoVinalesTour,
   showReservarExperienciaLabel,
 } from "@/lib/descubre/reservarExperienciaTour";
 import Image from "next/image";
@@ -84,6 +85,12 @@ Qué Hacer en Viñales y Cuba (Tours y Experiencias)
                   : "";
               const useExternal =
                 Boolean(post.is_redirect) && Boolean(externalUrl);
+              const postTitleStr = postTitle(post, locale);
+              const reservaTarget = isAmanecerAcuaticosTour(post.slug, postTitleStr)
+                ? ("amanecer" as const)
+                : isRutaCaballoVinalesTour(post.slug, postTitleStr)
+                  ? ("caballo" as const)
+                  : undefined;
 
               const cardInner = (
                 <>
@@ -114,16 +121,13 @@ Qué Hacer en Viñales y Cuba (Tours y Experiencias)
                         Viñales
                       </div>
                     )}
-                    {showReservarExperienciaLabel(post.slug, postTitle(post, locale)) &&
+                    {showReservarExperienciaLabel(post.slug, postTitleStr) &&
                       post.media_url &&
                       post.media_type === "image" && (
                         <ReservarExperienciaOverlayButton
                           stopParentClick
-                          amanecerNav={
-                            isAmanecerAcuaticosTour(post.slug, postTitle(post, locale))
-                              ? "catalog"
-                              : undefined
-                          }
+                          reservaTarget={reservaTarget}
+                          navMode={reservaTarget ? "catalog" : undefined}
                         />
                       )}
                   </div>

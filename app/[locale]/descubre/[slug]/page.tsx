@@ -1,6 +1,7 @@
 import ReservarExperienciaOverlayButton from "@/components/ReservarExperienciaOverlayButton";
 import {
   isAmanecerAcuaticosTour,
+  isRutaCaballoVinalesTour,
   showReservarExperienciaLabel,
 } from "@/lib/descubre/reservarExperienciaTour";
 import { createClient } from "@supabase/supabase-js";
@@ -121,6 +122,12 @@ export default async function PostPage({ params }: Props) {
 
   const showReservarOverlay = showReservarExperienciaLabel(slug, title);
   const isAmanecerTour = isAmanecerAcuaticosTour(slug, title);
+  const isCaballoTour = isRutaCaballoVinalesTour(slug, title);
+  const reservaTarget = isAmanecerTour
+    ? ("amanecer" as const)
+    : isCaballoTour
+      ? ("caballo" as const)
+      : undefined;
 
   return (
     <main className="min-h-screen bg-[#faf9f6] text-[#0A0A0A]">
@@ -152,7 +159,8 @@ export default async function PostPage({ params }: Props) {
             )}
             {showReservarOverlay && post.media_type === "image" && (
               <ReservarExperienciaOverlayButton
-                amanecerNav={isAmanecerTour ? "detail" : undefined}
+                reservaTarget={reservaTarget}
+                navMode={reservaTarget ? "detail" : undefined}
               />
             )}
           </div>

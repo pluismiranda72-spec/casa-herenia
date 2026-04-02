@@ -10,25 +10,28 @@ const overlayStyle = { fontFamily: "var(--font-playfair), serif" } as const;
 type Props = {
   /** Si es true, evita que el clic active el enlace padre de la tarjeta (catálogo). */
   stopParentClick?: boolean;
-  /** Solo tour Amanecer: ir directo a la página del calendario de reserva. */
-  amanecerNav?: "catalog" | "detail";
+  /** Tours con calendario dedicado + Stripe: navega a /reserva-amanecer o /reserva-caballo. */
+  reservaTarget?: "amanecer" | "caballo";
+  navMode?: "catalog" | "detail";
 };
 
 export default function ReservarExperienciaOverlayButton({
   stopParentClick,
-  amanecerNav,
+  reservaTarget,
+  navMode,
 }: Props) {
   const router = useRouter();
+  const path = reservaTarget ? `/reserva-${reservaTarget}` : null;
 
-  if (amanecerNav === "detail") {
+  if (path && navMode === "detail") {
     return (
-      <Link href="/reserva-amanecer" className={overlayClassName} style={overlayStyle}>
+      <Link href={path} className={overlayClassName} style={overlayStyle}>
         Reservar experiencia
       </Link>
     );
   }
 
-  if (amanecerNav === "catalog") {
+  if (path && navMode === "catalog") {
     return (
       <button
         type="button"
@@ -37,7 +40,7 @@ export default function ReservarExperienciaOverlayButton({
         onClick={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          router.push("/reserva-amanecer");
+          router.push(path);
         }}
       >
         Reservar experiencia
