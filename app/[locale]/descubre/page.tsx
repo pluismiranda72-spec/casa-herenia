@@ -124,7 +124,6 @@ Qué Hacer en Viñales y Cuba (Tours y Experiencias)
                               ? "catalog"
                               : undefined
                           }
-                          slug={post.slug}
                         />
                       )}
                   </div>

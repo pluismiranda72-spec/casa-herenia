@@ -10,7 +10,7 @@ export default function BookingFormAmanecer() {
   return (
     <section
       id="calendario-amanecer"
-      className="hidden md:flex flex-col items-center justify-center py-16 bg-gray-50 border-t border-gray-200 mt-12"
+      className="flex flex-col md:hidden items-center justify-center py-16 bg-gray-50 border-t border-gray-200 mt-12"
     >
       <div className="container mx-auto px-4 w-full flex justify-center">
         <div className="bg-white p-8 rounded-2xl shadow-lg max-w-4xl w-full flex flex-row gap-8 items-center">
@@ -21,10 +21,6 @@ export default function BookingFormAmanecer() {
             >
               Selecciona tu fecha para el Amanecer
             </h2>
-            <p className="font-sans text-[#0A0A0A]/70">
-              Consulta disponibilidad y asegura tu lugar en la experiencia más impresionante del
-              valle.
-            </p>
           </div>
           <div className="flex-1 min-w-0 flex flex-col gap-4">
             <input
