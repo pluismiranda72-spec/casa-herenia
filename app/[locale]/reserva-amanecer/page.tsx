@@ -8,11 +8,8 @@ export const metadata: Metadata = {
 
 export default function ReservaAmanecerPage() {
   return (
-    <>
-      <div className="md:hidden min-h-screen bg-gray-50" aria-hidden />
-      <div className="hidden md:flex flex-col items-center justify-center min-h-screen bg-gray-50 py-12 w-full">
-        <ReservaAmanecerClient />
-      </div>
-    </>
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 py-8 md:py-12 w-full">
+      <ReservaAmanecerClient />
+    </div>
   );
 }

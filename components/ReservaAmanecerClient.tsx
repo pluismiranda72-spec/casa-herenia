@@ -78,11 +78,11 @@ export default function ReservaAmanecerClient() {
         Disponibilidad: Amanecer en Los Acuáticos
       </h1>
       <div
-        className="hidden md:flex flex-row items-center justify-center gap-3 mt-3 mb-8 text-sm font-sans text-gray-700"
+        className="flex flex-col md:flex-row items-center justify-center gap-3 mt-3 mb-8 text-sm font-sans text-gray-700"
         style={{ fontFamily: "var(--font-montserrat), sans-serif" }}
       >
         <span className="font-semibold text-gray-900">Tu reserva incluye:</span>
-        <span className="flex items-center gap-3">
+        <span className="flex flex-col md:flex-row md:items-center gap-2 md:gap-3">
           <span className="flex items-center gap-1.5">
             <span className="text-sky-500 font-bold text-lg leading-none">•</span> Transporte
           </span>
@@ -96,57 +96,61 @@ export default function ReservaAmanecerClient() {
         <h2 className="font-sans text-sm font-semibold uppercase tracking-widest text-[#C5A059] mb-4">
           {locale === "en" ? "Dates" : "Fechas"}
         </h2>
-        <div className="bg-white border border-gray-200 rounded-xl p-4 md:p-6 shadow-sm">
-          <DayPicker
-            mode="range"
-            defaultMonth={new Date()}
-            selected={range}
-            onSelect={(r) => setRange(r ?? { from: undefined, to: undefined })}
-            disabled={(date) => amanecerBlockedDates.has(dateToKey(date))}
-            locale={dayPickerLocale}
-            modifiersClassNames={{
-              selected: "!bg-[#C5A059] !text-[#0A0A0A]",
-              range_start: "!bg-[#C5A059] !text-[#0A0A0A]",
-              range_end: "!bg-[#C5A059] !text-[#0A0A0A]",
-              range_middle: "!bg-[#C5A059]/80 !text-[#0A0A0A]",
-              disabled: "!opacity-50 line-through",
-              today: "text-[#C5A059] font-semibold",
-            }}
-            className="text-[#0A0A0A] [--rdp-accent:#C5A059] mx-auto"
-          />
-
-          <div className="hidden md:flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-6 mb-2 border-t border-gray-100 pt-6">
-            <label className="text-sm font-sans text-gray-700">
-              {locale === "en" ? "Guests" : "Personas"}
-              <select
-                className="mt-1 block w-full sm:w-40 border border-gray-300 rounded-lg px-3 py-2 text-gray-800 focus:ring-2 focus:ring-sky-400 outline-none"
-                value={personas}
-                onChange={(e) => setPersonas(Number(e.target.value))}
-                aria-label={locale === "en" ? "Number of guests" : "Número de personas"}
-              >
-                {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
-                  <option key={n} value={n}>
-                    {n}
-                  </option>
-                ))}
-              </select>
-            </label>
-            <p className="text-sm font-sans text-gray-600">
-              {locale === "en" ? "Total" : "Total"}:{" "}
-              <span className="text-lg font-bold text-[#0A0A0A]">{precioTotal} €</span>
-              <span className="text-gray-500 text-xs ml-1">(25 € / {locale === "en" ? "person" : "persona"})</span>
-            </p>
+        <div className="bg-white border border-gray-200 rounded-xl p-4 md:p-6 shadow-sm flex flex-col md:flex-row md:items-start md:gap-8">
+          <div className="w-full md:flex-1 min-w-0 flex justify-center">
+            <DayPicker
+              mode="range"
+              defaultMonth={new Date()}
+              selected={range}
+              onSelect={(r) => setRange(r ?? { from: undefined, to: undefined })}
+              disabled={(date) => amanecerBlockedDates.has(dateToKey(date))}
+              locale={dayPickerLocale}
+              modifiersClassNames={{
+                selected: "!bg-[#C5A059] !text-[#0A0A0A]",
+                range_start: "!bg-[#C5A059] !text-[#0A0A0A]",
+                range_end: "!bg-[#C5A059] !text-[#0A0A0A]",
+                range_middle: "!bg-[#C5A059]/80 !text-[#0A0A0A]",
+                disabled: "!opacity-50 line-through",
+                today: "text-[#C5A059] font-semibold",
+              }}
+              className="text-[#0A0A0A] [--rdp-accent:#C5A059] mx-auto"
+            />
           </div>
 
-          <div className="hidden md:flex w-full justify-end mt-8 border-t border-gray-100 pt-6">
-            <button
-              type="button"
-              onClick={handleCheckout}
-              disabled={isLoading}
-              className="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 hidden md:flex cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
-            >
-              {isLoading ? "Procesando..." : "Confirmar Reserva"}
-            </button>
+          <div className="w-full md:flex-1 min-w-0 flex flex-col">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mt-6 md:mt-0 mb-2 border-t border-gray-100 md:border-t-0 pt-6 md:pt-0">
+              <label className="text-sm font-sans text-gray-700">
+                {locale === "en" ? "Guests" : "Personas"}
+                <select
+                  className="mt-1 block w-full sm:w-40 border border-gray-300 rounded-lg px-3 py-2 text-gray-800 focus:ring-2 focus:ring-sky-400 outline-none"
+                  value={personas}
+                  onChange={(e) => setPersonas(Number(e.target.value))}
+                  aria-label={locale === "en" ? "Number of guests" : "Número de personas"}
+                >
+                  {Array.from({ length: 10 }, (_, i) => i + 1).map((n) => (
+                    <option key={n} value={n}>
+                      {n}
+                    </option>
+                  ))}
+                </select>
+              </label>
+              <p className="text-sm font-sans text-gray-600">
+                {locale === "en" ? "Total" : "Total"}:{" "}
+                <span className="text-lg font-bold text-[#0A0A0A]">{precioTotal} €</span>
+                <span className="text-gray-500 text-xs ml-1">(25 € / {locale === "en" ? "person" : "persona"})</span>
+              </p>
+            </div>
+
+            <div className="flex w-full justify-center md:justify-end mt-8 border-t border-gray-100 pt-6">
+              <button
+                type="button"
+                onClick={handleCheckout}
+                disabled={isLoading}
+                className="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
+              >
+                {isLoading ? "Procesando..." : "Confirmar Reserva"}
+              </button>
+            </div>
           </div>
         </div>
       </section>

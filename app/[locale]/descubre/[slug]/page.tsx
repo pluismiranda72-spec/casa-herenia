@@ -1,4 +1,3 @@
-import BookingFormAmanecer from "@/components/BookingFormAmanecer";
 import ReservarExperienciaOverlayButton from "@/components/ReservarExperienciaOverlayButton";
 import {
   isAmanecerAcuaticosTour,
@@ -172,8 +171,6 @@ export default async function PostPage({ params }: Props) {
           />
         )}
       </article>
-
-      {isAmanecerTour && <BookingFormAmanecer />}
     </main>
   );
 }
