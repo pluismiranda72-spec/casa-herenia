@@ -39,10 +39,9 @@ export default function ReservaAmanecerClient() {
   const format = useFormatter();
   const dayPickerLocale = locale === "en" ? enUS : es;
 
+  const fecha = range?.from ? dateToKey(range.from) : "";
+
   const handleCheckout = async () => {
-    if (!range?.from) {
-      return;
-    }
     try {
       setIsLoading(true);
       const res = await fetch("/api/checkout-amanecer", {
@@ -51,21 +50,20 @@ export default function ReservaAmanecerClient() {
         body: JSON.stringify({
           precioTotal,
           personas,
-          fecha: dateToKey(range.from),
-          fechaHasta: range.to ? dateToKey(range.to) : null,
-          locale,
+          fecha,
         }),
       });
       const data = (await res.json()) as { url?: string; error?: string };
-      if (data.url) {
+
+      if (res.ok && data.url) {
         window.location.href = data.url;
       } else {
-        console.error("[checkout-amanecer]", data);
-        alert("Error de Stripe. Revisa la terminal.");
+        console.error("Error devuelto por la API:", data);
+        alert("Hubo un problema al procesar el pago. Por favor, intenta de nuevo.");
       }
     } catch (error) {
-      console.error("Fallo de conexión:", error);
-      alert("Error de red. Asegúrate de que la API existe.");
+      console.error("Error de conexión:", error);
+      alert("Error de conexión con el servidor.");
     } finally {
       setIsLoading(false);
     }
@@ -145,7 +143,7 @@ export default function ReservaAmanecerClient() {
               type="button"
               onClick={handleCheckout}
               disabled={isLoading}
-              className={`bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 ${isLoading ? "cursor-not-allowed opacity-70" : "cursor-pointer"}`}
+              className="bg-sky-500 hover:bg-sky-600 text-white font-bold py-3 px-8 rounded-lg shadow-md transition-all duration-300 transform hover:scale-105 hidden md:flex cursor-pointer disabled:opacity-70 disabled:cursor-not-allowed"
             >
               {isLoading ? "Procesando..." : "Confirmar Reserva"}
             </button>

@@ -203,6 +203,11 @@
     "defaultCheckin": "[check-in date]",
     "defaultCheckout": "[check-out date]"
   },
+  "PagoExitoso": {
+    "title": "Payment received!",
+    "body": "Thank you for booking the Amanecer en Los Acuáticos experience. You were redirected here after completing payment with Stripe.",
+    "backHome": "Back to Home"
+  },
   "Taxi": {
     "title": "Book Your Transfer",
     "close": "Close",

@@ -167,6 +167,11 @@
     "defaultCheckin": "[fecha entrada]",
     "defaultCheckout": "[fecha salida]"
   },
+  "PagoExitoso": {
+    "title": "¡Pago recibido!",
+    "body": "Gracias por reservar la experiencia Amanecer en Los Acuáticos. Te hemos redirigido correctamente tras completar el pago en Stripe.",
+    "backHome": "Volver al Inicio"
+  },
   "Taxi": {
     "title": "Reservar Traslado",
     "close": "Cerrar",
