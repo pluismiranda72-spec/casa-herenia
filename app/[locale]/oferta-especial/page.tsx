@@ -1,8 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
-import { Suspense } from "react";
 import { Link } from "@/i18n/navigation";
-import { createClient } from "@/lib/supabase/server";
 
 type Props = {
   params: Promise<{ locale: string }>;
@@ -25,10 +23,6 @@ const copy = {
   es: {
     kicker: "Experiencia integral",
     title: "Oferta Especial: Tu Refugio Privado en Viñales",
-    p2:
-      "La atención se vuelve exclusiva: priorizamos tus horarios, tus dudas y tus peticiones con un trato cercano y bilingüe, como en casa. Disfrutarás de nuestro alojamiento, un pacio creado para descansar, conversar y planificar cada salida al mogote sin prisas.",
-    p3:
-      "Es la forma más serena de vivir Viñales: despertar con luz natural, desayunar sin aglomeraciones y volver por la tarde sabiendo que todo el refugio es vuestro. Solicita fechas y te confirmamos disponibilidad con la misma claridad que nuestra reserva segura.",
     cta: "Solicitar disponibilidad",
     ctaAria: "Ir a reservas para solicitar disponibilidad de la oferta de tres unidades",
     galleryAlt1: "Junior Suite I",
@@ -38,10 +32,6 @@ const copy = {
   en: {
     kicker: "Full-property experience",
     title: "Special Offer: Your Private Retreat in Viñales",
-    p2:
-      "Attention becomes truly exclusive: we prioritise your timings, questions, and requests with friendly bilingual care. You benefit from the property’s maximum capacity, with room to rest, gather, and plan each outing to the mogotes at your own pace.",
-    p3:
-      "It’s the calmest way to experience Viñales: wake to natural light, breakfast without crowds, and return in the evening knowing the whole retreat is yours. Ask for dates and we’ll confirm availability with the same transparency as our secure booking flow.",
     cta: "Request availability",
     ctaAria:
       "Go to booking to request availability for the three-unit special offer",
@@ -51,71 +41,101 @@ const copy = {
   },
 } as const;
 
-function OfertaCajasEsqueleto() {
+const ofertaBloqueCopy = {
+  es: {
+    heading: "¿Quieres alojarte 4 noches en Viñales?",
+    lead: "Reserva 3 noches en nuestra casa particular en Viñales directamente desde la web y disfruta de la cuarta noche gratis.",
+    b1: "• Haz tu reserva online de 3 noches.",
+    b2: "• Escríbenos por WhatsApp para confirmar tu estancia.",
+    b3: "• Te añadimos la 4ª noche sin coste adicional.",
+    closingItalic:
+      "Disfruta más tiempo de tu alojamiento en Viñales, con tranquilidad, comodidad y atención personalizada.",
+  },
+  en: {
+    heading: "Want to stay 4 nights in Viñales?",
+    lead: "Book 3 nights at our casa particular in Viñales directly through the website and enjoy the fourth night free.",
+    b1: "• Book your 3-night stay online.",
+    b2: "• Message us on WhatsApp to confirm your stay.",
+    b3: "• We add your 4th night at no extra cost.",
+    closingItalic:
+      "Enjoy more time at your accommodation in Viñales, with peace of mind, comfort and personalised attention.",
+  },
+} as const;
+
+const ofertaDescripcionCopy = {
+  es: {
+    intro:
+      "Nuestro alojamiento está pensado para viajeros que buscan comodidad, tranquilidad y atención personalizada. Te ofrecemos un espacio acogedor donde descansar, organizar tus excursiones por Viñales y disfrutar de una experiencia auténtica en Cuba.",
+    v1: "✔ Casa particular en Viñales con trato cercano y bilingüe.",
+    v2: "✔ Ambiente tranquilo, ideal para desconectar.",
+    v3: "✔ Asesoramiento para rutas y actividades en el valle.",
+    v4: "✔ Reserva directa, clara y segura.",
+    middle:
+      "Al alojarte más días, podrás descubrir Viñales a tu ritmo: despertar con luz natural, disfrutar del desayuno sin aglomeraciones y volver cada tarde a un espacio donde sentirte como en casa.",
+    cta:
+      "👉 Solicita tus fechas y te confirmamos disponibilidad para aprovechar esta oferta especial de alojamiento en Viñales.",
+  },
+  en: {
+    intro:
+      "Our accommodation is designed for travellers seeking comfort, peace of mind and personalised attention. We offer a welcoming space to rest, plan your outings in Viñales and enjoy an authentic experience in Cuba.",
+    v1: "✔ Casa particular in Viñales with friendly bilingual service.",
+    v2: "✔ A peaceful atmosphere, perfect to unwind.",
+    v3: "✔ Advice on routes and activities in the valley.",
+    v4: "✔ Direct, clear and secure booking.",
+    middle:
+      "By staying longer, you can discover Viñales at your own pace: wake to natural light, enjoy breakfast without crowds and return each afternoon to a space that feels like home.",
+    cta:
+      "👉 Request your dates and we’ll confirm availability so you can take advantage of this special accommodation offer in Viñales.",
+  },
+} as const;
+
+function OfertaDescripcionBloque({ locale }: { locale: string }) {
+  const c = locale === "en" ? ofertaDescripcionCopy.en : ofertaDescripcionCopy.es;
+
   return (
-    <div className="relative z-20 mx-auto my-8 flex w-full max-w-2xl flex-col gap-6 px-4">
-      <div className="w-full rounded-xl border-2 border-emerald-200 bg-emerald-50/30 px-6 py-2.5 text-center shadow-sm">
-        <div
-          className="mx-auto h-7 w-full max-w-none animate-pulse rounded-md bg-slate-200/80"
-          aria-hidden
-        />
+    <div className="flex flex-col text-left space-y-4 w-full">
+      <p className="text-sm md:text-base text-gray-700 text-balance leading-relaxed">
+        {c.intro}
+      </p>
+      <div className="flex flex-col space-y-2 text-sm md:text-base text-gray-800 font-medium ml-1">
+        <p>{c.v1}</p>
+        <p>{c.v2}</p>
+        <p>{c.v3}</p>
+        <p>{c.v4}</p>
       </div>
-      <div className="border-2 border-emerald-100 bg-white rounded-xl p-6 md:p-8 shadow-sm">
-        <div className="space-y-3" aria-hidden>
-          <div className="mx-auto h-4 w-full animate-pulse rounded bg-slate-200/80" />
-          <div className="mx-auto h-4 w-full animate-pulse rounded bg-slate-200/80" />
-          <div className="mx-auto h-4 w-11/12 animate-pulse rounded bg-slate-200/80" />
-          <div className="mx-auto h-4 w-full animate-pulse rounded bg-slate-200/80" />
-        </div>
-        <p className="sr-only">Cargando contenido de la oferta…</p>
-      </div>
+      <p className="text-sm md:text-base text-gray-700 text-balance leading-relaxed">
+        {c.middle}
+      </p>
+      <p className="font-bold text-base md:text-lg text-[#C5A059] pt-2">
+        {c.cta}
+      </p>
     </div>
   );
 }
 
-type OfertaRow = {
-  titulo: string | null;
-  descripcion: string | null;
-  titulo_en: string | null;
-  descripcion_en: string | null;
-};
-
-/** Lógica multi-idioma para el título en las cajas de oferta (Supabase). */
-function textoTituloOferta(datos: OfertaRow | null, locale: string): string {
-  if (locale === "en" && datos?.titulo_en?.trim()) {
-    return datos.titulo_en.trim();
-  }
-  return datos?.titulo?.trim() || "Oferta Especial";
-}
-
-async function OfertaCajasDinamicas({ locale }: { locale: string }) {
-  const supabase = await createClient();
-  const { data, error } = await supabase
-    .from("oferta_especial")
-    .select("titulo, descripcion, titulo_en, descripcion_en")
-    .eq("id", 1)
-    .maybeSingle();
-
-  const datos: OfertaRow | null = error ? null : (data as OfertaRow | null);
+function OfertaEspecialBloque({ locale }: { locale: string }) {
+  const isEn = locale === "en";
+  const c = isEn ? ofertaBloqueCopy.en : ofertaBloqueCopy.es;
 
   return (
     <div className="relative z-20 mx-auto my-8 flex w-full max-w-2xl flex-col gap-6 px-4">
-      {/* Contenedor Principal de la Oferta — z-20 para flotar sobre el layout */}
-      {/* 1. Rectángulo Superior: Título adaptable y multi-idioma */}
-      <div className="w-full min-w-0 rounded-xl border-2 border-emerald-200 bg-emerald-50/30 px-6 py-2.5 text-center shadow-sm">
-        <h3 className="truncate text-sm font-bold text-slate-800">
-          {textoTituloOferta(datos, locale)}
-        </h3>
-      </div>
-
-      {/* 2. Rectángulo Inferior: Descripción ordenada, multi-idioma y alineada */}
       <div className="rounded-xl border-2 border-emerald-100 bg-white p-6 shadow-sm md:p-8">
-        <p className="text-left text-lg leading-relaxed text-slate-600 whitespace-pre-line">
-          {locale === "en" && datos?.descripcion_en?.trim()
-            ? datos.descripcion_en.trim()
-            : datos?.descripcion?.trim() ||
-              "Descripción de la oferta especial."}
-        </p>
+        <div className="flex flex-col items-start justify-center text-left max-w-xl mx-auto space-y-4 px-4 md:px-6">
+          <h3 className="font-bold text-lg md:text-xl text-balance">
+            {c.heading}
+          </h3>
+          <p className="text-sm md:text-base text-balance text-gray-700">
+            {c.lead}
+          </p>
+          <div className="text-sm md:text-base font-medium flex flex-col space-y-1 text-gray-800">
+            <p>{c.b1}</p>
+            <p>{c.b2}</p>
+            <p>{c.b3}</p>
+          </div>
+          <p className="text-sm md:text-base text-balance text-gray-700 italic">
+            {c.closingItalic}
+          </p>
+        </div>
       </div>
     </div>
   );
@@ -144,7 +164,7 @@ export default async function OfertaEspecialPage({ params }: Props) {
           ></div>
         </div>
         <div className="relative z-10 mx-auto max-w-4xl px-4 py-16 text-center md:py-20">
-          <p className="mb-3 text-sm font-medium uppercase tracking-[0.2em] text-emerald-800/90">
+          <p className="hidden md:block mb-3 text-sm font-medium uppercase tracking-[0.2em] text-emerald-800/90">
             {t.kicker}
           </p>
           <h1 className="text-balance font-serif text-3xl font-semibold leading-tight text-white md:text-4xl lg:text-[2.65rem]">
@@ -157,15 +177,9 @@ export default async function OfertaEspecialPage({ params }: Props) {
       <main className="bg-white">
         <div className="mx-auto grid max-w-7xl gap-12 px-4 py-16 lg:grid-cols-2 lg:gap-16 lg:py-20">
           <div className="flex flex-col justify-center space-y-8 text-slate-700">
-            {/* Contenedor Principal de la Oferta — datos desde Supabase */}
-            <Suspense fallback={<OfertaCajasEsqueleto />}>
-              <OfertaCajasDinamicas locale={locale} />
-            </Suspense>
+            <OfertaEspecialBloque locale={locale} />
 
-            <div className="space-y-6 text-base leading-relaxed md:text-[1.0625rem]">
-              <p>{t.p2}</p>
-              <p>{t.p3}</p>
-            </div>
+            <OfertaDescripcionBloque locale={locale} />
             <div className="pt-2">
               <Link
                 href="/reservas"
