@@ -17,15 +17,18 @@ export default function LocationSection() {
       aria-labelledby="location-heading"
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="max-w-2xl mx-auto text-center">
+        <div className="max-w-2xl md:max-w-4xl mx-auto text-center">
         <h2
           id="location-heading"
-          className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 tracking-tight text-center mb-8 md:mb-12"
+          className="font-serif text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 tracking-tight text-center mb-8 md:mb-12 text-balance break-words whitespace-normal max-w-full px-1 sm:px-0"
         >
           {t("title")}
         </h2>
-        <p className="font-serif text-lg text-gray-700 leading-relaxed mb-8">
+        <p className="md:hidden font-serif text-sm text-gray-700 leading-snug mb-8 text-center mx-auto px-4 text-balance">
           {t("subtitle")}
+        </p>
+        <p className="hidden md:block font-serif text-lg text-gray-700 leading-relaxed mb-8 text-center mx-auto text-balance max-w-4xl px-2 sm:px-4">
+          {t("subtitleDesktop")}
         </p>
 
         <div className="rounded-xl border border-[#C5A059]/30 bg-white p-6 md:p-8 shadow-sm text-left mb-8">

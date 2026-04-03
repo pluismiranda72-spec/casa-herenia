@@ -82,8 +82,9 @@
   "Reviews": { "title": "Guest Reviews", "tripadvisorBtn": "READ ON TRIPADVISOR", "internalBtn": "VIEW ALL REVIEWS" },
   "Blog": { "title": "Valley Stories", "cta": "DISCOVER VIÑALES" },
   "Location": {
-    "title": "Worry-Free Arrival",
-    "subtitle": "We pick you up at the door of your accommodation and take you to our home.",
+    "title": "Taxi & Transfer to Viñales",
+    "subtitle": "Our taxi and transfer services to Viñales are safe, comfortable and punctual, with personalised attention. We offer shared and private transfers from Havana and other destinations in Cuba.",
+    "subtitleDesktop": "Plan your arrival easily, safely and stress-free with our taxi and transfer service to Viñales. We offer shared and private transfers from Havana and other destinations in Cuba, ideal for travellers seeking comfort, punctuality and personalised attention.",
     "transportTitle": "Transport Options",
     "taxiPrivate": "Private Taxi: 120 EUR per vehicle (max. 4 pax). For groups of 5-6 people, 2 vehicles will be arranged.",
     "taxiColectivo": "Shared Taxi: 25 EUR per person",
