@@ -8,6 +8,8 @@ import { CloudUpload, X } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { getGallery, saveImage } from "@/app/actions/galleryActions";
 import { optimizeCloudinaryUrl } from "@/utils/cloudinary";
+import RoomResponsiveName from "@/components/RoomResponsiveName";
+import type { Property } from "@/data/properties";
 
 const CLOUD_NAME = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME;
 const UPLOAD_PRESET = process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET;
@@ -139,6 +141,8 @@ type RoomDetailsModalProps = {
   roomTitle: string;
   roomSlug: string;
   images: string[];
+  roomUnit?: Property["unit"];
+  roomTitleMobile?: string;
 };
 
 export default function RoomDetailsModal({
@@ -147,6 +151,8 @@ export default function RoomDetailsModal({
   roomTitle,
   roomSlug,
   images: _images,
+  roomUnit,
+  roomTitleMobile,
 }: RoomDetailsModalProps) {
   const t = useTranslations("RoomModal");
   const [slotUrls, setSlotUrls] = useState<(string | null)[]>(() =>
@@ -233,7 +239,11 @@ export default function RoomDetailsModal({
           <div className="relative z-10 flex flex-1 flex-col min-h-0 overflow-auto pointer-events-none">
             <div className="pointer-events-auto px-4 py-3 md:px-6 md:py-4 shrink-0 pr-32 md:pr-40">
               <h2 className="font-serif text-lg md:text-xl text-white truncate">
-                {roomTitle}
+                {roomUnit && roomTitleMobile ? (
+                  <RoomResponsiveName unit={roomUnit} mobileName={roomTitleMobile} />
+                ) : (
+                  roomTitle
+                )}
               </h2>
             </div>
 

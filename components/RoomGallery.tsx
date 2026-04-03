@@ -10,6 +10,7 @@ import RoomDetailsModal from "@/components/RoomDetailsModal";
 import { optimizeCloudinaryUrl } from "@/utils/cloudinary";
 import { CURRENCY_SYMBOL } from "@/lib/constants/currency";
 import { Link } from "@/i18n/navigation";
+import RoomResponsiveName from "@/components/RoomResponsiveName";
 
 function RoomsTitle({ title }: { title: string }) {
   const colonIndex = title.indexOf(":");
@@ -120,7 +121,7 @@ export default function RoomGallery() {
                     />
                     <div className="absolute inset-x-0 bottom-0 pt-16 pb-5 px-5 bg-gradient-to-t from-black/90 via-black/50 to-transparent rounded-b-xl">
                       <h3 className="font-serif text-xl md:text-2xl text-white">
-                        {name}
+                        <RoomResponsiveName unit={property.unit} mobileName={name} />
                       </h3>
                       <p className="mt-1 font-sans font-semibold text-gray-200">
                         {property.pricePerNight}{CURRENCY_SYMBOL}{t("perNight")}
@@ -148,6 +149,8 @@ export default function RoomGallery() {
         isOpen={selectedRoom !== null}
         onClose={() => setSelectedRoom(null)}
         roomTitle={selectedRoom?.name ?? ""}
+        roomUnit={selectedRoom?.unit}
+        roomTitleMobile={selectedRoom ? t(`${selectedRoom.unit}.name`) : ""}
         roomSlug={selectedRoom?.id ?? ""}
         images={selectedRoom?.galleryImages ?? []}
       />

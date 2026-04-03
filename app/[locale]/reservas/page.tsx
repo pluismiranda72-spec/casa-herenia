@@ -11,6 +11,7 @@ import { getNightlyPricing } from "@/utils/pricing";
 import { createBooking } from "@/app/actions/createBooking";
 import type { BlockedDatesByUnitYmd } from "@/lib/ical";
 import CancellationPolicyModal from "@/components/CancellationPolicyModal";
+import RoomResponsiveName from "@/components/RoomResponsiveName";
 import { isRedirectError } from "next/dist/client/components/redirect";
 import { CURRENCY_SYMBOL } from "@/lib/constants/currency";
 import "react-day-picker/style.css";
@@ -144,7 +145,10 @@ export default function ReservasPage() {
                         : "border-white/30 text-white hover:border-[#C5A059]/50"
                     }`}
                   >
-                    {tRooms(`${p.unit}.name`)}
+                    <RoomResponsiveName
+                      unit={p.unit}
+                      mobileName={tRooms(`${p.unit}.name`)}
+                    />
                   </button>
                 ))}
               </div>
@@ -234,7 +238,10 @@ export default function ReservasPage() {
                 <>
                   <p className="font-sans text-sm text-gray-300">
                     <span className="text-[#C5A059]">{t("stay")}:</span>{" "}
-                    {tRooms(`${property.unit}.name`)}
+                    <RoomResponsiveName
+                      unit={property.unit}
+                      mobileName={tRooms(`${property.unit}.name`)}
+                    />
                   </p>
                   {range.from && (
                     <p className="font-sans text-sm text-gray-300">
