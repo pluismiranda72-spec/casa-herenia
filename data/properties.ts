@@ -24,7 +24,7 @@ export const PROPERTIES: Property[] = [
   {
     id: "room-1",
     slug: "junior-suite-i",
-    name: "JUNIOR SUITE I",
+    name: "Habitación Privada #1 Viñales",
     description:
       "Ambiente exclusivo y acogedor. Atención bilingüe, Baño en suite, A/C, 2 camas dobles y minibar con agua de cortesía.",
     pricePerNight: 55,
@@ -50,7 +50,7 @@ export const PROPERTIES: Property[] = [
   {
     id: "room-2",
     slug: "junior-suite-ii",
-    name: "JUNIOR SUITE II",
+    name: "Habitación Privada #2 Viñales",
     description:
       "Ambiente exclusivo y acogedor. Atención bilingüe, Baño en suite, A/C, 2 camas dobles y minibar con agua de cortesía.",
     pricePerNight: 55,
@@ -76,7 +76,7 @@ export const PROPERTIES: Property[] = [
   {
     id: "full-villa",
     slug: "villa-herenia-exclusiva",
-    name: "TWO-BEDROOM SUITE",
+    name: "Habitación Familar Viñales (2 Dormitorios)",
     description:
       "Privacidad total. Ambiente íntimo, tranquilo y exclusivo, con check-in flexible y guía local.",
     pricePerNight: 120,

@@ -40,15 +40,15 @@
     "perNight": "/ noche",
     "viewDetails": "Ver Detalles",
     "room_1": {
-      "name": "JUNIOR SUITE I",
+      "name": "Habitación Privada #1 Viñales",
       "desc": "Ambiente exclusivo y acogedor. Atención bilingüe, Baño en suite, A/C, 2 camas dobles y minibar con agua de cortesía."
     },
     "room_2": {
-      "name": "JUNIOR SUITE II",
+      "name": "Habitación Privada #2 Viñales",
       "desc": "Ambiente exclusivo y acogedor. Atención bilingüe, Baño en suite, A/C, 2 camas dobles y minibar con agua de cortesía."
     },
     "full_villa": {
-      "name": "TWO-BEDROOM SUITE",
+      "name": "Habitación Familar Viñales (2 Dormitorios)",
       "desc": "Privacidad total. Ambiente íntimo, tranquilo y exclusivo, con check-in flexible y guía local."
     }
   },

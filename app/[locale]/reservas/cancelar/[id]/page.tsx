@@ -10,10 +10,10 @@ type Props = {
 
 function roomLabel(roomId: string): string {
   return roomId === "room_1"
-    ? "Junior Suite I"
+    ? "Habitación Privada #1 Viñales"
     : roomId === "room_2"
-      ? "Junior Suite II"
-      : "TWO-BEDROOM SUITE (Villa Completa)";
+      ? "Habitación Privada #2 Viñales"
+      : "Habitación Familar Viñales (2 Dormitorios) (Villa Completa)";
 }
 
 export default async function CancelarReservaPage({ params, searchParams }: Props) {

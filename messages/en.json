@@ -42,12 +42,12 @@
     "viewDetails": "View Details",
     "detailsBtn": "View Details",
     "closeBtn": "CLOSE",
-    "room_1": { "name": "JUNIOR SUITE I", "desc": "Exclusive and cozy atmosphere. Bilingual service, En-suite bathroom, A/C, 2 double beds, and complimentary minibar." },
-    "room_2": { "name": "JUNIOR SUITE II", "desc": "Exclusive and cozy atmosphere. Bilingual service, En-suite bathroom, A/C, 2 double beds, and complimentary minibar." },
-    "full_villa": { "name": "TWO-BEDROOM SUITE", "desc": "Total privacy. An intimate, quiet, and exclusive environment with flexible check-in and local guide." },
-    "suite1": { "title": "JUNIOR SUITE I", "price": "55€ / night", "desc": "Exclusive and cozy atmosphere. Bilingual service, En-suite bathroom, A/C, 2 double beds, and complimentary minibar." },
-    "suite2": { "title": "JUNIOR SUITE II", "price": "55€ / night", "desc": "Exclusive and cozy atmosphere. Bilingual service, En-suite bathroom, A/C, 2 double beds, and complimentary minibar." },
-    "villa": { "title": "TWO-BEDROOM SUITE", "price": "120€ / night", "desc": "Total privacy. An intimate, quiet, and exclusive environment with flexible check-in and local guide." }
+    "room_1": { "name": "Habitación Privada #1 Viñales", "desc": "Exclusive and cozy atmosphere. Bilingual service, En-suite bathroom, A/C, 2 double beds, and complimentary minibar." },
+    "room_2": { "name": "Habitación Privada #2 Viñales", "desc": "Exclusive and cozy atmosphere. Bilingual service, En-suite bathroom, A/C, 2 double beds, and complimentary minibar." },
+    "full_villa": { "name": "Habitación Familar Viñales (2 Dormitorios)", "desc": "Total privacy. An intimate, quiet, and exclusive environment with flexible check-in and local guide." },
+    "suite1": { "title": "Habitación Privada #1 Viñales", "price": "55€ / night", "desc": "Exclusive and cozy atmosphere. Bilingual service, En-suite bathroom, A/C, 2 double beds, and complimentary minibar." },
+    "suite2": { "title": "Habitación Privada #2 Viñales", "price": "55€ / night", "desc": "Exclusive and cozy atmosphere. Bilingual service, En-suite bathroom, A/C, 2 double beds, and complimentary minibar." },
+    "villa": { "title": "Habitación Familar Viñales (2 Dormitorios)", "price": "120€ / night", "desc": "Total privacy. An intimate, quiet, and exclusive environment with flexible check-in and local guide." }
   },
   "Benefits": {
     "title": "Services Included in Our House: Comfort, WiFi & 24-hour Energy",

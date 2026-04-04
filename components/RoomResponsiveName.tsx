@@ -17,12 +17,12 @@ export default function RoomResponsiveName({ unit, mobileName }: Props) {
       <span className="md:hidden">{mobileName}</span>
       {unit === "room_1" && (
         <span className="hidden md:inline md:text-lg lg:text-base md:whitespace-nowrap md:tracking-tight">
-          Habitación Privada en Viñales
+          Habitación Privada #1 Viñales
         </span>
       )}
       {unit === "room_2" && (
         <span className="hidden md:inline md:text-lg lg:text-base md:whitespace-nowrap md:tracking-tight">
-          Habitación privada en Viñales
+          Habitación Privada #2 Viñales
         </span>
       )}
       {unit === "full_villa" && (
