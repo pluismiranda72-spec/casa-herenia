@@ -75,7 +75,8 @@ function CardImage({
                 alt={altText}
                 fill
                 className="object-cover transition-transform duration-300 group-hover/card:scale-105"
-                sizes="(max-width: 480px) 240px, 240px"
+                sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                loading="lazy"
                 unoptimized={url.startsWith("http")}
               />
             </div>

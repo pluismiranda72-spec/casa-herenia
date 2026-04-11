@@ -105,8 +105,9 @@ export default function AwardsSection() {
                     src={optimizeCloudinaryUrl(award.image_url)}
                     alt={`Premio ${award.position}`}
                     fill
-                    sizes="(max-width: 640px) 50vw, (max-width: 768px) 33vw, 20vw"
+                    sizes="(max-width: 768px) 150px, 200px"
                     className="object-contain"
+                    loading="lazy"
                     unoptimized={award.image_url.startsWith("http")}
                   />
                 </div>

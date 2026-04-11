@@ -228,8 +228,9 @@ export default function PremiosAdminClient({ initialAwards }: Props) {
                         src={award.image_url}
                         alt={award.title ?? award.image_url}
                         fill
-                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
+                        sizes="(max-width: 768px) 150px, 200px"
                         className="object-contain"
+                        loading="lazy"
                       />
                     ) : (
                       <div className="flex h-full items-center justify-center text-slate-500 text-xs">

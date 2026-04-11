@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 import { useLocale, useTranslations } from "next-intl";
 import { Link } from "@/i18n/navigation";
 
@@ -11,12 +12,18 @@ export default function HeroSection() {
   return (
     <section className="relative w-full h-[80vh] md:h-screen overflow-hidden bg-gray-900">
       {/* 1. La Imagen de Fondo */}
-      <img
-        src="/images/hero-habitacion.jpeg"
-        alt="Habitación principal con vista al Valle de Viñales"
-        className="absolute inset-0 w-full h-full object-cover z-0"
-        loading="eager"
-      />
+      <div className="absolute inset-0 z-0">
+        <Image
+          src="/images/Nueva.webp"
+          alt="Habitación principal con vista al Valle de Viñales"
+          fill
+          className="object-cover"
+          priority={true}
+          sizes="100vw"
+          quality={100}
+          unoptimized={true}
+        />
+      </div>
 
       {/* 2. Superposición Oscura (Overlay) para LEGIBILIDAD */}
       <div className="absolute inset-0 bg-black/40 z-10" aria-hidden="true" />

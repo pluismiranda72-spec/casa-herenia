@@ -151,11 +151,15 @@ export default async function OfertaEspecialPage({ params }: Props) {
       {/* Hero */}
       <section className="relative overflow-hidden border-b border-emerald-100/80">
         <div className="absolute inset-0 z-0">
-          <img
-            src="/images/06.jpeg"
-            alt="Vista decorativa del Valle de Viñales"
-            className="absolute inset-0 z-0 h-full w-full object-cover"
-            loading="eager"
+          <Image
+            src="/images/Nueva.webp"
+            alt="Amanecer en el Valle de Viñales desde Casa Herenia y Pedro"
+            fill
+            className="object-cover"
+            priority={true}
+            sizes="100vw"
+            quality={100}
+            unoptimized={true}
           />
           {/* Nuevo overlay oscuro para legibilidad sin tinte verde */}
           <div
@@ -201,6 +205,7 @@ export default async function OfertaEspecialPage({ params }: Props) {
                     fill
                     className="object-cover"
                     sizes="(max-width: 1024px) 50vw, 33vw"
+                    loading="lazy"
                   />
                 </div>
               </figure>
@@ -212,6 +217,7 @@ export default async function OfertaEspecialPage({ params }: Props) {
                     fill
                     className="object-cover"
                     sizes="(max-width: 1024px) 50vw, 33vw"
+                    loading="lazy"
                   />
                 </div>
               </figure>
@@ -224,6 +230,7 @@ export default async function OfertaEspecialPage({ params }: Props) {
                   fill
                   className="object-cover"
                   sizes="(max-width: 1024px) 100vw, 50vw"
+                  loading="lazy"
                 />
               </div>
             </figure>

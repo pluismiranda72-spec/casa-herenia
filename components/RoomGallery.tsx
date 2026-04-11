@@ -39,13 +39,22 @@ export default function RoomGallery() {
       className="relative w-full overflow-hidden py-16 md:py-24"
       aria-labelledby="room-gallery-heading"
     >
-      <div className="absolute inset-0 z-0">
-        <img
-          src="/images/06.jpeg"
-          alt=""
-          className="absolute inset-0 z-0 h-full w-full object-cover"
-          loading="eager"
-        />
+      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden">
+        {/* Contenedor relativo de altura completa: object-cover conserva la proporción de la imagen (sin estirar). */}
+        <div className="relative h-full w-full min-h-0">
+          <Image
+            src="/images/06.webp"
+            alt="Amanecer en el Valle de Viñales desde Casa Herenia y Pedro"
+            fill={true}
+            sizes="(max-width: 768px) 100vw, 50vw"
+            className="object-cover object-center"
+            style={{ objectFit: "cover", objectPosition: "center center" }}
+            loading="lazy"
+            quality={100}
+            unoptimized={true}
+            draggable={false}
+          />
+        </div>
         {/* Nuevo overlay oscuro para legibilidad sin tinte verde */}
         <div
           className="absolute inset-0 bg-black/30 z-10"
@@ -118,6 +127,7 @@ export default function RoomGallery() {
                       fill
                       className="object-cover transition-transform duration-500 group-hover:scale-105"
                       sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                      loading="lazy"
                     />
                     <div className="absolute inset-x-0 bottom-0 pt-16 pb-5 px-5 bg-gradient-to-t from-black/90 via-black/50 to-transparent rounded-b-xl">
                       <h3 className="font-serif text-xl md:text-2xl text-white">

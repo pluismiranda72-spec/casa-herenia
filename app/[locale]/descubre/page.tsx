@@ -104,6 +104,7 @@ Qué Hacer en Viñales y Cuba (Tours y Experiencias)
                         sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
                         placeholder="blur"
                         blurDataURL={BLUR_DATA}
+                        loading="lazy"
                         unoptimized={post.media_url.startsWith("http")}
                       />
                     ) : post.media_url && post.media_type === "video" ? (
