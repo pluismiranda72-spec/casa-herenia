@@ -82,14 +82,18 @@ export default function RootLayout({
       </head>
       <body className="min-h-screen">
         {children}
-        <Analytics />
-        <SpeedInsights />
-        {/* Metricool Tracking Script */}
-        <Script id="metricool-tracker" strategy="afterInteractive">
-          {`
+        {process.env.NODE_ENV === "production" && (
+          <>
+            <Analytics />
+            <SpeedInsights />
+            {/* Metricool Tracking Script */}
+            <Script id="metricool-tracker" strategy="afterInteractive">
+              {`
             function loadScript(a){var b=document.getElementsByTagName("head")[0],c=document.createElement("script");c.type="text/javascript",c.src="https://tracker.metricool.com/resources/be.js",c.onreadystatechange=a,c.onload=a,b.appendChild(c)}loadScript(function(){beTracker.t({hash:"fdf28228ce793eceee86fa3eebe82ee3"})});
           `}
-        </Script>
+            </Script>
+          </>
+        )}
       </body>
     </html>
   );

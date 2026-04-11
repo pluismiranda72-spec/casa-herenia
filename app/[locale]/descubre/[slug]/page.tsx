@@ -70,6 +70,12 @@ const CITY_PATTERNS = CITY_LINKS.map((link) => ({
   regex: new RegExp(`(\\d+\\.\\s*)(${link.name})`, "i"),
 }));
 
+/** URL del perfil en texto plano a la que se muestra en el cuerpo de algunos posts (p. ej. alojamiento en Viñales). */
+const INSTAGRAM_CASA_HERENIA_PLAIN =
+  /https:\/\/www\.instagram\.com\/casa_herenia_y_pedro(?:\?[^\s<"'`]*)?/gi;
+
+const INSTAGRAM_CASA_HERENIA_ANCHOR = `<a href="https://www.instagram.com/casa_herenia_y_pedro" target="_blank" rel="noopener noreferrer" class="text-[#38B6FF] dark:text-[#5cc4ff] hover:text-[#2ea3e6] dark:hover:text-[#7dd3fc] hover:underline transition-colors duration-200 font-medium">@casa_herenia_y_pedro</a>`;
+
 function processCityContent(content: string): string {
   if (!content) return "";
 
@@ -80,6 +86,11 @@ function processCityContent(content: string): string {
       return `<br /><br />${prefix}<a href="${url}" target="_blank" rel="noopener noreferrer" class="text-[#38B6FF] font-semibold no-underline hover:underline transition-all duration-200 ease-in-out">${cityName}</a>`;
     });
   }
+
+  processedHtml = processedHtml.replace(
+    INSTAGRAM_CASA_HERENIA_PLAIN,
+    INSTAGRAM_CASA_HERENIA_ANCHOR
+  );
 
   return processedHtml;
 }
